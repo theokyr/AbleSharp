@@ -57,17 +57,17 @@ public static class AbletonProjectHandler
         var project = new AbletonProject
         {
             MajorVersion = 5,
-            MinorVersion = "11.0_11300",
-            SchemaChangeCount = 3,
-            Creator = "Ableton Live 11.3.21",
-            Revision = "5ac24cad7c51ea0671d49e6b4885371f15b57c1e",
+            MinorVersion = "12.0_12049",
+            SchemaChangeCount = 12,
+            Creator = "Ableton Live 12.0.10",
+            Revision = "518b0e8f662095a813fbfe2191c405929dce7c4f",
             LiveSet = CreateBlankLiveSet() 
         };
 
         int highestIdUsed = IdGenerator.GetLastId(); 
         if (project.LiveSet.NextPointeeId.Val <= highestIdUsed)
         {
-            project.LiveSet.NextPointeeId.Val = highestIdUsed + 1;
+            project.LiveSet.NextPointeeId.Val = new Value<int> { Val = highestIdUsed + 1 };
         }
 
         return project;
@@ -83,8 +83,8 @@ public static class AbletonProjectHandler
             LomIdView = new Value<int> { Val = 0 },
             Tracks = new List<Track>
             {
-                CreateBlankMidiTrack("12", "1-MIDI"),
-                // CreateBlankAudioTrack("13", "2-Audio")
+                CreateBlankMidiTrack("12", "Generated Midi Track"),
+                CreateBlankAudioTrack("13", "Generated Audio Track"),
             },
             MainTrack = CreateMainTrack(),
             PreHearTrack = CreatePreHearTrack(),
@@ -212,7 +212,7 @@ public static class AbletonProjectHandler
                             {
                                 Id = "0",
                                 Time = -63072000,
-                                Value = 120
+                                Value = 112
                             }
                         },
                         AutomationTransformViewState = CreateDefaultAutomationTransformViewState()
@@ -240,12 +240,12 @@ public static class AbletonProjectHandler
         };
     }
 
-    private static TrackName CreateTrackName(string name, string userName = "", string annotation = "", string memorizedFirstClipName = "")
+    private static TrackName CreateTrackName(string name, string annotation = "", string memorizedFirstClipName = "")
     {
         return new TrackName
         {
             EffectiveName = new Value<string> { Val = name },
-            UserName = new Value<string> { Val = userName },
+            UserName = new Value<string> { Val = name },
             Annotation = new Value<string> { Val = annotation },
             MemorizedFirstClipName = new Value<string> { Val = memorizedFirstClipName }
         };
@@ -412,6 +412,7 @@ public static class AbletonProjectHandler
         var chain = CreateDefaultDeviceChain();
         chain.AudioOutputRouting.Target = new Value<string> { Val = "AudioOut/External/S0" };
         chain.AudioOutputRouting.UpperDisplayString = new Value<string> { Val = "Ext. Out" };
+        chain.Mixer.Tempo = CreateTempo(133.7m);
         return chain;
     }
 
@@ -522,7 +523,7 @@ public static class AbletonProjectHandler
             SoloSink = new Value<bool> { Val = false },
             PanMode = new Value<int> { Val = 0 },
             Pan = CreateDefaultPan(),
-            Volume = CreateDefaultVolume(),
+            Volume = CreateVolume(),
             ViewStateSesstionTrackWidth = new Value<decimal> { Val = 93 },
             CrossFadeState = new CrossFadeState
             {
@@ -564,16 +565,32 @@ public static class AbletonProjectHandler
         };
     }
 
-    private static Volume CreateDefaultVolume()
+    private static Volume CreateVolume(decimal value = 1)
     {
         return new Volume
         {
             LomId = new Value<int> { Val = 0 },
-            Manual = new Value<decimal> { Val = 1 },
+            Manual = new Value<decimal> { Val = value },
             MidiControllerRange = new MidiControllerRange
             {
                 Min = new Value<decimal> { Val = 0.0003162277571M },
                 Max = new Value<decimal> { Val = 1.99526238M }
+            },
+            AutomationTarget = CreateAutomationTarget(),
+            ModulationTarget = CreateModulationTarget()
+        };
+    }
+
+    private static Tempo CreateTempo(decimal value = 120)
+    {
+        return new Tempo
+        {
+            LomId = new Value<int> { Val = 0 },
+            Manual = new Value<decimal> { Val = value },
+            MidiControllerRange = new MidiControllerRange
+            {
+                Min = new Value<decimal> { Val = 60 },
+                Max = new Value<decimal> { Val = 200 }
             },
             AutomationTarget = CreateAutomationTarget(),
             ModulationTarget = CreateModulationTarget()

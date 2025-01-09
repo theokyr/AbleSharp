@@ -809,6 +809,9 @@ public class Mixer
     [XmlElement("Volume")]
     public Volume Volume { get; set; }
 
+    [XmlElement("Tempo")]
+    public Tempo Tempo { get; set; }
+
     [XmlElement("ViewStateSesstionTrackWidth")]
     public Value<decimal> ViewStateSesstionTrackWidth { get; set; }
 
@@ -1187,6 +1190,24 @@ public class Volume
     public ModulationTarget ModulationTarget { get; set; }
 }
 
+public class Tempo
+{
+    [XmlElement("LomId")]
+    public Value<int> LomId { get; set; }
+
+    [XmlElement("Manual")]
+    public Value<decimal> Manual { get; set; }
+
+    [XmlElement("MidiControllerRange")]
+    public MidiControllerRange MidiControllerRange { get; set; }
+
+    [XmlElement("AutomationTarget")]
+    public AutomationTarget AutomationTarget { get; set; }
+
+    [XmlElement("ModulationTarget")]
+    public ModulationTarget ModulationTarget { get; set; }
+}
+
 public class MidiControllerRange
 {
     [XmlElement("Min")]
@@ -1357,7 +1378,6 @@ public class LastPresetRef
 
 public class LockedScripts
 {
-    // Empty in examples but included for XML serialization
 }
 
 public class ExpressionLane
@@ -1593,12 +1613,10 @@ public class Onsets
 
 public class SavedWarpMarkers
 {
-    // Usually empty in the examples, but included for completeness
 }
 
 public class ViewData
 {
-    // In examples this is usually serialized as "{}"
     public string Value { get; set; }
 }
 
@@ -1667,7 +1685,6 @@ public class AutomationTransformViewState
 
 public class TimeAndValueTransforms
 {
-    // Empty in examples but included for completeness
 }
 
 public class DevicesListWrapper
@@ -1706,7 +1723,6 @@ public class Devices
 
 public class SignalModulations
 {
-    // Empty in examples but included for completeness
 }
 
 public class ParametersListWrapper
@@ -1797,7 +1813,6 @@ public class VolumeModulationTarget
 
 public class EventList
 {
-    // Empty in examples but included for completeness
 }
 
 public class LoopSlot
@@ -1807,7 +1822,6 @@ public class LoopSlot
 
 public class UserOnset
 {
-    // Empty in examples but included for completeness
 }
 
 public class SendsPre
@@ -1831,7 +1845,6 @@ public class ContentLane
 
 public class NoteProbabilityGroup
 {
-    // Empty in examples but included for completeness
 }
 
 public class Device
