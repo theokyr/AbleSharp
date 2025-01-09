@@ -8,7 +8,7 @@ class Program
     {
         // Create a new blank project and save it
         var newSet = AbletonProjectHandler.CreateBlankProject();
-        AbletonProjectHandler.SaveToFile(newSet, "new_blank_project.als");
+        AbletonProjectHandler.SaveToFile(newSet, "generated.als");
         Console.WriteLine("Created new blank project");
 
         // TODO: We don't care about loading existing files for now.
