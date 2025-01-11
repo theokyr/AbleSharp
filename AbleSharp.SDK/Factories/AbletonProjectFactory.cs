@@ -699,7 +699,7 @@ public class AbletonProjectFactory
     {
         return new ArrangerAutomation
         {
-            Events = new List<AutomationEvent>(),
+            Events = new List<Clip>(),
             AutomationTransformViewState = new AutomationTransformViewState
             {
                 IsTransformPending = new Value<bool> { Val = false },
