@@ -6,6 +6,12 @@ namespace AbleSharp.Lib;
 [XmlInclude(typeof(AudioClip))]
 public abstract class Clip
 {
+    [XmlAttribute("Id")]
+    public string Id { get; set; }
+
+    [XmlAttribute("Time")]
+    public decimal Time { get; set; }
+
     [XmlElement("LomId")]
     public Value<int> LomId { get; set; }
 

@@ -70,4 +70,7 @@ public class MainSequencer
 
     [XmlElement("Recorder")]
     public Recorder Recorder { get; set; }
+
+    [XmlElement("MidiControllers")]
+    public MidiControllers MidiControllers { get; set; }
 }

@@ -43,25 +43,25 @@ public class MidiClip : Clip
     public Value<int> NoteEditorFoldOutScroll { get; set; }
 
     [XmlElement("NoteEditorFoldScaleZoom")]
-    public int NoteEditorFoldScaleZoom { get; set; }
+    public Value<int> NoteEditorFoldScaleZoom { get; set; }
 
     [XmlElement("NoteEditorFoldScaleScroll")]
-    public int NoteEditorFoldScaleScroll { get; set; }
+    public Value<int> NoteEditorFoldScaleScroll { get; set; }
 
     [XmlElement("ScaleInformation")]
     public ScaleInformation ScaleInformation { get; set; }
 
     [XmlElement("IsInKey")]
-    public bool IsInKey { get; set; }
+    public Value<bool> IsInKey { get; set; }
 
     [XmlElement("NoteSpellingPreference")]
-    public int NoteSpellingPreference { get; set; }
+    public Value<int> NoteSpellingPreference { get; set; }
 
     [XmlElement("AccidentalSpellingPreference")]
-    public int AccidentalSpellingPreference { get; set; }
+    public Value<int> AccidentalSpellingPreference { get; set; }
 
     [XmlElement("PreferFlatRootNote")]
-    public bool PreferFlatRootNote { get; set; }
+    public Value<bool> PreferFlatRootNote { get; set; }
 
     [XmlElement("ExpressionGrid")]
     public ExpressionGrid ExpressionGrid { get; set; }
