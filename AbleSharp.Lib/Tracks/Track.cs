@@ -7,6 +7,7 @@ namespace AbleSharp.Lib;
 [XmlInclude(typeof(ReturnTrack))]
 [XmlInclude(typeof(MainTrack))]
 [XmlInclude(typeof(PreHearTrack))]
+[XmlInclude(typeof(GroupTrack))]
 public abstract class Track
 {
     [XmlAttribute("Id")]
@@ -62,4 +63,6 @@ public abstract class Track
 
     [XmlElement("ReWireDeviceMidiTargetId")]
     public Value<int> ReWireDeviceMidiTargetId { get; set; }
+    
+    
 }

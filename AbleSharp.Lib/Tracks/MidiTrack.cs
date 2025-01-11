@@ -3,7 +3,7 @@ using System.Xml.Serialization;
 namespace AbleSharp.Lib;
 
 [XmlType("MidiTrack")]
-public class MidiTrack : Track
+public class MidiTrack : FreezableTrack
 {
     [XmlElement("ReWireSlaveMidiTargetId")]
     public Value<int> ReWireSlaveMidiTargetId { get; set; }
@@ -20,17 +20,8 @@ public class MidiTrack : Track
     [XmlElement("SavedPlayingOffset")]
     public Value<decimal> SavedPlayingOffset { get; set; }
 
-    [XmlElement("Freeze")]
-    public Value<bool> Freeze { get; set; }
-
     [XmlElement("VelocityDetail")]
     public Value<int> VelocityDetail { get; set; }
-
-    [XmlElement("NeedArrangerRefreeze")]
-    public Value<bool> NeedArrangerRefreeze { get; set; }
-
-    [XmlElement("PostProcessFreezeClips")]
-    public Value<int> PostProcessFreezeClips { get; set; }
 
     [XmlElement("ControllerLayoutRemoteable")]
     public Value<int> ControllerLayoutRemoteable { get; set; }

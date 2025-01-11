@@ -12,6 +12,7 @@ public class LiveSet
     [XmlArray("Tracks")]
     [XmlArrayItem("MidiTrack", typeof(MidiTrack))]
     [XmlArrayItem("AudioTrack", typeof(AudioTrack))]
+    [XmlArrayItem("GroupTrack", typeof(GroupTrack))]
     public List<Track> Tracks { get; set; }
 
     [XmlElement("MasterTrack")]
