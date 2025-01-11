@@ -63,6 +63,4 @@ public abstract class Track
 
     [XmlElement("ReWireDeviceMidiTargetId")]
     public Value<int> ReWireDeviceMidiTargetId { get; set; }
-    
-    
 }
