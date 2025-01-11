@@ -3,9 +3,21 @@
              x:Class="AbleSharp.GUI.Views.ProjectView"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:views="clr-namespace:AbleSharp.GUI.Views"
              mc:Ignorable="d">
-    <StackPanel Margin="10">
-        <TextBlock Text="Project Tracks" FontSize="16" FontWeight="Bold" />
-        <ListBox ItemsSource="{Binding Tracks}" />
-    </StackPanel>
+
+    <Grid RowDefinitions="Auto, *" Margin="10">
+        <TextBlock Text="Project Tracks" 
+                   FontSize="16" 
+                   FontWeight="Bold" 
+                   Grid.Row="0" 
+                   Margin="0,0,0,10" />
+        <ListBox Grid.Row="1" ItemsSource="{Binding Tracks}">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <views:TrackView DataContext="{Binding}" />
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </Grid>
 </UserControl>

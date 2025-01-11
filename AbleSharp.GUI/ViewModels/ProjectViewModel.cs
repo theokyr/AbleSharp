@@ -1,28 +1,30 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using AbleSharp.Lib; // so we can reference AbletonProject, Track, etc.
+using AbleSharp.Lib;
 
 namespace AbleSharp.GUI.ViewModels
 {
     public class ProjectViewModel : INotifyPropertyChanged
     {
-        private ObservableCollection<string> _tracks = new();
+        private ObservableCollection<TrackViewModel> _tracks = new();
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public ProjectViewModel(AbletonProject project)
         {
+            // Convert the project's track info into TrackViewModel objects
             if (project?.LiveSet?.Tracks != null)
             {
                 foreach (var track in project.LiveSet.Tracks)
                 {
-                    _tracks.Add(track?.Name?.EffectiveName ?? "(Unnamed Track)");
+                    _tracks.Add(new TrackViewModel(track));
                 }
             }
         }
 
-        public ObservableCollection<string> Tracks
+        // Now it's a collection of *TrackViewModel* objects
+        public ObservableCollection<TrackViewModel> Tracks
         {
             get => _tracks;
             set
