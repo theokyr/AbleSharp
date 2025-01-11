@@ -1,24 +1,23 @@
+// File: AbleSharp.GUI/App.axaml.cs
+
 using AbleSharp.GUI.Views;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 
-namespace AbleSharp.GUI;
-
-public partial class App : Application
+namespace AbleSharp.GUI
 {
-    public override void Initialize()
+    public partial class App : Application
     {
-        AvaloniaXamlLoader.Load(this);
-    }
+        public override void Initialize() => AvaloniaXamlLoader.Load(this);
 
-    public override void OnFrameworkInitializationCompleted()
-    {
-        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+        public override void OnFrameworkInitializationCompleted()
         {
-            desktop.MainWindow = new MainWindow();
+            if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+            {
+                desktop.MainWindow = new MainWindow();
+            }
+            base.OnFrameworkInitializationCompleted();
         }
-
-        base.OnFrameworkInitializationCompleted();
     }
 }

@@ -1,30 +1,38 @@
-<UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             x:Class="AbleSharp.GUI.Views.ProjectView"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:vm="clr-namespace:AbleSharp.GUI.ViewModels"
-             mc:Ignorable="d">
+<UserControl 
+    x:Class="AbleSharp.GUI.Views.ProjectView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:vm="clr-namespace:AbleSharp.GUI.ViewModels"
+    xmlns:views="clr-namespace:AbleSharp.GUI.Views">
 
-    <Grid RowDefinitions="Auto, *" Margin="10">
-        <TextBlock Text="Project Tracks"
-                   FontSize="16"
-                   FontWeight="Bold"
-                   Grid.Row="0"
-                   Margin="0,0,0,10" />
-
-        <TreeView Grid.Row="1"
+    <Grid ColumnDefinitions="300, *" RowDefinitions="*" Margin="10">
+        <!-- Left pane: track hierarchy -->
+        <TreeView Grid.Column="0"
                   ItemsSource="{Binding RootTracks}">
             <TreeView.ItemTemplate>
                 <TreeDataTemplate
                     DataType="vm:TrackViewModel"
                     ItemsSource="{Binding Children}">
                     <StackPanel Orientation="Horizontal" Spacing="5">
-                        <!-- Display each TrackViewModel’s name -->
                         <TextBlock Text="{Binding TrackName}" FontSize="14" />
                     </StackPanel>
                 </TreeDataTemplate>
             </TreeView.ItemTemplate>
         </TreeView>
+
+        <!-- Right pane: timeline -->
+        <ScrollViewer Grid.Column="1"
+                      HorizontalScrollBarVisibility="Auto"
+                      VerticalScrollBarVisibility="Auto">
+            <StackPanel Orientation="Vertical">
+                <ItemsControl ItemsSource="{Binding TimelineTracks}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate DataType="vm:TimelineTrackViewModel">
+                            <views:TimelineTrackView DataContext="{Binding}" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+        </ScrollViewer>
     </Grid>
 </UserControl>

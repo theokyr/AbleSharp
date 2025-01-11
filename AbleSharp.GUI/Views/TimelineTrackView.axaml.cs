@@ -1,12 +1,11 @@
-// File: AbleSharp.GUI/Views/ProjectView.axaml.cs
-using Avalonia.Controls;
+﻿using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 
 namespace AbleSharp.GUI.Views
 {
-    public partial class ProjectView : UserControl
+    public partial class TimelineTrackView : UserControl
     {
-        public ProjectView()
+        public TimelineTrackView()
         {
             InitializeComponent();
         }

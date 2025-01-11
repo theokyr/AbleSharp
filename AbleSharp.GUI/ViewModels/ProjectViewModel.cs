@@ -1,73 +1,58 @@
+// File: AbleSharp.GUI/ViewModels/ProjectViewModel.cs
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
+using System.Linq;
 using AbleSharp.Lib;
 
 namespace AbleSharp.GUI.ViewModels
 {
-    public class ProjectViewModel : INotifyPropertyChanged
+    public class ProjectViewModel
     {
         private ObservableCollection<TrackViewModel> _rootTracks = new();
+        public ObservableCollection<TrackViewModel> RootTracks
+        {
+            get => _rootTracks;
+            set { _rootTracks = value; }
+        }
 
-        public event PropertyChangedEventHandler? PropertyChanged;
+        public ObservableCollection<TimelineTrackViewModel> TimelineTracks { get; } = new();
 
         public ProjectViewModel(AbletonProject project)
         {
             if (project?.LiveSet?.Tracks != null)
             {
                 BuildTrackHierarchy(project.LiveSet.Tracks);
-            }
-        }
-
-        /// <summary>
-        /// The top-level tracks to display in a TreeView.
-        /// </summary>
-        public ObservableCollection<TrackViewModel> RootTracks
-        {
-            get => _rootTracks;
-            set
-            {
-                if (_rootTracks != value)
-                {
-                    _rootTracks = value;
-                    OnPropertyChanged();
-                }
+                BuildTimelineTracks(project.LiveSet.Tracks);
             }
         }
 
         private void BuildTrackHierarchy(List<Track> tracks)
         {
-            var allViewModels = new Dictionary<string, TrackViewModel>();
-            foreach (var track in tracks)
+            var allVms = new Dictionary<string, TrackViewModel>();
+            foreach (var t in tracks)
             {
-                var vm = new TrackViewModel(track);
-                if (!string.IsNullOrEmpty(track.Id))
-                {
-                    allViewModels[track.Id] = vm;
-                }
+                var vm = new TrackViewModel(t);
+                allVms[t.Id] = vm;
             }
-
-            foreach (var track in tracks)
+            foreach (var t in tracks)
             {
-                var trackVm = allViewModels[track.Id];
-
-                var groupIdVal = track.TrackGroupId?.Val ?? -1;
-                string parentId = groupIdVal.ToString();
-
-                // If groupIdVal == -1, it's root. 
-                if (groupIdVal != -1 && allViewModels.ContainsKey(parentId))
+                var tvm = allVms[t.Id];
+                var parentIdVal = t.TrackGroupId?.Val ?? -1;
+                var parentId = parentIdVal.ToString();
+                if (parentIdVal != -1 && allVms.ContainsKey(parentId))
                 {
-                    var parentVm = allViewModels[parentId];
-                    parentVm.Children.Add(trackVm);
+                    allVms[parentId].Children.Add(tvm);
                 }
                 else
                 {
-                    RootTracks.Add(trackVm);
+                    RootTracks.Add(tvm);
                 }
             }
         }
 
-        protected void OnPropertyChanged([CallerMemberName] string? name = null)
-            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        private void BuildTimelineTracks(List<Track> tracks)
+        {
+            foreach (var t in tracks)
+                TimelineTracks.Add(new TimelineTrackViewModel(t));
+        }
     }
 }

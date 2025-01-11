@@ -1,0 +1,39 @@
+﻿<!-- File: AbleSharp.GUI/Views/TimelineTrackView.axaml -->
+<UserControl 
+    x:Class="AbleSharp.GUI.Views.TimelineTrackView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:canvas="clr-namespace:Avalonia.Controls;assembly=Avalonia.Controls"
+    xmlns:vm="clr-namespace:AbleSharp.GUI.ViewModels"
+    Height="60">
+
+    <Grid ColumnDefinitions="100, *">
+        <!-- Track label on the left -->
+        <Border Grid.Column="0" Background="#333" Padding="5" CornerRadius="2">
+            <TextBlock Text="{Binding TrackName}" Foreground="White" />
+        </Border>
+
+        <!-- Timeline area on the right -->
+        <Border Grid.Column="1" Background="#222" Padding="2" CornerRadius="2">
+            <ItemsControl ItemsSource="{Binding Clips}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Canvas />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="vm:ClipViewModel">
+                        <Border Background="SteelBlue"
+                                Height="30"
+                                Width="{Binding Length, Converter={StaticResource TimeToPixelConverter}}"
+                                canvas:Canvas.Left="{Binding Start, Converter={StaticResource TimeToPixelConverter}}"
+                                CornerRadius="2">
+                            <TextBlock Text="{Binding ClipName}" Margin="5" Foreground="White" />
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </Border>
+    </Grid>
+</UserControl>
