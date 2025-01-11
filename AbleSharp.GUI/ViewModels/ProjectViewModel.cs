@@ -7,32 +7,62 @@ namespace AbleSharp.GUI.ViewModels
 {
     public class ProjectViewModel : INotifyPropertyChanged
     {
-        private ObservableCollection<TrackViewModel> _tracks = new();
+        private ObservableCollection<TrackViewModel> _rootTracks = new();
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public ProjectViewModel(AbletonProject project)
         {
-            // Convert the project's track info into TrackViewModel objects
             if (project?.LiveSet?.Tracks != null)
             {
-                foreach (var track in project.LiveSet.Tracks)
+                BuildTrackHierarchy(project.LiveSet.Tracks);
+            }
+        }
+
+        /// <summary>
+        /// The top-level tracks to display in a TreeView.
+        /// </summary>
+        public ObservableCollection<TrackViewModel> RootTracks
+        {
+            get => _rootTracks;
+            set
+            {
+                if (_rootTracks != value)
                 {
-                    _tracks.Add(new TrackViewModel(track));
+                    _rootTracks = value;
+                    OnPropertyChanged();
                 }
             }
         }
 
-        // Now it's a collection of *TrackViewModel* objects
-        public ObservableCollection<TrackViewModel> Tracks
+        private void BuildTrackHierarchy(List<Track> tracks)
         {
-            get => _tracks;
-            set
+            var allViewModels = new Dictionary<string, TrackViewModel>();
+            foreach (var track in tracks)
             {
-                if (_tracks != value)
+                var vm = new TrackViewModel(track);
+                if (!string.IsNullOrEmpty(track.Id))
                 {
-                    _tracks = value;
-                    OnPropertyChanged();
+                    allViewModels[track.Id] = vm;
+                }
+            }
+
+            foreach (var track in tracks)
+            {
+                var trackVm = allViewModels[track.Id];
+
+                var groupIdVal = track.TrackGroupId?.Val ?? -1;
+                string parentId = groupIdVal.ToString();
+
+                // If groupIdVal == -1, it's root. 
+                if (groupIdVal != -1 && allViewModels.ContainsKey(parentId))
+                {
+                    var parentVm = allViewModels[parentId];
+                    parentVm.Children.Add(trackVm);
+                }
+                else
+                {
+                    RootTracks.Add(trackVm);
                 }
             }
         }

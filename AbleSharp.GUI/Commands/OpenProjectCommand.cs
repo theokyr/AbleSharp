@@ -1,7 +1,7 @@
 using System.Windows.Input;
 using AbleSharp.GUI.Services;
 using AbleSharp.GUI.ViewModels;
-using AbleSharp.SDK; 
+using AbleSharp.SDK;
 
 namespace AbleSharp.GUI.Commands
 {
