@@ -12,6 +12,12 @@
       <PackageReference Include="Avalonia.Desktop" Version="11.2.3" />
       <PackageReference Include="Avalonia.Fonts.Inter" Version="11.2.3" />
       <PackageReference Include="Avalonia.Themes.Fluent" Version="11.2.3" />
+      <PackageReference Include="ReactiveUI" Version="20.1.63" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\AbleSharp.Lib\AbleSharp.Lib.csproj" />
+      <ProjectReference Include="..\AbleSharp.SDK\AbleSharp.SDK.csproj" />
     </ItemGroup>
 
 </Project>
