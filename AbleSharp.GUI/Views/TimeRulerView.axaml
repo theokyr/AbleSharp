@@ -1,26 +1,53 @@
-﻿<UserControl
+﻿<?xml version="1.0" encoding="utf-8"?>
+<UserControl
     x:Class="AbleSharp.GUI.Views.TimeRulerView"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     Height="30">
 
-    <Canvas Background="#333333">
+    <Canvas Name="RulerCanvas" Background="#333333">
         <ItemsControl Name="TickMarks">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <Canvas />
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
-
+            
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <StackPanel>
-                        <Line StartPoint="0,15" EndPoint="0,30"
-                              Stroke="White" StrokeThickness="1" />
+                    <Grid Canvas.Left="{Binding Position}">
+                        <!-- Major tick -->
+                        <Line StartPoint="0,15" 
+                              EndPoint="0,30"
+                              Stroke="White" 
+                              StrokeThickness="1" />
+                              
+                        <!-- Minor ticks -->
+                        <ItemsControl ItemsSource="{Binding MinorTicks}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <Canvas />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Line StartPoint="{Binding StartPoint}" 
+                                          EndPoint="{Binding EndPoint}"
+                                          Canvas.Left="{Binding Position}"
+                                          Stroke="#888888" 
+                                          StrokeThickness="1" />
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        
+                        <!-- Beat number label -->
                         <TextBlock Text="{Binding Label}"
-                                   Foreground="White"
-                                   Margin="2,0,0,0" />
-                    </StackPanel>
+                                 Foreground="White"
+                                 Canvas.Left="2"
+                                 Canvas.Top="0"
+                                 FontSize="10" />
+                    </Grid>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>

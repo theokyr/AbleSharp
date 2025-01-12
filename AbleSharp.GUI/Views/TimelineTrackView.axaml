@@ -4,15 +4,23 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:vm="clr-namespace:AbleSharp.GUI.ViewModels"
     xmlns:views="clr-namespace:AbleSharp.GUI.Views"
-    Height="60">
-    
+    Height="60"
+    HorizontalAlignment="Left">
+
     <Border Background="#1E1E1E"
             BorderBrush="#333333" 
             BorderThickness="0,0,0,1">
+
         <ItemsControl ItemsSource="{Binding Clips}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <Canvas />
+                    <!-- 
+                        Ensure the Canvas can expand to the full timeline width
+                        from the parent TimelineView's DataContext (which is TimelineViewModel).
+                    -->
+                    <Canvas
+                        Width="{Binding DataContext.TotalTimelineWidth, RelativeSource={RelativeSource AncestorType=views:TimelineView}}"
+                        HorizontalAlignment="Left" />
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
 
@@ -27,29 +35,30 @@
                             ToolTip.Tip="{Binding ClipName}"
                             Canvas.Left="{Binding Start, Converter={StaticResource TimeToPixelConverter}, ConverterParameter={Binding DataContext, RelativeSource={RelativeSource AncestorType=views:TimelineView}}}"
                             Width="{Binding Length, Converter={StaticResource TimeToPixelConverter}, ConverterParameter={Binding DataContext, RelativeSource={RelativeSource AncestorType=views:TimelineView}}}">
-                        
+
                         <Grid>
                             <Border Height="16" 
                                     VerticalAlignment="Top"
                                     Background="#3A80D2">
                                 <TextBlock Text="{Binding ClipName}"
-                                         Margin="5,0,5,0"
-                                         FontSize="10"
-                                         Foreground="White"
-                                         TextTrimming="CharacterEllipsis" />
+                                           Margin="5,0,5,0"
+                                           FontSize="10"
+                                           Foreground="White"
+                                           TextTrimming="CharacterEllipsis" />
                             </Border>
                             
                             <Border Margin="0,16,0,0">
                                 <TextBlock Text="{Binding Length, StringFormat='Length: {0:F2}'}"
-                                         Margin="5,2"
-                                         FontSize="9"
-                                         Foreground="#CCFFFFFF"
-                                         VerticalAlignment="Top"/>
+                                           Margin="5,2"
+                                           FontSize="9"
+                                           Foreground="#CCFFFFFF"
+                                           VerticalAlignment="Top"/>
                             </Border>
                         </Grid>
                     </Border>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
+
     </Border>
 </UserControl>

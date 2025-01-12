@@ -1,14 +1,14 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using AbleSharp.Lib;
+using Microsoft.Extensions.Logging;
+using AbleSharp.GUI.Services;
 
 namespace AbleSharp.GUI.ViewModels;
 
-/// <summary>
-/// Represents a single clip. 
-/// </summary>
 public class ClipViewModel : INotifyPropertyChanged
 {
+    private readonly ILogger<ClipViewModel> _logger = LoggerService.GetLogger<ClipViewModel>();
     public event PropertyChangedEventHandler? PropertyChanged;
 
     private decimal _start;
@@ -41,10 +41,7 @@ public class ClipViewModel : INotifyPropertyChanged
         }
     }
 
-    /// <summary>
-    /// A handy read-only property for (End - Start).
-    /// We'll bind this to the Width in XAML.
-    /// </summary>
+    // For UI binding (Width in the timeline)
     public decimal Length => End - Start;
 
     public string ClipName
@@ -62,18 +59,36 @@ public class ClipViewModel : INotifyPropertyChanged
 
     public ClipViewModel(Clip clip)
     {
-        Start = clip.CurrentStart?.Val ?? 0;
-        End = clip.CurrentEnd?.Val ?? 0;
-        ClipName = clip.Name?.Val ?? "Unnamed Clip";
+        _logger.LogDebug("Creating ClipViewModel for clip Id={Id}", clip.Id);
+
+        // The arrangement time (where this clip appears in the timeline)
+        Start = clip.Time;
+        
+        // Calculate end time based on clip length
+        var clipLength = (clip.CurrentEnd?.Val ?? 16) - (clip.CurrentStart?.Val ?? 0);
+        End = Start + clipLength;
+
+        ClipName = string.IsNullOrEmpty(clip.Name?.Val)
+            ? "Unnamed Clip"
+            : clip.Name.Val;
+
+        _logger.LogDebug(
+            "Created clip '{Name}': Time={Time}, CurrentStart={CurStart}, CurrentEnd={CurEnd} => " +
+            "DisplayedStart={DispStart}, DisplayedEnd={DispEnd}, Length={Length}",
+            ClipName,
+            clip.Time,
+            clip.CurrentStart?.Val,
+            clip.CurrentEnd?.Val,
+            Start,
+            End,
+            Length
+        );
     }
 
-    protected void OnPropertyChanged([CallerMemberName] string name = null)
+    protected void OnPropertyChanged([CallerMemberName] string? name = null)
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }
 
-    public override string ToString()
-    {
-        return $"Clip '{ClipName}' from {Start} to {End} (Len={Length})";
-    }
+    public override string ToString() => $"Clip '{ClipName}' Start={Start} End={End}";
 }

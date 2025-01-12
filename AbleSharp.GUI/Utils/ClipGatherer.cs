@@ -15,40 +15,32 @@ public static class ClipGatherer
 
         _logger.LogDebug("Gathering clips from track '{TrackName}'", track.Name?.EffectiveName?.Val);
 
+        // MAIN
         var mainSeq = track.DeviceChain?.MainSequencer;
-        if (mainSeq?.ClipSlotList != null)
-            foreach (var slot in mainSeq.ClipSlotList)
-                if (slot?.ClipData?.Clip != null)
-                {
-                    _logger.LogTrace("Found main-sequencer clip '{ClipName}'", slot.ClipData.Clip.Name?.Val);
-                    result.Add(slot.ClipData.Clip);
-                }
-
-        // Audio Clips
-        if (mainSeq?.Sample?.ArrangerAutomation?.Events != null)
-        {
-            var count = mainSeq.Sample.ArrangerAutomation.Events.Count();
-            _logger.LogTrace("Found {Count} Audio events in main-sequencer Sample.ArrangerAutomation", count);
-            result.AddRange(mainSeq.Sample.ArrangerAutomation.Events);
-        }
-        
-        // Midi Clips
         if (mainSeq?.ClipTimeable?.ArrangerAutomation?.Events != null)
         {
             var clips = mainSeq.ClipTimeable.ArrangerAutomation.Events;
-            _logger.LogTrace("Found {Count} MIDI clips in main-sequencer ClipTimeable.ArrangerAutomation", clips.Count);
+            _logger.LogTrace("Found {Count} clips in main-sequencer ClipTimeable.ArrangerAutomation", clips.Count);
             result.AddRange(clips);
         }
 
-        // Freeze Samples
+        if (mainSeq?.Sample?.ArrangerAutomation?.Events != null)
+        {
+            var eventsCount = mainSeq.Sample.ArrangerAutomation.Events.Count;
+            _logger.LogTrace("Found {Count} Audio events in main-sequencer Sample.ArrangerAutomation", eventsCount);
+            result.AddRange(mainSeq.Sample.ArrangerAutomation.Events);
+        }
+
+        // FREEZE
         var freezeSeq = track.DeviceChain?.FreezeSequencer;
         if (freezeSeq?.Sample?.ArrangerAutomation?.Events != null)
         {
-            var count = freezeSeq.Sample.ArrangerAutomation.Events.Count();
-            _logger.LogTrace("Found {Count} events in freeze-sequencer Sample.ArrangerAutomation", count);
+            var freezeCount = freezeSeq.Sample.ArrangerAutomation.Events.Count;
+            _logger.LogTrace("Found {Count} events in freeze-sequencer Sample.ArrangerAutomation", freezeCount);
             result.AddRange(freezeSeq.Sample.ArrangerAutomation.Events);
         }
 
+        // Return what we found
         return result;
     }
 }

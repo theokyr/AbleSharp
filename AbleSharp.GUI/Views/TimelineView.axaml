@@ -1,4 +1,5 @@
-﻿<UserControl
+﻿<?xml version="1.0" encoding="utf-8"?>
+<UserControl
     x:Class="AbleSharp.GUI.Views.TimelineView"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -9,49 +10,109 @@
 
     <Grid RowDefinitions="Auto,Auto,*">
         <!-- Row 0: Transport controls -->
-        <StackPanel Orientation="Horizontal" Margin="10" Grid.Row="0" Spacing="10">
-            <TextBlock Text="Tempo:" VerticalAlignment="Center" />
-            <TextBlock Text="{Binding Tempo}" VerticalAlignment="Center" FontWeight="Bold" />
-            <TextBlock Text="TimeSig:" VerticalAlignment="Center" Margin="15,0,0,0" />
-            <TextBlock Text="{Binding TimeSigNumerator}" VerticalAlignment="Center" FontWeight="Bold" />
-            <TextBlock Text="/" VerticalAlignment="Center" />
-            <TextBlock Text="{Binding TimeSigDenominator}" VerticalAlignment="Center" FontWeight="Bold" />
-
-            <Button Content="Zoom In" Margin="20,0,0,0" Command="{Binding ZoomInCommand}" />
-            <Button Content="Zoom Out" Command="{Binding ZoomOutCommand}" />
-            <TextBlock Text="{Binding Zoom, StringFormat='Zoom: {0:F2}'}"
-                       VerticalAlignment="Center" Margin="10,0,0,0" />
-        </StackPanel>
+        <Grid Grid.Row="0" 
+              ColumnDefinitions="Auto,*,Auto"
+              Background="#222222">
+              
+            <!-- Left side controls -->
+            <StackPanel Grid.Column="0" 
+                       Orientation="Horizontal" 
+                       Spacing="10">
+                <TextBlock Text="{Binding Tempo, StringFormat='{}{0:F1} BPM'}" 
+                          VerticalAlignment="Center"
+                          Foreground="#CCCCCC" />
+                          
+                <TextBlock Text="{Binding TimeSigNumerator}" 
+                          VerticalAlignment="Center"
+                          Foreground="#CCCCCC" />
+                <TextBlock Text="/" 
+                          VerticalAlignment="Center"
+                          Foreground="#CCCCCC" />
+                <TextBlock Text="{Binding TimeSigDenominator}"
+                          VerticalAlignment="Center"
+                          Foreground="#CCCCCC" />
+            </StackPanel>
+            
+            <!-- Right side controls -->
+            <StackPanel Grid.Column="2" 
+                       Orientation="Horizontal"
+                       Spacing="10">
+                <Button Command="{Binding ZoomOutCommand}"
+                        Classes="transport">
+                    <TextBlock Text="-" />
+                </Button>
+                
+                <TextBlock Text="{Binding Zoom, StringFormat='x{0:F1}'}"
+                          VerticalAlignment="Center"
+                          Width="50"
+                          TextAlignment="Center"
+                          Foreground="#CCCCCC" />
+                          
+                <Button Command="{Binding ZoomInCommand}"
+                        Classes="transport">
+                    <TextBlock Text="+" />
+                </Button>
+            </StackPanel>
+        </Grid>
 
         <!-- Row 1: Time Ruler -->
-        <views:TimeRulerView Grid.Row="1" Name="TimeRuler" Height="30" />
+        <Border Grid.Row="1" 
+                Background="#1A1A1A">
+            <Grid ColumnDefinitions="150,*">
+                <Border Grid.Column="0"
+                        Background="#222222"
+                        Height="30" />
+                        
+                <ScrollViewer Grid.Column="1"
+                             Name="RulerScroller"
+                             HorizontalScrollBarVisibility="Hidden"
+                             VerticalScrollBarVisibility="Disabled">
+                    <views:TimeRulerView Name="TimeRuler"
+                                        Height="30"
+                                        Width="{Binding TotalTimelineWidth}" />
+                </ScrollViewer>
+            </Grid>
+        </Border>
 
         <!-- Row 2: Scrollable track lanes -->
         <ScrollViewer Grid.Row="2"
-                      HorizontalScrollBarVisibility="Visible"
-                      VerticalScrollBarVisibility="Visible"
-                      Name="TimelineScroller">
-
-            <Grid ColumnDefinitions="Auto,*">
+                     Name="TimelineScroller"
+                     HorizontalScrollBarVisibility="Visible"
+                     VerticalScrollBarVisibility="Visible">
+            <Grid ColumnDefinitions="150,*">
                 <!-- Track headers column -->
-                <StackPanel Grid.Column="0" Width="150" Background="#222222">
-                    <ItemsControl ItemsSource="{Binding Tracks}">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <Border Height="60" Padding="5" Background="#333333">
-                                    <TextBlock Text="{Binding TrackName}"
-                                               Foreground="White"
-                                               VerticalAlignment="Center" />
-                                </Border>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                </StackPanel>
+                <ItemsControl Grid.Column="0" 
+                            ItemsSource="{Binding Tracks}"
+                            Background="#222222">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Height="60"
+                                    Margin="0,0,0,1"
+                                    Padding="8,4"
+                                    Background="#333333">
+                                <Grid RowDefinitions="*,*">
+                                    <TextBlock Grid.Row="0"
+                                             Text="{Binding TrackName}"
+                                             Foreground="White"
+                                             FontSize="12"
+                                             Margin="{Binding IndentLevel, Converter={StaticResource IndentConverter}}"
+                                             TextTrimming="CharacterEllipsis" />
+                                             
+                                    <TextBlock Grid.Row="1"
+                                             Text="{Binding Track.Id}"
+                                             Foreground="#888888"
+                                             FontSize="10"
+                                             Margin="{Binding IndentLevel, Converter={StaticResource IndentConverter}}" />
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
 
                 <!-- Clips area -->
                 <ItemsControl Grid.Column="1"
-                              ItemsSource="{Binding Tracks}"
-                              Background="#1A1A1A">
+                            ItemsSource="{Binding Tracks}"
+                            Background="#1A1A1A">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <views:TimelineTrackView DataContext="{Binding}" />
@@ -61,4 +122,14 @@
             </Grid>
         </ScrollViewer>
     </Grid>
+
+    <UserControl.Styles>
+        <Style Selector="Button.transport">
+            <Setter Property="Width" Value="24"/>
+            <Setter Property="Height" Value="24"/>
+            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="Background" Value="#444444"/>
+            <Setter Property="BorderThickness" Value="0"/>
+        </Style>
+    </UserControl.Styles>
 </UserControl>
