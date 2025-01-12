@@ -38,13 +38,9 @@ public partial class TrackHeaderView : UserControl
 
     private void OnDataContextChanged(object? sender, EventArgs e)
     {
-        if (DataContext is TimelineTrackViewModel vm)
-        {
-            _logger.LogTrace($"Track header data context changed: {vm.TrackName}");
-
-            // Reset meter animation when track changes
-            // ResetMeterAnimation();
-        }
+        if (DataContext is TimelineTrackViewModel vm) _logger.LogTrace($"Track header data context changed: {vm.TrackName}");
+        // Reset meter animation when track changes
+        // ResetMeterAnimation();
     }
 
     // private void SetupMeterAnimation()
