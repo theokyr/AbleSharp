@@ -32,7 +32,7 @@ public abstract class Track
     public TrackName Name { get; set; }
 
     [XmlElement("Color")]
-    public Value<string> Color { get; set; }
+    public Value<int> Color { get; set; }
 
     [XmlElement("AutomationEnvelopes")]
     public AutomationEnvelopes AutomationEnvelopes { get; set; }

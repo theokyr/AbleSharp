@@ -56,7 +56,7 @@ public abstract class Clip
     public Value<string> Annotation { get; set; }
 
     [XmlElement("Color")]
-    public Value<string> Color { get; set; }
+    public Value<int> Color { get; set; }
 
     [XmlElement("LaunchMode")]
     public Value<int> LaunchMode { get; set; }

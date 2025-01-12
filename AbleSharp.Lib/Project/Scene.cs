@@ -17,7 +17,7 @@ public class Scene
     public Value<string> Annotation { get; set; }
 
     [XmlElement("Color")]
-    public Value<string> Color { get; set; }
+    public Value<int> Color { get; set; }
 
     [XmlElement("Tempo")]
     public Value<decimal> Tempo { get; set; }
