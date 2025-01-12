@@ -17,16 +17,12 @@ public static class ClipGatherer
 
         var mainSeq = track.DeviceChain?.MainSequencer;
         if (mainSeq?.ClipSlotList != null)
-        {
             foreach (var slot in mainSeq.ClipSlotList)
-            {
                 if (slot?.ClipData?.Clip != null)
                 {
                     _logger.LogTrace("Found main-sequencer clip '{ClipName}'", slot.ClipData.Clip.Name?.Val);
                     result.Add(slot.ClipData.Clip);
                 }
-            }
-        }
 
         if (mainSeq?.Sample?.ArrangerAutomation?.Events != null)
         {

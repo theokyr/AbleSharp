@@ -54,12 +54,8 @@ public class TimelineViewModel : INotifyPropertyChanged
         // Build timeline tracks
         var allTracks = project?.LiveSet?.Tracks;
         if (allTracks != null)
-        {
             foreach (var t in allTracks)
-            {
                 Tracks.Add(new TimelineTrackViewModel(t));
-            }
-        }
 
         // Set up commands
         ZoomInCommand = new RelayCommand(_ => ZoomIn(), _ => true);
@@ -146,7 +142,9 @@ public class TimelineViewModel : INotifyPropertyChanged
     public event PropertyChangedEventHandler? PropertyChanged;
 
     protected void OnPropertyChanged([CallerMemberName] string name = null)
-        => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+    }
 }
 
 /// <summary>
@@ -164,8 +162,20 @@ public class RelayCommand : ICommand
         _canExecute = canExecute;
     }
 
-    public bool CanExecute(object? parameter) => _canExecute(parameter);
-    public void Execute(object? parameter) => _execute(parameter);
+    public bool CanExecute(object? parameter)
+    {
+        return _canExecute(parameter);
+    }
+
+    public void Execute(object? parameter)
+    {
+        _execute(parameter);
+    }
+
     public event EventHandler? CanExecuteChanged;
-    public void RaiseCanExecuteChanged() => CanExecuteChanged?.Invoke(this, EventArgs.Empty);
+
+    public void RaiseCanExecuteChanged()
+    {
+        CanExecuteChanged?.Invoke(this, EventArgs.Empty);
+    }
 }

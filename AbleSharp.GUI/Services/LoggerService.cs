@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using Microsoft.Extensions.Logging;
 using Avalonia.Threading;
 
@@ -37,8 +36,10 @@ public static class LoggerService
     /// Retrieve a typed logger for use in any class.
     /// </summary>
     public static ILogger<T> GetLogger<T>()
-        => _loggerFactory?.CreateLogger<T>()
-           ?? throw new InvalidOperationException("LoggerService not initialized.");
+    {
+        return _loggerFactory?.CreateLogger<T>()
+               ?? throw new InvalidOperationException("LoggerService not initialized.");
+    }
 }
 
 /// <summary>
@@ -48,7 +49,10 @@ internal class DebugLogProvider : ILoggerProvider
 {
     private readonly DebugLogLogger _logger = new();
 
-    public ILogger CreateLogger(string categoryName) => _logger;
+    public ILogger CreateLogger(string categoryName)
+    {
+        return _logger;
+    }
 
     public void Dispose()
     {
@@ -60,8 +64,15 @@ internal class DebugLogProvider : ILoggerProvider
 /// </summary>
 internal class DebugLogLogger : ILogger
 {
-    public IDisposable BeginScope<TState>(TState state) => NullScope.Instance;
-    public bool IsEnabled(LogLevel logLevel) => true;
+    public IDisposable BeginScope<TState>(TState state)
+    {
+        return NullScope.Instance;
+    }
+
+    public bool IsEnabled(LogLevel logLevel)
+    {
+        return true;
+    }
 
     public void Log<TState>(
         LogLevel logLevel,
@@ -75,10 +86,7 @@ internal class DebugLogLogger : ILogger
         var message = formatter(state, exception);
         var final = $"{DateTime.Now:HH:mm:ss} [{logLevel}] {message}";
 
-        if (exception != null)
-        {
-            final += Environment.NewLine + exception;
-        }
+        if (exception != null) final += Environment.NewLine + exception;
 
         // Ensure we add to the collection on the UI thread.
         Dispatcher.UIThread.Post(() => { LoggerService.InMemoryLog.Add(final); });

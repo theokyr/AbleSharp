@@ -5,66 +5,66 @@ using AbleSharp.GUI.Commands;
 using AbleSharp.GUI.Views;
 using Microsoft.Extensions.Logging;
 using AbleSharp.GUI.Services;
-using Avalonia;
 
-namespace AbleSharp.GUI.ViewModels
+namespace AbleSharp.GUI.ViewModels;
+
+public class MainWindowViewModel : INotifyPropertyChanged
 {
-    public class MainWindowViewModel : INotifyPropertyChanged
+    private readonly ILogger<MainWindowViewModel> _logger;
+    private object? _currentView;
+
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    public ICommand OpenProjectCommand { get; }
+    public ICommand OpenDebugLogCommand { get; }
+
+    public MainWindowViewModel()
     {
-        private readonly ILogger<MainWindowViewModel> _logger;
-        private object? _currentView;
+        _logger = LoggerService.GetLogger<MainWindowViewModel>();
 
-        public event PropertyChangedEventHandler? PropertyChanged;
+        _logger.LogDebug("Constructing MainWindowViewModel");
 
-        public ICommand OpenProjectCommand { get; }
-        public ICommand OpenDebugLogCommand { get; }
+        OpenProjectCommand = new OpenProjectCommand(this);
 
-        public MainWindowViewModel()
+        // Command to open the DebugLogWindow
+        OpenDebugLogCommand = new RelayCommand(_ => ShowDebugLog(), _ => true);
+    }
+
+    public object CurrentView
+    {
+        get => _currentView;
+        set
         {
-            _logger = LoggerService.GetLogger<MainWindowViewModel>();
-
-            _logger.LogDebug("Constructing MainWindowViewModel");
-
-            OpenProjectCommand = new OpenProjectCommand(this);
-
-            // Command to open the DebugLogWindow
-            OpenDebugLogCommand = new RelayCommand(_ => ShowDebugLog(), _ => true);
-        }
-
-        public object CurrentView
-        {
-            get => _currentView;
-            set
+            if (_currentView != value)
             {
-                if (_currentView != value)
-                {
-                    _currentView = value;
-                    OnPropertyChanged();
-                }
+                _currentView = value;
+                OnPropertyChanged();
             }
         }
+    }
 
-        // Notifies the UI that a property changed
-        protected void OnPropertyChanged([CallerMemberName] string? name = null)
-            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+    // Notifies the UI that a property changed
+    protected void OnPropertyChanged([CallerMemberName] string? name = null)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+    }
 
-        public void ShowProjectView(ProjectViewModel projectViewModel)
+    public void ShowProjectView(ProjectViewModel projectViewModel)
+    {
+        _logger.LogInformation("Switching current view to ProjectView");
+        var projectView = new ProjectView
         {
-            _logger.LogInformation("Switching current view to ProjectView");
-            var projectView = new ProjectView
-            {
-                DataContext = projectViewModel
-            };
+            DataContext = projectViewModel
+        };
 
-            CurrentView = projectView;
-        }
+        CurrentView = projectView;
+    }
 
-        private void ShowDebugLog()
-        {
-            _logger.LogDebug("User requested to open debug log window");
+    private void ShowDebugLog()
+    {
+        _logger.LogDebug("User requested to open debug log window");
 
-            var debugLogWindow = new DebugLogWindow();
-            debugLogWindow.Show();
-        }
+        var debugLogWindow = new DebugLogWindow();
+        debugLogWindow.Show();
     }
 }

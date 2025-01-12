@@ -2,20 +2,19 @@ using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using AbleSharp.GUI.ViewModels;
 
-namespace AbleSharp.GUI.Views
+namespace AbleSharp.GUI.Views;
+
+public partial class MainWindow : Window
 {
-    public partial class MainWindow : Window
+    public MainWindow()
     {
-        public MainWindow()
-        {
-            InitializeComponent();
+        InitializeComponent();
 
-            DataContext = new MainWindowViewModel();
-        }
+        DataContext = new MainWindowViewModel();
+    }
 
-        private void InitializeComponent()
-        {
-            AvaloniaXamlLoader.Load(this);
-        }
+    private void InitializeComponent()
+    {
+        AvaloniaXamlLoader.Load(this);
     }
 }

@@ -1,18 +1,17 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 
-namespace AbleSharp.GUI.Views
-{
-    public partial class TimelineView : UserControl
-    {
-        public TimelineView()
-        {
-            InitializeComponent();
-        }
+namespace AbleSharp.GUI.Views;
 
-        private void InitializeComponent()
-        {
-            AvaloniaXamlLoader.Load(this);
-        }
+public partial class TimelineView : UserControl
+{
+    public TimelineView()
+    {
+        InitializeComponent();
+    }
+
+    private void InitializeComponent()
+    {
+        AvaloniaXamlLoader.Load(this);
     }
 }
