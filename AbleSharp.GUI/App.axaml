@@ -1,6 +1,7 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:converters="clr-namespace:AbleSharp.GUI.Converters"
+             xmlns:system="clr-namespace:System;assembly=System.Runtime"
              x:Class="AbleSharp.GUI.App"
              RequestedThemeVariant="Dark">
 
@@ -12,7 +13,8 @@
     </Application.Styles>
 
     <Application.Resources>
-        <converters:TimeToPixelConverter x:Key="TimeToPixelConverter" />
+        <converters:TimeToPixelMultiConverter x:Key="TimeToPixelMultiConverter" />
         <converters:IndentConverter x:Key="IndentConverter" />
+        <system:Double x:Key="DefaultZoom">20.0</system:Double>
     </Application.Resources>
 </Application>

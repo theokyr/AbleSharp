@@ -78,7 +78,7 @@ public class TimelineViewModel : INotifyPropertyChanged
             trackDict[track.Id] = vm;
 
             // Track the latest clip end time across all clips
-            foreach (var clipVM in vm.Clips) _lastClipEndTime = Math.Max(_lastClipEndTime, clipVM.Time + clipVM.Length);
+            foreach (var clipVM in vm.ClipViewModels) _lastClipEndTime = Math.Max(_lastClipEndTime, clipVM.Time + clipVM.Length);
         }
 
         // 2) Build hierarchy (indentation, children, etc.)

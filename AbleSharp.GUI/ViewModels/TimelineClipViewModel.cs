@@ -1,19 +1,17 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using AbleSharp.Lib;
-using Microsoft.Extensions.Logging;
-using AbleSharp.GUI.Services;
 
 namespace AbleSharp.GUI.ViewModels;
 
-public class ClipViewModel : INotifyPropertyChanged
+public class TimelineClipViewModel : INotifyPropertyChanged
 {
-    private readonly ILogger<ClipViewModel> _logger = LoggerService.GetLogger<ClipViewModel>();
-    public event PropertyChangedEventHandler? PropertyChanged;
-
     private decimal _time;
     private decimal _length;
     private string _clipName;
+    private double _zoom;
+
+    public event PropertyChangedEventHandler? PropertyChanged;
 
     public decimal Time
     {
@@ -54,35 +52,29 @@ public class ClipViewModel : INotifyPropertyChanged
         }
     }
 
-    public ClipViewModel(Clip clip)
+    public double Zoom
     {
-        _logger.LogDebug("Creating ClipViewModel for clip Id={Id}", clip.Id);
+        get => _zoom;
+        set
+        {
+            if (Math.Abs(_zoom - value) > 0.001)
+            {
+                _zoom = value;
+                OnPropertyChanged();
+            }
+        }
+    }
 
-        // Store the arrangement position directly, this determines where the clip appears
+    public TimelineClipViewModel(Clip clip, double zoom)
+    {
         Time = clip.Time;
-
-        // Calculate length from the clip's CurrentEnd - CurrentStart
         Length = (clip.CurrentEnd?.Val ?? 16) - (clip.CurrentStart?.Val ?? 0);
-
-        ClipName = string.IsNullOrEmpty(clip.Name?.Val)
-            ? "Unnamed Clip"
-            : clip.Name.Val;
-
-        _logger.LogDebug(
-            "Created clip '{Name}': Time={Time}, Length={Length}",
-            ClipName,
-            Time,
-            Length
-        );
+        ClipName = string.IsNullOrEmpty(clip.Name?.Val) ? "Unnamed Clip" : clip.Name.Val;
+        Zoom = zoom;
     }
 
     protected void OnPropertyChanged([CallerMemberName] string? name = null)
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-    }
-
-    public override string ToString()
-    {
-        return $"Clip '{ClipName}' Time={Time} Length={Length}";
     }
 }

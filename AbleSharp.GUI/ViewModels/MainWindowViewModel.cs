@@ -35,11 +35,8 @@ public class MainWindowViewModel : INotifyPropertyChanged
 
         ExitCommand = AbleSharpUiCommand.Create(Exit);
 
-        if (loadProjectPath is null or "")
-        {
-            return;
-        }
-        
+        if (loadProjectPath is null or "") return;
+
         OpenProjectCommand.Execute(loadProjectPath);
     }
 

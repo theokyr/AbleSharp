@@ -12,6 +12,9 @@ public partial class TimelineView : UserControl
 {
     private readonly ILogger<TimelineView> _logger;
 
+    // ReSharper disable once MemberCanBePrivate.Global
+    public TimelineViewModel ViewModel;
+
     // The pinned time ruler at top
     private TimeRulerView _timeRuler;
 
@@ -21,7 +24,7 @@ public partial class TimelineView : UserControl
     // The inner horizontal scroller (for track lanes)
     private ScrollViewer _horizontalScroller;
 
-    private TimelineViewModel _viewModel;
+    public double Zoom;
 
     public TimelineView()
     {
@@ -46,17 +49,16 @@ public partial class TimelineView : UserControl
 
     private void OnDataContextChanged(object sender, EventArgs e)
     {
-        if (DataContext is TimelineViewModel vm)
-        {
-            // Unsubscribe from old model if needed:
-            if (_viewModel != null) _viewModel.PropertyChanged -= ViewModelOnPropertyChanged;
+        if (DataContext is not TimelineViewModel vm) return;
+        // Unsubscribe from old model if needed:
+        if (ViewModel != null) ViewModel.PropertyChanged -= ViewModelOnPropertyChanged;
 
-            _viewModel = vm;
-            _viewModel.PropertyChanged += ViewModelOnPropertyChanged;
+        ViewModel = vm;
+        ViewModel.PropertyChanged += ViewModelOnPropertyChanged;
 
-            // Force an initial ruler update
-            UpdateTimeRuler();
-        }
+        // Force an initial ruler update
+        UpdateTimeRuler();
+        Zoom = vm.Zoom;
     }
 
     private void ViewModelOnPropertyChanged(object? sender,
@@ -81,10 +83,10 @@ public partial class TimelineView : UserControl
     /// </summary>
     private void UpdateTimeRuler()
     {
-        if (_viewModel == null)
+        if (ViewModel == null)
             return;
 
-        var pixelsPerBeat = _viewModel.Zoom;
+        var pixelsPerBeat = ViewModel.Zoom;
 
         // The horizontal offset & width come from the horizontal scroller
         var scrollPosition = _horizontalScroller.Offset.X;
@@ -98,7 +100,7 @@ public partial class TimelineView : UserControl
             pixelsPerBeat,
             startBeat,
             endBeat,
-            _viewModel.TotalTimelineWidth
+            ViewModel.TotalTimelineWidth
         );
     }
 }

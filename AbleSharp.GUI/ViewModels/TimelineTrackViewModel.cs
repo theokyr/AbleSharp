@@ -5,20 +5,17 @@ using AbleSharp.Lib;
 
 namespace AbleSharp.GUI.ViewModels;
 
-/// <summary>
-/// Each track row in the timeline. Contains multiple ClipViewModels.
-/// Supports track hierarchy with Children collection.
-/// </summary>
 public class TimelineTrackViewModel : INotifyPropertyChanged
 {
-    public event PropertyChangedEventHandler? PropertyChanged;
-
-    private TimelineViewModel? _parentTimeline;
+    private readonly TimelineViewModel _parentTimeline;
     private decimal _indentLevel;
+    private double _zoom => _parentTimeline.Zoom;
+
+    public event PropertyChangedEventHandler? PropertyChanged;
 
     public Track Track { get; }
     public string TrackName => Track?.Name?.EffectiveName?.Val ?? "(No Name)";
-    public ObservableCollection<ClipViewModel> Clips { get; } = new();
+    public ObservableCollection<TimelineClipViewModel> ClipViewModels { get; } = new();
     public ObservableCollection<TimelineTrackViewModel> Children { get; } = new();
 
     public decimal IndentLevel
@@ -40,21 +37,26 @@ public class TimelineTrackViewModel : INotifyPropertyChanged
         _parentTimeline = parent;
         _indentLevel = indent;
 
+        // Subscribe to parent's zoom changes
+        _parentTimeline.PropertyChanged += ParentTimelinePropertyChanged;
+
         var found = ClipGatherer.FromTrack(track);
-        foreach (var c in found)
+        foreach (var clip in found)
         {
-            var clipVm = new ClipViewModel(c);
-            Clips.Add(clipVm);
+            var clipVm = new TimelineClipViewModel(clip, _zoom);
+            ClipViewModels.Add(clipVm);
         }
+    }
+
+    private void ParentTimelinePropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(TimelineViewModel.Zoom))
+            foreach (var clipVm in ClipViewModels)
+                clipVm.Zoom = _zoom;
     }
 
     protected void OnPropertyChanged([CallerMemberName] string? name = null)
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-    }
-
-    public override string ToString()
-    {
-        return $"Track '{TrackName}' with {Clips.Count} clips";
     }
 }
