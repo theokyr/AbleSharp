@@ -27,6 +27,7 @@ public static class LoggerService
         _loggerFactory = LoggerFactory.Create(builder =>
         {
             builder
+                .SetMinimumLevel(LogLevel.Trace)
                 .AddConsole() // Writes logs to console
                 .AddProvider(new DebugLogProvider()); // Writes logs to InMemoryLog
         });
