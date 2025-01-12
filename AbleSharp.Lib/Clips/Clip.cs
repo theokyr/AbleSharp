@@ -2,13 +2,27 @@ using System.Xml.Serialization;
 
 namespace AbleSharp.Lib;
 
+/// <summary>
+/// Represents a single Clip in Ableton. 
+/// 
+/// `Time` typically is the arrangement offset: how far into the arrangement this clip starts.
+/// `CurrentStart` is the local start time within the clip data.
+/// `CurrentEnd` is the local end time within the clip data.
+/// </summary>
 [XmlInclude(typeof(MidiClip))]
 [XmlInclude(typeof(AudioClip))]
 public abstract class Clip
 {
+    /// <summary>
+    /// Unique ID for this clip
+    /// </summary>
     [XmlAttribute("Id")]
     public string Id { get; set; }
 
+    /// <summary>
+    /// Arrangement offset (in beats, or seconds, etc.) 
+    /// where this clip is placed on the timeline.
+    /// </summary>
     [XmlAttribute("Time")]
     public decimal Time { get; set; }
 
@@ -18,9 +32,17 @@ public abstract class Clip
     [XmlElement("LomIdView")]
     public Value<int> LomIdView { get; set; }
 
+    /// <summary>
+    /// Local in-point within the clip’s own data.
+    /// If the clip is untrimmed, CurrentStart often equals 0.
+    /// Some older sets may store the entire offset here as well.
+    /// </summary>
     [XmlElement("CurrentStart")]
     public Value<decimal> CurrentStart { get; set; }
 
+    /// <summary>
+    /// Local out-point within the clip’s data.
+    /// </summary>
     [XmlElement("CurrentEnd")]
     public Value<decimal> CurrentEnd { get; set; }
 
