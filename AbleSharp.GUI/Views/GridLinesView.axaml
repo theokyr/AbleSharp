@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<UserControl
+    x:Class="AbleSharp.GUI.Views.GridLinesView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Canvas Name="GridCanvas" Background="#1E1E1E">
+        <ItemsControl Name="GridLines">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Canvas />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Line StartPoint="{Binding StartPoint}"
+                          EndPoint="{Binding EndPoint}"
+                          Stroke="{Binding StrokeColor}"
+                          StrokeThickness="{Binding StrokeThickness}"
+                          IsHitTestVisible="False" />
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </Canvas>
+</UserControl>

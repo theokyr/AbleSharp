@@ -2,76 +2,98 @@
 
 <UserControl
     x:Class="AbleSharp.GUI.Views.TimelineView"
-    x:Name="TimelineViewRoot"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:views="clr-namespace:AbleSharp.GUI.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    d:DesignWidth="900"
-    d:DesignHeight="600">
+    d:DesignWidth="1200"
+    d:DesignHeight="800"
+    x:Name="TimelineViewRoot">
 
     <Grid RowDefinitions="Auto,Auto,*">
-        <!-- ========== Row 0: Transport & Zoom controls ========== -->
-        <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" Background="#222222">
-            <!-- Left side: BPM & Time Sig -->
-            <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="10" Margin="10,0">
-                <TextBlock Text="{Binding Tempo, StringFormat='{}{0:F1} BPM'}"
-                           VerticalAlignment="Center"
-                           Foreground="#CCCCCC" />
+        <!-- Transport Bar -->
+        <Grid Grid.Row="0"
+              Height="40"
+              Background="#272727"
+              ColumnDefinitions="Auto,*,Auto">
 
-                <TextBlock Text="{Binding TimeSigNumerator}" Margin="10,0,2,0"
-                           VerticalAlignment="Center" Foreground="#CCCCCC" />
-                <TextBlock Text="/" VerticalAlignment="Center" Foreground="#CCCCCC" />
-                <TextBlock Text="{Binding TimeSigDenominator}"
-                           VerticalAlignment="Center" Foreground="#CCCCCC" />
+            <!-- Left: Transport Controls -->
+            <StackPanel Grid.Column="0"
+                        Orientation="Horizontal"
+                        Margin="10,0"
+                        Spacing="20">
+
+                <!-- Tempo -->
+                <StackPanel Orientation="Horizontal" Spacing="5">
+                    <TextBlock Text="{Binding Tempo, StringFormat='{}{0:F1}'}"
+                               Foreground="#CCCCCC"
+                               VerticalAlignment="Center" />
+                    <TextBlock Text="BPM"
+                               Foreground="#CCCCCC"
+                               VerticalAlignment="Center" />
+                </StackPanel>
+
+                <!-- Time Signature -->
+                <StackPanel Orientation="Horizontal" Spacing="2">
+                    <TextBlock Text="{Binding TimeSigNumerator}"
+                               Foreground="#CCCCCC"
+                               VerticalAlignment="Center" />
+                    <TextBlock Text="/"
+                               Foreground="#CCCCCC"
+                               VerticalAlignment="Center" />
+                    <TextBlock Text="{Binding TimeSigDenominator}"
+                               Foreground="#CCCCCC"
+                               VerticalAlignment="Center" />
+                </StackPanel>
             </StackPanel>
 
-            <!-- Right side: Zoom controls -->
-            <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="10" Margin="10,0">
-                <Button Command="{Binding ZoomOutCommand}" Classes="transport">
+            <!-- Right: Zoom Controls -->
+            <StackPanel Grid.Column="2"
+                        Orientation="Horizontal"
+                        Margin="10,0"
+                        Spacing="10">
+
+                <Button Command="{Binding ZoomOutCommand}"
+                        Classes="transport">
                     <TextBlock Text="-" />
                 </Button>
 
                 <TextBlock Text="{Binding Zoom, StringFormat='x{0:F1}'}"
-                           VerticalAlignment="Center"
+                           Foreground="#CCCCCC"
                            Width="50"
                            TextAlignment="Center"
-                           Foreground="#CCCCCC" />
+                           VerticalAlignment="Center" />
 
-                <Button Command="{Binding ZoomInCommand}" Classes="transport">
+                <Button Command="{Binding ZoomInCommand}"
+                        Classes="transport">
                     <TextBlock Text="+" />
                 </Button>
             </StackPanel>
         </Grid>
 
-        <!-- ========== Row 1: The pinned TimeRuler (30px tall) ========== -->
+        <!-- Timeline Ruler -->
         <views:TimeRulerView
             Grid.Row="1"
             Height="30"
             Width="{Binding TotalTimelineWidth}"
-            Background="#333333"
+            Background="#1E1E1E"
             x:Name="TimeRuler" />
 
-        <!-- 
-          ========== Row 2: SCROLLABLE region for:
-             - A horizontal scroller (clips) in col=0
-             - Pinned track headers in col=1
-          Both in the same vertical scrolling region, so
-          when the user scrolls down, they remain aligned.
-        ========== -->
-        <ScrollViewer Grid.Row="2"
-                      VerticalScrollBarVisibility="Visible"
-                      HorizontalScrollBarVisibility="Disabled"
-                      Background="#1A1A1A"
-                      x:Name="OuterVerticalScroller">
-            <Grid ColumnDefinitions="*">
-                <ScrollViewer Grid.Column="0"
-                              HorizontalScrollBarVisibility="Visible"
-                              VerticalScrollBarVisibility="Disabled"
-                              Background="#1A1A1A"
-                              x:Name="HorizontalScroller">
+        <!-- Main Content Area -->
+        <Grid Grid.Row="2" ColumnDefinitions="*,Auto">
+            <!-- Scrollable Timeline -->
+            <ScrollViewer Grid.Column="0"
+                          Name="HorizontalScroller"
+                          HorizontalScrollBarVisibility="Visible"
+                          VerticalScrollBarVisibility="Visible">
+                <Grid>
+                    <!-- Background Grid -->
+                    <views:GridLinesView x:Name="GridLines"
+                                         Width="{Binding TotalTimelineWidth}" />
+
+                    <!-- Track Lanes -->
                     <ItemsControl ItemsSource="{Binding Tracks}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
@@ -79,13 +101,28 @@
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
-                </ScrollViewer>
-            </Grid>
-        </ScrollViewer>
+                </Grid>
+            </ScrollViewer>
+
+            <!-- Fixed Track Headers -->
+            <ScrollViewer Grid.Column="1"
+                          Name="HeaderScroller"
+                          Width="200"
+                          HorizontalScrollBarVisibility="Disabled"
+                          VerticalScrollBarVisibility="Hidden">
+                <ItemsControl ItemsSource="{Binding Tracks}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <views:TrackHeaderView DataContext="{Binding}" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+        </Grid>
     </Grid>
 
-    <!-- Style for zoom/transport buttons -->
     <UserControl.Styles>
+        <!-- Transport Button Style -->
         <Style Selector="Button.transport">
             <Setter Property="Width" Value="24" />
             <Setter Property="Height" Value="24" />
