@@ -27,7 +27,8 @@ class Program
         string alsFileName = Path.GetFileName(alsFilePath);
         string dumpFileName = alsFileName + ".dump.txt";
 
-        string dumpFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, dumpFileName);
+        string dumpSaveDirectory = Path.GetDirectoryName(alsFilePath) ?? AppDomain.CurrentDomain.BaseDirectory;
+        string dumpFilePath = Path.Combine(dumpSaveDirectory, dumpFileName);
 
         File.WriteAllText(dumpFilePath, dumpText);
 
