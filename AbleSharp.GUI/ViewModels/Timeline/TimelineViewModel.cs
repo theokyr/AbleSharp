@@ -27,7 +27,7 @@ public class TimelineViewModel : INotifyPropertyChanged
     // Zoom constants
     private const double MIN_ZOOM = 0.125;
     private const double MAX_ZOOM = 50.0;
-    private const double ZOOM_STEP = 10;
+    private const double ZOOM_STEP = 4;
 
     // Flattened list of all tracks for timeline display
     public ObservableCollection<TimelineTrackViewModel> Tracks { get; } = new();
