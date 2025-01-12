@@ -12,7 +12,7 @@
     d:DesignHeight="800"
     x:Name="TimelineViewRoot">
 
-    <Grid RowDefinitions="Auto,Auto,*">
+    <Grid RowDefinitions="Auto,Auto,*" ColumnDefinitions="*">
         <!-- Transport Bar -->
         <Grid Grid.Row="0"
               Height="40"
@@ -79,6 +79,7 @@
             Height="30"
             Width="{Binding TotalTimelineWidth}"
             Background="#1E1E1E"
+            HorizontalAlignment="Left"
             x:Name="TimeRuler" />
 
         <!-- Main Content Area -->
