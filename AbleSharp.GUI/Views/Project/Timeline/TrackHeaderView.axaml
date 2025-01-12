@@ -1,0 +1,81 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<UserControl
+    x:Class="AbleSharp.GUI.Views.TrackHeaderView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Height="60">
+
+    <Border Background="#272727"
+            BorderBrush="#333333"
+            BorderThickness="0,0,0,1">
+        <Grid Margin="8,4" RowDefinitions="Auto">
+            <!-- Track Name -->
+            <Grid Grid.Row="0"
+                  ColumnDefinitions="Auto,*"
+                  Margin="0,0,0,4">
+                <TextBlock Grid.Column="0"
+                           Text="{Binding Track.Id}"
+                           Foreground="#666666"
+                           FontSize="10"
+                           Margin="0,0,4,0"
+                           VerticalAlignment="Center" />
+                <TextBlock Grid.Column="1"
+                           Text="{Binding TrackName}"
+                           Foreground="White"
+                           FontSize="12"
+                           VerticalAlignment="Center" />
+            </Grid>
+
+            <!-- I/O Controls -->
+            <!-- <Grid Grid.Row="1" -->
+            <!--       RowDefinitions="Auto,Auto" -->
+            <!--       Margin="0,4"> -->
+            <!--     <Grid Grid.Row="0" -->
+            <!--           ColumnDefinitions="Auto,*" -->
+            <!--           Margin="0,0,0,4"> -->
+            <!--         <TextBlock Grid.Column="0" -->
+            <!--                    Text="Audio From" -->
+            <!--                    Foreground="#999999" -->
+            <!--                    FontSize="10" -->
+            <!--                    Margin="0,0,4,0" -->
+            <!--                    VerticalAlignment="Center" /> -->
+            <!--         <ComboBox Grid.Column="1" -->
+            <!--                   Height="20" -->
+            <!--                   FontSize="11" -->
+            <!--                   Background="#333333" -->
+            <!--                   SelectedIndex="0"> -->
+            <!--             <ComboBoxItem>No Input</ComboBoxItem> -->
+            <!--         </ComboBox> -->
+            <!--     </Grid> -->
+            <!-- -->
+            <!--     <Grid Grid.Row="1" -->
+            <!--           ColumnDefinitions="Auto,*"> -->
+            <!--         <TextBlock Grid.Column="0" -->
+            <!--                    Text="Audio To" -->
+            <!--                    Foreground="#999999" -->
+            <!--                    FontSize="10" -->
+            <!--                    Margin="0,0,4,0" -->
+            <!--                    VerticalAlignment="Center" /> -->
+            <!--         <ComboBox Grid.Column="1" -->
+            <!--                   Height="20" -->
+            <!--                   FontSize="11" -->
+            <!--                   Background="#333333" -->
+            <!--                   SelectedIndex="0"> -->
+            <!--             <ComboBoxItem>Master</ComboBoxItem> -->
+            <!--         </ComboBox> -->
+            <!--     </Grid> -->
+            <!-- </Grid> -->
+            <!-- Volume Meter -->
+            <!-- <Grid Grid.Row="1" Height="4" Margin="0,4,0,0"> -->
+            <!--     <Border Name="MeterBackground" -->
+            <!--             Background="#333333"> -->
+            <!--         <Border Name="MeterForeground" -->
+            <!--                 Width="0" -->
+            <!--                 Background="#4A90E2" -->
+            <!--                 HorizontalAlignment="Left" /> -->
+            <!--     </Border> -->
+            <!-- </Grid> -->
+        </Grid>
+    </Border>
+</UserControl>

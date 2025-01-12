@@ -6,6 +6,7 @@
         x:Class="AbleSharp.GUI.Views.MainWindow"
         Title="AbleSharp.GUI"
         Width="800" Height="600"
+        WindowState="Maximized"
         Background="#1E1E1E">
 
     <DockPanel>
@@ -15,15 +16,19 @@
                 <MenuItem Header="_Open .als"
                           Command="{Binding OpenProjectCommand}" />
                 <Separator />
+                <MenuItem Header="_Settings" />
+                <Separator />
                 <MenuItem Header="_Exit"
                           Command="{Binding ExitCommand}" />
             </MenuItem>
 
-            <MenuItem Header="_Options">
-                <MenuItem Header="_Debug">
-                    <MenuItem Header="Open Debug Log"
-                              Command="{Binding OpenDebugLogCommand}" />
-                </MenuItem>
+            <MenuItem Header="_Tools">
+                <MenuItem Header="Open Debug Log"
+                          Command="{Binding OpenDebugLogCommand}" />
+            </MenuItem>
+
+            <MenuItem Header="_Help">
+                <MenuItem Header="About" />
             </MenuItem>
         </Menu>
 

@@ -1,7 +1,0 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             x:Class="AbleSharp.GUI.Views.TrackView">
-    <StackPanel Orientation="Horizontal" Spacing="5" Margin="5">
-        <TextBlock Text="{Binding TrackName}" FontSize="14" />
-    </StackPanel>
-</UserControl>

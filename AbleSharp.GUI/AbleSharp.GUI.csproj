@@ -24,4 +24,30 @@
         <ProjectReference Include="..\AbleSharp.SDK\AbleSharp.SDK.csproj"/>
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Update="Views\Project\ProjectView.axaml.cs">
+        <DependentUpon>ProjectView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Views\App\MainWindow.axaml.cs">
+        <DependentUpon>MainWindow.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Views\Tools\DebugLogWindow.axaml.cs">
+        <DependentUpon>DebugLogWindow.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+    </ItemGroup>
+
+    <ItemGroup>
+      <AdditionalFiles Include="Views\Project\ProjectView.axaml" />
+      <AdditionalFiles Include="Views\Windows\DebugLogWindow.axaml" />
+      <AdditionalFiles Include="Views\Windows\MainWindow.axaml" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="ViewModels\Windows\" />
+      <Folder Include="Views\Windows\" />
+    </ItemGroup>
+
 </Project>
