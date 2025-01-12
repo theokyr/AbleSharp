@@ -7,66 +7,81 @@
     Height="60"
     HorizontalAlignment="Left">
 
-    <Border Background="#1E1E1E"
-            BorderBrush="#333333"
-            BorderThickness="0,0,0,1">
+    <Grid RowDefinitions="*" ColumnDefinitions="*,Auto" Height="60">
+        <Border Grid.Column="0" Background="#1E1E1E"
+                BorderBrush="#333333"
+                BorderThickness="0,0,0,1">
 
-        <ItemsControl ItemsSource="{Binding Clips}">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <Canvas
-                        Width="{Binding DataContext.TotalTimelineWidth, 
+            <ItemsControl ItemsSource="{Binding Clips}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Canvas
+                            Width="{Binding DataContext.TotalTimelineWidth, 
                                           RelativeSource={RelativeSource FindAncestor, 
                                                                       AncestorType={x:Type views:TimelineView}}}"
-                        HorizontalAlignment="Left" />
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
+                            HorizontalAlignment="Left" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
 
-            <ItemsControl.ItemTemplate>
-                <DataTemplate DataType="vm:ClipViewModel">
-                    <Border Background="#4A90E2"
-                            BorderBrush="#2171CD"
-                            BorderThickness="1"
-                            CornerRadius="3"
-                            Height="40"
-                            Margin="0,10,0,10"
-                            ToolTip.Tip="{Binding ClipName}"
-                            Canvas.Left="{Binding Time, 
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="vm:ClipViewModel">
+                        <Border Background="#4A90E2"
+                                BorderBrush="#2171CD"
+                                BorderThickness="1"
+                                CornerRadius="3"
+                                Height="40"
+                                Margin="0,10,0,10"
+                                ToolTip.Tip="{Binding ClipName}"
+                                Canvas.Left="{Binding Time, 
                                                 Converter={StaticResource TimeToPixelConverter}, 
                                                 ConverterParameter={Binding DataContext,
                                                                   RelativeSource={RelativeSource FindAncestor, 
                                                                                 AncestorType={x:Type views:TimelineView}}}}"
-                            Width="{Binding Length, 
+                                Width="{Binding Length, 
                                           Converter={StaticResource TimeToPixelConverter}, 
                                           ConverterParameter={Binding DataContext,
                                                             RelativeSource={RelativeSource FindAncestor, 
                                                                           AncestorType={x:Type views:TimelineView}}}}">
 
-                        <Grid>
-                            <Border Height="16"
-                                    VerticalAlignment="Top"
-                                    Background="#3A80D2">
-                                <TextBlock Text="{Binding ClipName}"
-                                           Margin="5,0,5,0"
-                                           FontSize="10"
-                                           Foreground="White"
-                                           TextTrimming="CharacterEllipsis" />
-                            </Border>
+                            <Grid>
+                                <Border Height="16"
+                                        VerticalAlignment="Top"
+                                        Background="#3A80D2">
+                                    <TextBlock Text="{Binding ClipName}"
+                                               Margin="5,0,5,0"
+                                               FontSize="10"
+                                               Foreground="White"
+                                               TextTrimming="CharacterEllipsis" />
+                                </Border>
 
-                            <Border Margin="0,16,0,0">
-                                <StackPanel Margin="5,2">
-                                    <TextBlock Text="{Binding Time, StringFormat='Time: {0:F2}'}"
-                                               FontSize="9"
-                                               Foreground="#CCFFFFFF" />
-                                    <TextBlock Text="{Binding Length, StringFormat='Length: {0:F2}'}"
-                                               FontSize="9"
-                                               Foreground="#CCFFFFFF" />
-                                </StackPanel>
-                            </Border>
-                        </Grid>
-                    </Border>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
-    </Border>
+                                <Border Margin="0,16,0,0">
+                                    <StackPanel Margin="5,2">
+                                        <TextBlock Text="{Binding Time, StringFormat='Time: {0:F2}'}"
+                                                   FontSize="9"
+                                                   Foreground="#CCFFFFFF" />
+                                        <TextBlock Text="{Binding Length, StringFormat='Length: {0:F2}'}"
+                                                   FontSize="9"
+                                                   Foreground="#CCFFFFFF" />
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </Border>
+
+        <Border Grid.Column="1"
+                Background="#333333">
+            <StackPanel Orientation="Vertical"
+                        Margin="0,0,0,1">
+                <TextBlock Text="{Binding TrackName}"
+                           Foreground="#FFFFFF"
+                           FontSize="12" />
+                <TextBlock Text="{Binding Track.Id}"
+                           Foreground="#BBBBBB"
+                           FontSize="10" />
+            </StackPanel>
+        </Border>
+    </Grid>
 </UserControl>

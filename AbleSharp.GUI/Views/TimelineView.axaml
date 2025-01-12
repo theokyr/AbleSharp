@@ -65,22 +65,12 @@
                       HorizontalScrollBarVisibility="Disabled"
                       Background="#1A1A1A"
                       x:Name="OuterVerticalScroller">
-            <!-- 
-              A 2-column grid:
-                - col=0: Another ScrollViewer for horizontal scrolling of track-lanes
-                - col=1: Pinned track headers
-            -->
-            <Grid ColumnDefinitions="*,Auto">
-                <!-- (1) HORIZONTAL scroller for timeline rows & clips -->
+            <Grid ColumnDefinitions="*">
                 <ScrollViewer Grid.Column="0"
                               HorizontalScrollBarVisibility="Visible"
                               VerticalScrollBarVisibility="Disabled"
                               Background="#1A1A1A"
                               x:Name="HorizontalScroller">
-
-                    <!-- Stack (or ItemsControl) of timeline track rows.
-                         Each row is a TimelineTrackView or row-based ItemsControl 
-                         with the same ItemsSource: TimelineViewModel.Tracks -->
                     <ItemsControl ItemsSource="{Binding Tracks}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
@@ -89,32 +79,6 @@
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
                 </ScrollViewer>
-
-                <!-- (2) Pinned track headers on the right.
-                     Because they're in the same parent <ScrollViewer> for vertical,
-                     they will move up/down in sync with the timeline rows.
-                -->
-                <ItemsControl Grid.Column="1"
-                              ItemsSource="{Binding Tracks}"
-                              Background="#2B2B2B">
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Border Height="60"
-                                    Background="#333333">
-                                <!-- Display track name + ID -->
-                                <StackPanel Orientation="Vertical"
-                                            Margin="0,0,0,1">
-                                    <TextBlock Text="{Binding TrackName}"
-                                               Foreground="#FFFFFF"
-                                               FontSize="12" />
-                                    <TextBlock Text="{Binding Track.Id}"
-                                               Foreground="#BBBBBB"
-                                               FontSize="10" />
-                                </StackPanel>
-                            </Border>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
             </Grid>
         </ScrollViewer>
     </Grid>

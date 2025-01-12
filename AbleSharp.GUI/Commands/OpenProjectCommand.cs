@@ -24,7 +24,7 @@ public class OpenProjectCommand : ICommand
 
     public async void Execute(object? parameter)
     {
-        var filePath = await FileDialogService.ShowOpenFileDialogAsync();
+        var filePath = parameter as string ?? await FileDialogService.ShowOpenFileDialogAsync();
 
         if (!string.IsNullOrEmpty(filePath))
         {
@@ -46,7 +46,7 @@ public class OpenProjectCommand : ICommand
         }
         else
         {
-            _logger.LogInformation("Open project dialog canceled or empty file path.");
+            _logger.LogInformation("Open project dialog canceled or empty file path. '{parameter}'", parameter);
         }
     }
 

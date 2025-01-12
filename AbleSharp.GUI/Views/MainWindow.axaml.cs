@@ -7,11 +7,11 @@ namespace AbleSharp.GUI.Views;
 
 public partial class MainWindow : Window
 {
-    public MainWindow()
+    public MainWindow(string? loadProjectPath = null)
     {
         InitializeComponent();
 
-        DataContext = new MainWindowViewModel();
+        DataContext = new MainWindowViewModel(loadProjectPath);
     }
 
     private void InitializeComponent()

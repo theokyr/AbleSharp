@@ -17,7 +17,9 @@ public partial class App : Application
     {
         LoggerService.Initialize();
 
-        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop) desktop.MainWindow = new MainWindow();
+        var args = (ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.Args;
+
+        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop) desktop.MainWindow = new MainWindow(args?[0]);
 
         base.OnFrameworkInitializationCompleted();
     }

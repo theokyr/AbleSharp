@@ -23,7 +23,7 @@ public class MainWindowViewModel : INotifyPropertyChanged
     public ICommand OpenDebugLogCommand { get; }
     public ICommand ExitCommand { get; }
 
-    public MainWindowViewModel()
+    public MainWindowViewModel(string? loadProjectPath = null)
     {
         _logger = LoggerService.GetLogger<MainWindowViewModel>();
 
@@ -34,6 +34,13 @@ public class MainWindowViewModel : INotifyPropertyChanged
         OpenDebugLogCommand = AbleSharpUiCommand.Create(ShowDebugLog);
 
         ExitCommand = AbleSharpUiCommand.Create(Exit);
+
+        if (loadProjectPath is null or "")
+        {
+            return;
+        }
+        
+        OpenProjectCommand.Execute(loadProjectPath);
     }
 
     public object CurrentView
