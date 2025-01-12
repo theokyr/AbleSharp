@@ -12,6 +12,7 @@
     </Application.Styles>
 
     <Application.Resources>
-        <converters:TimeToPixelConverter x:Key="TimeToPixelConverter" PixelsPerBeat="80" />
+        <converters:TimeToPixelConverter x:Key="TimeToPixelConverter" />
+        <converters:IndentConverter x:Key="IndentConverter" />
     </Application.Resources>
 </Application>

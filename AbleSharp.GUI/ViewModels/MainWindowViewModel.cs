@@ -5,6 +5,10 @@ using AbleSharp.GUI.Commands;
 using AbleSharp.GUI.Views;
 using Microsoft.Extensions.Logging;
 using AbleSharp.GUI.Services;
+using Avalonia;
+using Avalonia.ReactiveUI;
+using Avalonia.Threading;
+using ReactiveUI;
 
 namespace AbleSharp.GUI.ViewModels;
 
@@ -17,6 +21,7 @@ public class MainWindowViewModel : INotifyPropertyChanged
 
     public ICommand OpenProjectCommand { get; }
     public ICommand OpenDebugLogCommand { get; }
+    public ICommand ExitCommand { get; }
 
     public MainWindowViewModel()
     {
@@ -26,8 +31,9 @@ public class MainWindowViewModel : INotifyPropertyChanged
 
         OpenProjectCommand = new OpenProjectCommand(this);
 
-        // Command to open the DebugLogWindow
-        OpenDebugLogCommand = new RelayCommand(_ => ShowDebugLog(), _ => true);
+        OpenDebugLogCommand = AbleSharpUiCommand.Create(ShowDebugLog);
+
+        ExitCommand = AbleSharpUiCommand.Create(Exit);
     }
 
     public object CurrentView
@@ -43,7 +49,6 @@ public class MainWindowViewModel : INotifyPropertyChanged
         }
     }
 
-    // Notifies the UI that a property changed
     protected void OnPropertyChanged([CallerMemberName] string? name = null)
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
@@ -66,5 +71,11 @@ public class MainWindowViewModel : INotifyPropertyChanged
 
         var debugLogWindow = new DebugLogWindow();
         debugLogWindow.Show();
+    }
+
+    private void Exit()
+    {
+        _logger.LogDebug("Exiting Application");
+        Environment.Exit(0);
     }
 }

@@ -1,0 +1,28 @@
+﻿<UserControl
+    x:Class="AbleSharp.GUI.Views.TimeRulerView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Height="30">
+
+    <Canvas Background="#333333">
+        <ItemsControl Name="TickMarks">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Canvas />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel>
+                        <Line StartPoint="0,15" EndPoint="0,30"
+                              Stroke="White" StrokeThickness="1" />
+                        <TextBlock Text="{Binding Label}"
+                                   Foreground="White"
+                                   Margin="2,0,0,0" />
+                    </StackPanel>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </Canvas>
+</UserControl>

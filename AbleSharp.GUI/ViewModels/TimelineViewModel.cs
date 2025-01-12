@@ -1,48 +1,41 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
+using System.Linq;
 using AbleSharp.Lib;
+using ReactiveUI;
+using System.Reactive.Concurrency;
+using AbleSharp.GUI.Commands;
+using AbleSharp.GUI.Converters;
+using Avalonia.ReactiveUI;
+using Avalonia.Threading;
 
 namespace AbleSharp.GUI.ViewModels;
 
-/// <summary>
-/// A separate ViewModel to manage the global timeline:
-/// - zoom in/out
-/// - pan offset
-/// - track/clip arrangement
-/// - optional measure lines or time-based lines
-/// </summary>
 public class TimelineViewModel : INotifyPropertyChanged
 {
-    // The tempo and time signature could come from the Transport or MasterTrack
     private decimal _tempo;
     private int _timeSigNumerator;
     private int _timeSigDenominator;
-
-    // Zoom factor in pixels-per-beat (or measure). Adjust as needed.
     private double _zoom = 80.0;
-
-    // Pan or horizontal offset in pixels (for future advanced panning).
     private double _panX = 0.0;
 
-    // The timeline row viewmodels:
+    // Flattened list of all tracks for timeline display
     public ObservableCollection<TimelineTrackViewModel> Tracks { get; } = new();
 
-    // Simple commands for UI zoom in/out, etc.
     public ICommand ZoomInCommand { get; }
     public ICommand ZoomOutCommand { get; }
 
     public TimelineViewModel(AbletonProject project)
     {
-        // Example: read the global tempo from LiveSet.Transport or MasterTrack.
-        // This is an example; adapt to your actual data logic:
+        // Read basic project info
         _tempo = project?.LiveSet?.MainTrack?.Tempo?.Val ?? 120m;
-
-        // If time signatures exist, read them. Otherwise fallback:
         _timeSigNumerator = 4;
         _timeSigDenominator = 4;
+
         var mainTS = project?.LiveSet?.MainTrack?.TimeSignature?.TimeSignatures;
         if (mainTS != null && mainTS.Count > 0)
         {
@@ -51,16 +44,59 @@ public class TimelineViewModel : INotifyPropertyChanged
             _timeSigDenominator = first.Denominator?.Val ?? 4;
         }
 
-        // Build timeline tracks
-        var allTracks = project?.LiveSet?.Tracks;
-        if (allTracks != null)
-            foreach (var t in allTracks)
-                Tracks.Add(new TimelineTrackViewModel(t));
+        // Build track hierarchy
+        if (project?.LiveSet?.Tracks != null) BuildTrackHierarchy(project.LiveSet.Tracks);
 
-        // Set up commands
-        ZoomInCommand = new RelayCommand(_ => ZoomIn(), _ => true);
-        ZoomOutCommand = new RelayCommand(_ => ZoomOut(), _ => true);
+        ZoomInCommand = AbleSharpUiCommand.Create(ZoomIn);
+        ZoomOutCommand = AbleSharpUiCommand.Create(ZoomOut);
     }
+
+    private void BuildTrackHierarchy(List<Track> tracks)
+    {
+        var trackDict = new Dictionary<string, TimelineTrackViewModel>();
+        var processedTracks = new HashSet<string>();
+
+        // First pass: Create all track ViewModels
+        foreach (var track in tracks)
+        {
+            var vm = new TimelineTrackViewModel(track, this);
+            trackDict[track.Id] = vm;
+        }
+
+        // Second pass: Build hierarchy and determine indentation
+        void ProcessTrack(Track track, decimal indent = 0)
+        {
+            if (processedTracks.Contains(track.Id)) return;
+            processedTracks.Add(track.Id);
+
+            var vm = trackDict[track.Id];
+            vm.IndentLevel = indent;
+
+            // Add to our flattened track list
+            Tracks.Add(vm);
+
+            // Find and process child tracks
+            var childTracks = tracks.Where(t =>
+                t.TrackGroupId?.Val != null &&
+                t.TrackGroupId.Val.ToString() == track.Id).ToList();
+
+            foreach (var childTrack in childTracks) ProcessTrack(childTrack, indent + 1);
+        }
+
+        // Start with root tracks (those without a group or with invalid group)
+        foreach (var track in tracks)
+        {
+            var groupId = track.TrackGroupId?.Val ?? -1;
+            if (groupId == -1 || !trackDict.ContainsKey(groupId.ToString())) ProcessTrack(track);
+        }
+
+        // Process any remaining tracks
+        foreach (var track in tracks)
+            if (!processedTracks.Contains(track.Id))
+                ProcessTrack(track);
+    }
+
+    #region Properties
 
     public decimal Tempo
     {
@@ -108,8 +144,9 @@ public class TimelineViewModel : INotifyPropertyChanged
         {
             if (Math.Abs(_zoom - value) > 0.001)
             {
-                _zoom = value;
+                _zoom = Math.Max(1.0, Math.Min(500.0, value));
                 OnPropertyChanged();
+                OnPropertyChanged(nameof(TimeToPixelConverter));
             }
         }
     }
@@ -127,55 +164,22 @@ public class TimelineViewModel : INotifyPropertyChanged
         }
     }
 
+    #endregion
+
     private void ZoomIn()
     {
-        // Example: increase zoom by 20%
         Zoom *= 1.2;
     }
 
     private void ZoomOut()
     {
-        // Example: decrease zoom by ~16%
         Zoom /= 1.2;
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
-    protected void OnPropertyChanged([CallerMemberName] string name = null)
+    protected void OnPropertyChanged([CallerMemberName] string? name = null)
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-    }
-}
-
-/// <summary>
-/// Simple command helper for inline commands
-/// (instead of using MVVM frameworks).
-/// </summary>
-public class RelayCommand : ICommand
-{
-    private readonly Action<object?> _execute;
-    private readonly Predicate<object?> _canExecute;
-
-    public RelayCommand(Action<object?> execute, Predicate<object?> canExecute)
-    {
-        _execute = execute;
-        _canExecute = canExecute;
-    }
-
-    public bool CanExecute(object? parameter)
-    {
-        return _canExecute(parameter);
-    }
-
-    public void Execute(object? parameter)
-    {
-        _execute(parameter);
-    }
-
-    public event EventHandler? CanExecuteChanged;
-
-    public void RaiseCanExecuteChanged()
-    {
-        CanExecuteChanged?.Invoke(this, EventArgs.Empty);
     }
 }
