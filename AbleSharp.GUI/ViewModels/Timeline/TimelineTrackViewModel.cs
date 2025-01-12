@@ -18,6 +18,11 @@ public class TimelineTrackViewModel : INotifyPropertyChanged
     public ObservableCollection<TimelineClipViewModel> ClipViewModels { get; } = new();
     public ObservableCollection<TimelineTrackViewModel> Children { get; } = new();
 
+    // Color properties
+    public string BaseColor => ColorPalette.GetColor(Track?.Color.Val ?? 0);
+    public string LightColor => ColorPalette.GetLightColor(Track?.Color.Val ?? 0);
+    public string DarkColor => ColorPalette.GetDarkColor(Track?.Color.Val ?? 0);
+
     public decimal IndentLevel
     {
         get => _indentLevel;

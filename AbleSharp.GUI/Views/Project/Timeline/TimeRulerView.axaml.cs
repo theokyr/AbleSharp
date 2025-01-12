@@ -14,7 +14,7 @@ public partial class TimeRulerView : UserControl
     private readonly ILogger<TimeRulerView> _logger;
     private ItemsControl _tickMarks;
     private readonly ObservableCollection<TickMarkModel> _ticks = new();
-    private double _pixelsPerBeat = 20.0; // Match new default zoom
+    private double _pixelsPerBeat = Constants.DEFAULT_ZOOM_LEVEL;
     private double _viewportStart = 0.0;
     private double _viewportEnd = 16.0;
     private double _totalWidth;

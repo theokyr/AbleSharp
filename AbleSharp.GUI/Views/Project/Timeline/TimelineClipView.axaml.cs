@@ -19,7 +19,7 @@ public partial class TimelineClipView : UserControl
             o => o.Zoom,
             (o, v) => o.Zoom = v);
 
-    private double _zoom = 20.0;
+    private double _zoom = Constants.DEFAULT_ZOOM_LEVEL;
 
     public double Zoom
     {

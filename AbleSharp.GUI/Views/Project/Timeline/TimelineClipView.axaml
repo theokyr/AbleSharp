@@ -1,6 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-
-<UserControl
+﻿<UserControl
     x:Class="AbleSharp.GUI.Views.TimelineClipView"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
@@ -16,15 +14,15 @@
             <!-- Clip Background -->
             <Border.Background>
                 <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                    <GradientStop Offset="0" Color="#4A90E2" />
-                    <GradientStop Offset="1" Color="#3A80D2" />
+                    <GradientStop Offset="0" Color="{Binding LightColor}" />
+                    <GradientStop Offset="1" Color="{Binding BaseColor}" />
                 </LinearGradientBrush>
             </Border.Background>
 
             <Grid RowDefinitions="16,*">
                 <!-- Clip Header -->
                 <Border Grid.Row="0"
-                        Background="#3A80D2">
+                        Background="{Binding DarkColor}">
                     <Grid ColumnDefinitions="*,Auto">
                         <!-- Clip Name -->
                         <TextBlock Grid.Column="0"
@@ -47,11 +45,12 @@
 
                 <!-- Clip Content -->
                 <Border Grid.Row="1"
+                        Background="{Binding DarkColor}"
                         Margin="0,1,0,0">
                     <!-- Place for waveform/midi data visualization -->
                     <Grid>
                         <TextBlock Text="∿∿∿∿"
-                                   Foreground="#FFFFFF66"
+                                   Foreground="#fff"
                                    FontSize="14"
                                    HorizontalAlignment="Center"
                                    VerticalAlignment="Center" />

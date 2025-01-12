@@ -11,7 +11,7 @@ public partial class GridLinesView : UserControl
 {
     private readonly ILogger<GridLinesView> _logger;
     private readonly ObservableCollection<GridLineModel> _gridLines = new();
-    private double _pixelsPerBeat = 20.0;
+    private double _pixelsPerBeat = Constants.DEFAULT_ZOOM_LEVEL;
     private double _totalWidth;
     private ItemsControl _gridLinesControl;
 

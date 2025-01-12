@@ -19,15 +19,15 @@ public class TimelineViewModel : INotifyPropertyChanged
     private decimal _tempo;
     private int _timeSigNumerator;
     private int _timeSigDenominator;
-    private double _zoom = 20.0; // Pixel width per beat
+    private double _zoom = Constants.DEFAULT_ZOOM_LEVEL; // Pixel width per beat
     private double _panX = 0.0;
     private double _totalTimelineWidth;
     private decimal _lastClipEndTime = 0;
 
     // Zoom constants
-    private const double MIN_ZOOM = 5.0; // 5 pixels per beat minimum
-    private const double MAX_ZOOM = 200.0; // 200 pixels per beat maximum
-    private const double ZOOM_STEP = 1.2; // Smaller zoom step
+    private const double MIN_ZOOM = 0.125;
+    private const double MAX_ZOOM = 50.0;
+    private const double ZOOM_STEP = 10;
 
     // Flattened list of all tracks for timeline display
     public ObservableCollection<TimelineTrackViewModel> Tracks { get; } = new();
