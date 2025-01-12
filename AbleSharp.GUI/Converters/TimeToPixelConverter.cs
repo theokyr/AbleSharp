@@ -10,22 +10,26 @@ namespace AbleSharp.GUI.Converters;
 
 /// <summary>
 /// Converts a decimal "time in beats" to a pixel offset or width.
-/// Gets zoom level from the DataContext's TimelineViewModel.
+/// Gets zoom level from the TimelineViewModel parameter.
 /// </summary>
 public class TimeToPixelConverter : IValueConverter
 {
     private static readonly ILogger _logger = LoggerService.GetLogger<TimeToPixelConverter>();
+
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        if (value is decimal dec)
+        if (value is decimal time)
         {
-            // Get the zoom level from the TimelineViewModel
-            var zoom = parameter is TimelineViewModel timeline ? timeline.Zoom : 80.0;
-            _logger.LogDebug($"TimeToPixel: Value={dec}, Param Zoom={zoom} => result={(double)dec * zoom}");
-            return (double)dec * zoom;
+            if (parameter is not TimelineViewModel timeline) throw new ArgumentException("TimeToPixel requires TimelineViewModel as a parameter");
+
+            var zoom = timeline.Zoom;
+            var pixels = (double)time * zoom;
+
+            _logger.LogTrace($"TimeToPixel: Time={time}, Zoom={zoom} => Pixels={pixels}");
+            return pixels;
         }
-        _logger.LogDebug($"TimeToPixel: value is not decimal. returning 0.0");
-        return 0.0;
+
+        throw new ArgumentException($"TimeToPixel: Invalid value type: {value?.GetType().Name ?? "null"}");
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

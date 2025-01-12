@@ -14,7 +14,7 @@ public partial class TimeRulerView : UserControl
     private readonly ILogger<TimeRulerView> _logger;
     private ItemsControl _tickMarks;
     private readonly ObservableCollection<TickMarkModel> _ticks = new();
-    private double _pixelsPerBeat = 80.0;
+    private double _pixelsPerBeat = 20.0; // Match new default zoom
     private double _viewportStart = 0.0;
     private double _viewportEnd = 16.0;
     private double _totalWidth;
@@ -34,7 +34,7 @@ public partial class TimeRulerView : UserControl
 
     public void UpdateRuler(double pixelsPerBeat, double viewportStart, double viewportEnd, double totalWidth)
     {
-        _logger.LogTrace("Updating ruler: PPB={PixelsPerBeat}, Start={Start}, End={End}, Width={Width}", 
+        _logger.LogTrace("Updating ruler: PPB={PixelsPerBeat}, Start={Start}, End={End}, Width={Width}",
             pixelsPerBeat, viewportStart, viewportEnd, totalWidth);
 
         _pixelsPerBeat = pixelsPerBeat;
@@ -51,31 +51,29 @@ public partial class TimeRulerView : UserControl
         _ticks.Clear();
 
         // Calculate spacing between major ticks based on zoom level
-        int majorTickSpacing = CalculateMajorTickSpacing(_pixelsPerBeat);
-        int minorTickCount = CalculateMinorTickCount(majorTickSpacing);
+        var majorTickSpacing = CalculateMajorTickSpacing(_pixelsPerBeat);
+        var minorTickCount = CalculateMinorTickCount(majorTickSpacing);
 
         // Generate ticks within the viewport
-        double startBeat = Math.Floor(_viewportStart / majorTickSpacing) * majorTickSpacing;
-        double endBeat = Math.Ceiling(_viewportEnd / majorTickSpacing) * majorTickSpacing;
+        var startBeat = Math.Floor(_viewportStart / majorTickSpacing) * majorTickSpacing;
+        var endBeat = Math.Ceiling(_viewportEnd / majorTickSpacing) * majorTickSpacing;
 
-        for (double beat = startBeat; beat <= endBeat; beat += majorTickSpacing)
+        for (var beat = startBeat; beat <= endBeat; beat += majorTickSpacing)
         {
             var minorTicks = new ObservableCollection<MinorTickModel>();
-            
+
             // Add minor tick marks between major ticks
-            double minorSpacing = majorTickSpacing / (double)minorTickCount;
-            for (int i = 1; i < minorTickCount; i++)
+            var minorSpacing = majorTickSpacing / (double)minorTickCount;
+            for (var i = 1; i < minorTickCount; i++)
             {
-                double minorBeat = beat + (i * minorSpacing);
+                var minorBeat = beat + i * minorSpacing;
                 if (minorBeat <= _viewportEnd)
-                {
                     minorTicks.Add(new MinorTickModel
                     {
                         Position = (minorBeat - beat) * _pixelsPerBeat,
                         StartPoint = new Point(0, 22),
                         EndPoint = new Point(0, 30)
                     });
-                }
             }
 
             _ticks.Add(new TickMarkModel
@@ -92,29 +90,34 @@ public partial class TimeRulerView : UserControl
     private int CalculateMajorTickSpacing(double pixelsPerBeat)
     {
         // Adjust major tick spacing based on zoom level
-        // We want roughly 100 pixels between major ticks
-        double targetPixels = 100.0;
-        double beatsPerMajorTick = targetPixels / pixelsPerBeat;
+        // Target about 100 pixels between major ticks
+        var targetPixels = 100.0;
+        var beatsPerMajorTick = targetPixels / pixelsPerBeat;
 
-        // Round to nearest power of 2 or multiple of 4
-        if (beatsPerMajorTick <= 1) return 1;
-        if (beatsPerMajorTick <= 2) return 2;
-        if (beatsPerMajorTick <= 4) return 4;
-        if (beatsPerMajorTick <= 8) return 8;
-        return 16;
+        // Round to nearest appropriate division
+        if (beatsPerMajorTick <= 0.25) return 1; // Quarter beat
+        if (beatsPerMajorTick <= 0.5) return 1; // Half beat
+        if (beatsPerMajorTick <= 1) return 1; // One beat
+        if (beatsPerMajorTick <= 2) return 2; // Two beats
+        if (beatsPerMajorTick <= 4) return 4; // Bar (in 4/4)
+        if (beatsPerMajorTick <= 8) return 8; // Two bars
+        if (beatsPerMajorTick <= 16) return 16; // Four bars
+        return 32; // Eight bars
     }
 
     private int CalculateMinorTickCount(int majorSpacing)
     {
-        // Number of minor ticks between major ticks
-        switch (majorSpacing)
+        // More appropriate subdivisions based on major spacing
+        return majorSpacing switch
         {
-            case 1: return 4;  // Quarter beat divisions
-            case 2: return 8;  // Eighth beat divisions
-            case 4: return 4;  // Beat divisions
-            case 8: return 8;  // Two beat divisions
-            default: return 4; // Four beat divisions
-        }
+            1 => 4, // Quarter beats
+            2 => 2, // Half beats
+            4 => 4, // Beats
+            8 => 8, // Two beats
+            16 => 4, // Four beats
+            32 => 8, // Eight beats
+            _ => 4
+        };
     }
 }
 

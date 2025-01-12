@@ -8,18 +8,16 @@
     HorizontalAlignment="Left">
 
     <Border Background="#1E1E1E"
-            BorderBrush="#333333" 
+            BorderBrush="#333333"
             BorderThickness="0,0,0,1">
 
         <ItemsControl ItemsSource="{Binding Clips}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <!-- 
-                        Ensure the Canvas can expand to the full timeline width
-                        from the parent TimelineView's DataContext (which is TimelineViewModel).
-                    -->
                     <Canvas
-                        Width="{Binding DataContext.TotalTimelineWidth, RelativeSource={RelativeSource AncestorType=views:TimelineView}}"
+                        Width="{Binding DataContext.TotalTimelineWidth, 
+                                          RelativeSource={RelativeSource FindAncestor, 
+                                                                      AncestorType={x:Type views:TimelineView}}}"
                         HorizontalAlignment="Left" />
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
@@ -33,11 +31,19 @@
                             Height="40"
                             Margin="0,10,0,10"
                             ToolTip.Tip="{Binding ClipName}"
-                            Canvas.Left="{Binding Start, Converter={StaticResource TimeToPixelConverter}, ConverterParameter={Binding DataContext, RelativeSource={RelativeSource AncestorType=views:TimelineView}}}"
-                            Width="{Binding Length, Converter={StaticResource TimeToPixelConverter}, ConverterParameter={Binding DataContext, RelativeSource={RelativeSource AncestorType=views:TimelineView}}}">
+                            Canvas.Left="{Binding Time, 
+                                                Converter={StaticResource TimeToPixelConverter}, 
+                                                ConverterParameter={Binding DataContext,
+                                                                  RelativeSource={RelativeSource FindAncestor, 
+                                                                                AncestorType={x:Type views:TimelineView}}}}"
+                            Width="{Binding Length, 
+                                          Converter={StaticResource TimeToPixelConverter}, 
+                                          ConverterParameter={Binding DataContext,
+                                                            RelativeSource={RelativeSource FindAncestor, 
+                                                                          AncestorType={x:Type views:TimelineView}}}}">
 
                         <Grid>
-                            <Border Height="16" 
+                            <Border Height="16"
                                     VerticalAlignment="Top"
                                     Background="#3A80D2">
                                 <TextBlock Text="{Binding ClipName}"
@@ -46,19 +52,21 @@
                                            Foreground="White"
                                            TextTrimming="CharacterEllipsis" />
                             </Border>
-                            
+
                             <Border Margin="0,16,0,0">
-                                <TextBlock Text="{Binding Length, StringFormat='Length: {0:F2}'}"
-                                           Margin="5,2"
-                                           FontSize="9"
-                                           Foreground="#CCFFFFFF"
-                                           VerticalAlignment="Top"/>
+                                <StackPanel Margin="5,2">
+                                    <TextBlock Text="{Binding Time, StringFormat='Time: {0:F2}'}"
+                                               FontSize="9"
+                                               Foreground="#CCFFFFFF" />
+                                    <TextBlock Text="{Binding Length, StringFormat='Length: {0:F2}'}"
+                                               FontSize="9"
+                                               Foreground="#CCFFFFFF" />
+                                </StackPanel>
                             </Border>
                         </Grid>
                     </Border>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
-
     </Border>
 </UserControl>

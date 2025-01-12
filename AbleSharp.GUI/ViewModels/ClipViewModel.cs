@@ -11,43 +11,40 @@ public class ClipViewModel : INotifyPropertyChanged
     private readonly ILogger<ClipViewModel> _logger = LoggerService.GetLogger<ClipViewModel>();
     public event PropertyChangedEventHandler? PropertyChanged;
 
-    private decimal _start;
-    private decimal _end;
+    private decimal _time;
+    private decimal _length;
     private string _clipName;
 
-    public decimal Start
+    public decimal Time
     {
-        get => _start;
-        set
+        get => _time;
+        private set
         {
-            if (_start != value)
+            if (_time != value)
             {
-                _start = value;
+                _time = value;
                 OnPropertyChanged();
             }
         }
     }
 
-    public decimal End
+    public decimal Length
     {
-        get => _end;
-        set
+        get => _length;
+        private set
         {
-            if (_end != value)
+            if (_length != value)
             {
-                _end = value;
+                _length = value;
                 OnPropertyChanged();
             }
         }
     }
-
-    // For UI binding (Width in the timeline)
-    public decimal Length => End - Start;
 
     public string ClipName
     {
         get => _clipName;
-        set
+        private set
         {
             if (_clipName != value)
             {
@@ -61,26 +58,20 @@ public class ClipViewModel : INotifyPropertyChanged
     {
         _logger.LogDebug("Creating ClipViewModel for clip Id={Id}", clip.Id);
 
-        // The arrangement time (where this clip appears in the timeline)
-        Start = clip.Time;
-        
-        // Calculate end time based on clip length
-        var clipLength = (clip.CurrentEnd?.Val ?? 16) - (clip.CurrentStart?.Val ?? 0);
-        End = Start + clipLength;
+        // Store the arrangement position directly, this determines where the clip appears
+        Time = clip.Time;
+
+        // Calculate length from the clip's CurrentEnd - CurrentStart
+        Length = (clip.CurrentEnd?.Val ?? 16) - (clip.CurrentStart?.Val ?? 0);
 
         ClipName = string.IsNullOrEmpty(clip.Name?.Val)
             ? "Unnamed Clip"
             : clip.Name.Val;
 
         _logger.LogDebug(
-            "Created clip '{Name}': Time={Time}, CurrentStart={CurStart}, CurrentEnd={CurEnd} => " +
-            "DisplayedStart={DispStart}, DisplayedEnd={DispEnd}, Length={Length}",
+            "Created clip '{Name}': Time={Time}, Length={Length}",
             ClipName,
-            clip.Time,
-            clip.CurrentStart?.Val,
-            clip.CurrentEnd?.Val,
-            Start,
-            End,
+            Time,
             Length
         );
     }
@@ -90,5 +81,8 @@ public class ClipViewModel : INotifyPropertyChanged
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }
 
-    public override string ToString() => $"Clip '{ClipName}' Start={Start} End={End}";
+    public override string ToString()
+    {
+        return $"Clip '{ClipName}' Time={Time} Length={Length}";
+    }
 }

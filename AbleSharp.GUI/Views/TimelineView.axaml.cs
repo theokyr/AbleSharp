@@ -11,75 +11,94 @@ namespace AbleSharp.GUI.Views;
 public partial class TimelineView : UserControl
 {
     private readonly ILogger<TimelineView> _logger;
+
+    // The pinned time ruler at top
     private TimeRulerView _timeRuler;
-    private ScrollViewer _timelineScroller;
-    private ScrollViewer _rulerScroller;
+
+    // The outer vertical scroller
+    private ScrollViewer _outerVerticalScroller;
+
+    // The inner horizontal scroller (for track lanes)
+    private ScrollViewer _horizontalScroller;
+
     private TimelineViewModel _viewModel;
 
     public TimelineView()
     {
         _logger = LoggerService.GetLogger<TimelineView>();
         InitializeComponent();
-
-        _timeRuler = this.FindControl<TimeRulerView>("TimeRuler");
-        _timelineScroller = this.FindControl<ScrollViewer>("TimelineScroller");
-        _rulerScroller = this.FindControl<ScrollViewer>("RulerScroller");
-
-        // Sync ruler with main timeline scrolling
-        _timelineScroller.ScrollChanged += OnMainScrollChanged;
         DataContextChanged += OnDataContextChanged;
     }
 
     private void InitializeComponent()
     {
         AvaloniaXamlLoader.Load(this);
+
+        // Grab references after XAML load
+        _timeRuler = this.FindControl<TimeRulerView>("TimeRuler");
+        _outerVerticalScroller = this.FindControl<ScrollViewer>("OuterVerticalScroller");
+        _horizontalScroller = this.FindControl<ScrollViewer>("HorizontalScroller");
+
+        // Whenever the user scrolls horizontally on the timeline lanes,
+        // update the time ruler accordingly:
+        _horizontalScroller.ScrollChanged += OnHorizontalScrollChanged;
     }
 
     private void OnDataContextChanged(object sender, EventArgs e)
     {
         if (DataContext is TimelineViewModel vm)
         {
+            // Unsubscribe from old model if needed:
+            if (_viewModel != null) _viewModel.PropertyChanged -= ViewModelOnPropertyChanged;
+
             _viewModel = vm;
-            _viewModel.PropertyChanged += (s, e) =>
-            {
-                if (e.PropertyName == nameof(TimelineViewModel.Zoom) ||
-                    e.PropertyName == nameof(TimelineViewModel.TotalTimelineWidth))
-                {
-                    UpdateTimeRuler();
-                }
-            };
+            _viewModel.PropertyChanged += ViewModelOnPropertyChanged;
+
+            // Force an initial ruler update
             UpdateTimeRuler();
         }
     }
 
-    private void OnMainScrollChanged(object sender, ScrollChangedEventArgs e)
+    private void ViewModelOnPropertyChanged(object? sender,
+        System.ComponentModel.PropertyChangedEventArgs e)
     {
-        if (e.ExtentDelta != null && e.ExtentDelta.X != 0)
-        {
-            _logger.LogTrace("Timeline extent changed to {Extent}", e.ExtentDelta.X);
-        }
-
-        if (Math.Abs(e.OffsetDelta.X) > 0.001)
-        {
-            _logger.LogTrace("Timeline scrolled to {Offset}", e.OffsetDelta.X);
-            // Keep the ruler in sync with main timeline
-            _rulerScroller.Offset = new Vector(e.OffsetDelta.X, 0);
+        // If the Zoom or timeline width changes, re‐draw the time ruler
+        if (e.PropertyName == nameof(TimelineViewModel.Zoom) ||
+            e.PropertyName == nameof(TimelineViewModel.TotalTimelineWidth))
             UpdateTimeRuler();
-        }
     }
 
+    private void OnHorizontalScrollChanged(object? sender, ScrollChangedEventArgs e)
+    {
+        // Re‐draw the time ruler’s tick marks on horizontal scroll
+        UpdateTimeRuler();
+    }
+
+    /// <summary>
+    /// Grabs the current horizontal scroll offset (and viewport width)
+    /// from the horizontal scroller, converts them to beats, and
+    /// calls TimeRulerView.UpdateRuler().
+    /// </summary>
     private void UpdateTimeRuler()
     {
-        if (_viewModel == null) return;
+        if (_viewModel == null)
+            return;
 
         var pixelsPerBeat = _viewModel.Zoom;
-        var scrollPosition = _timelineScroller.Offset.X;
-        var viewportWidth = _timelineScroller.Viewport.Width;
 
-        // Convert scroll position to beats
+        // The horizontal offset & width come from the horizontal scroller
+        var scrollPosition = _horizontalScroller.Offset.X;
+        var viewportWidth = _horizontalScroller.Viewport.Width;
+
+        // Convert the offset & width to “beats”
         var startBeat = scrollPosition / pixelsPerBeat;
         var endBeat = (scrollPosition + viewportWidth) / pixelsPerBeat;
 
-        _timeRuler.UpdateRuler(pixelsPerBeat, startBeat, endBeat, _viewModel.TotalTimelineWidth);
+        _timeRuler.UpdateRuler(
+            pixelsPerBeat,
+            startBeat,
+            endBeat,
+            _viewModel.TotalTimelineWidth
+        );
     }
 }

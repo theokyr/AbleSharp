@@ -1,4 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
+
 <UserControl
     x:Class="AbleSharp.GUI.Views.TimeRulerView"
     xmlns="https://github.com/avaloniaui"
@@ -12,16 +13,16 @@
                     <Canvas />
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
-            
+
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <Grid Canvas.Left="{Binding Position}">
                         <!-- Major tick -->
-                        <Line StartPoint="0,15" 
+                        <Line StartPoint="0,15"
                               EndPoint="0,30"
-                              Stroke="White" 
+                              Stroke="White"
                               StrokeThickness="1" />
-                              
+
                         <!-- Minor ticks -->
                         <ItemsControl ItemsSource="{Binding MinorTicks}">
                             <ItemsControl.ItemsPanel>
@@ -29,24 +30,22 @@
                                     <Canvas />
                                 </ItemsPanelTemplate>
                             </ItemsControl.ItemsPanel>
-                            
+
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Line StartPoint="{Binding StartPoint}" 
+                                    <Line StartPoint="{Binding StartPoint}"
                                           EndPoint="{Binding EndPoint}"
                                           Canvas.Left="{Binding Position}"
-                                          Stroke="#888888" 
+                                          Stroke="#888888"
                                           StrokeThickness="1" />
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
-                        
+
                         <!-- Beat number label -->
                         <TextBlock Text="{Binding Label}"
-                                 Foreground="White"
-                                 Canvas.Left="2"
-                                 Canvas.Top="0"
-                                 FontSize="10" />
+                                   Foreground="White"
+                                   FontSize="10" />
                     </Grid>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
