@@ -13,6 +13,13 @@
                 <MenuItem Header="_Open .als"
                           Command="{Binding OpenProjectCommand}" />
             </MenuItem>
+
+            <MenuItem Header="_Options">
+                <MenuItem Header="_Debug">
+                    <MenuItem Header="Open Debug Log"
+                              Command="{Binding OpenDebugLogCommand}" />
+                </MenuItem>
+            </MenuItem>
         </Menu>
 
         <ContentControl Content="{Binding CurrentView}" />

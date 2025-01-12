@@ -12,6 +12,8 @@
       <PackageReference Include="Avalonia.Desktop" Version="11.2.3" />
       <PackageReference Include="Avalonia.Fonts.Inter" Version="11.2.3" />
       <PackageReference Include="Avalonia.Themes.Fluent" Version="11.2.3" />
+      <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.0" />
+      <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="9.0.0" />
       <PackageReference Include="ReactiveUI" Version="20.1.63" />
     </ItemGroup>
 

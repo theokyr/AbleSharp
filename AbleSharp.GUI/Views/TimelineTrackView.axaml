@@ -1,5 +1,4 @@
-﻿<!-- File: AbleSharp.GUI/Views/TimelineTrackView.axaml -->
-<UserControl 
+﻿<UserControl
     x:Class="AbleSharp.GUI.Views.TimelineTrackView"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -8,12 +7,13 @@
     Height="60">
 
     <Grid ColumnDefinitions="100, *">
-        <!-- Track label on the left -->
+        <!-- Left: The track label -->
         <Border Grid.Column="0" Background="#333" Padding="5" CornerRadius="2">
-            <TextBlock Text="{Binding TrackName}" Foreground="White" />
+            <TextBlock Text="{Binding TrackName}" Foreground="White" VerticalAlignment="Center" />
         </Border>
 
-        <!-- Timeline area on the right -->
+        <!-- Right: Canvas with clips. 
+             We rely on TimeToPixelConverter in each Border's binding to place it. -->
         <Border Grid.Column="1" Background="#222" Padding="2" CornerRadius="2">
             <ItemsControl ItemsSource="{Binding Clips}">
                 <ItemsControl.ItemsPanel>
@@ -24,11 +24,12 @@
 
                 <ItemsControl.ItemTemplate>
                     <DataTemplate DataType="vm:ClipViewModel">
-                        <Border Background="SteelBlue"
-                                Height="30"
-                                Width="{Binding Length, Converter={StaticResource TimeToPixelConverter}}"
-                                canvas:Canvas.Left="{Binding Start, Converter={StaticResource TimeToPixelConverter}}"
-                                CornerRadius="2">
+                        <Border
+                            Background="SteelBlue"
+                            Height="30"
+                            CornerRadius="2"
+                            canvas:Canvas.Left="{Binding Start, Converter={StaticResource TimeToPixelConverter}}"
+                            Width="{Binding Length, Converter={StaticResource TimeToPixelConverter}}">
                             <TextBlock Text="{Binding ClipName}" Margin="5" Foreground="White" />
                         </Border>
                     </DataTemplate>

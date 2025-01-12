@@ -1,13 +1,19 @@
-<UserControl 
+<!-- File: AbleSharp.GUI/Views/ProjectView.axaml -->
+<UserControl
     x:Class="AbleSharp.GUI.Views.ProjectView"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:vm="clr-namespace:AbleSharp.GUI.ViewModels"
-    xmlns:views="clr-namespace:AbleSharp.GUI.Views">
+    xmlns:views="clr-namespace:AbleSharp.GUI.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    d:DesignWidth="1000" d:DesignHeight="700">
 
-    <Grid ColumnDefinitions="300, *" RowDefinitions="*" Margin="10">
-        <!-- Left pane: track hierarchy -->
-        <TreeView Grid.Column="0"
+    <Grid RowDefinitions="*" Margin="10">
+        <!--
+        <TreeView Grid.Row="0"
+                  Height="10"
                   ItemsSource="{Binding RootTracks}">
             <TreeView.ItemTemplate>
                 <TreeDataTemplate
@@ -18,21 +24,9 @@
                     </StackPanel>
                 </TreeDataTemplate>
             </TreeView.ItemTemplate>
-        </TreeView>
+        </TreeView> -->
 
-        <!-- Right pane: timeline -->
-        <ScrollViewer Grid.Column="1"
-                      HorizontalScrollBarVisibility="Auto"
-                      VerticalScrollBarVisibility="Auto">
-            <StackPanel Orientation="Vertical">
-                <ItemsControl ItemsSource="{Binding TimelineTracks}">
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate DataType="vm:TimelineTrackViewModel">
-                            <views:TimelineTrackView DataContext="{Binding}" />
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </StackPanel>
-        </ScrollViewer>
+        <views:TimelineView Grid.Row="0"
+                            DataContext="{Binding TimelineVM}" />
     </Grid>
 </UserControl>

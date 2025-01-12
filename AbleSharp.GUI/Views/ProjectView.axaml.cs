@@ -1,4 +1,3 @@
-// File: AbleSharp.GUI/Views/ProjectView.axaml.cs
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 
@@ -10,6 +9,7 @@ namespace AbleSharp.GUI.Views
         {
             InitializeComponent();
         }
+
         private void InitializeComponent() => AvaloniaXamlLoader.Load(this);
     }
 }

@@ -1,0 +1,50 @@
+﻿<UserControl
+    x:Class="AbleSharp.GUI.Views.TimelineView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:vm="clr-namespace:AbleSharp.GUI.ViewModels"
+    xmlns:views="clr-namespace:AbleSharp.GUI.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    d:DesignWidth="800"
+    d:DesignHeight="600">
+
+    <Grid RowDefinitions="Auto, Auto, *">
+        <!-- Row 0: Zoom + Pan controls -->
+        <StackPanel Orientation="Horizontal" Margin="10" Grid.Row="0" Spacing="10">
+            <TextBlock Text="Tempo:" VerticalAlignment="Center" />
+            <TextBlock Text="{Binding Tempo}" VerticalAlignment="Center" FontWeight="Bold" />
+            <TextBlock Text="TimeSig:" VerticalAlignment="Center" Margin="15,0,0,0" />
+            <TextBlock Text="{Binding TimeSigNumerator}" VerticalAlignment="Center" FontWeight="Bold" />
+            <TextBlock Text="/" VerticalAlignment="Center" />
+            <TextBlock Text="{Binding TimeSigDenominator}" VerticalAlignment="Center" FontWeight="Bold" />
+
+            <Button Content="Zoom In" Margin="20,0,0,0" Command="{Binding ZoomInCommand}" />
+            <Button Content="Zoom Out" Command="{Binding ZoomOutCommand}" />
+        </StackPanel>
+
+        <!-- Row 1: A simplistic "time ruler" area -->
+        <Border Background="#444" Grid.Row="1" Height="30">
+            <TextBlock Text="(Time Ruler placeholder)"
+                       Foreground="White" Margin="10,0,0,0"
+                       VerticalAlignment="Center" />
+        </Border>
+
+        <!-- Row 2: Scrollable track lanes -->
+        <ScrollViewer Grid.Row="2"
+                      HorizontalScrollBarVisibility="Auto"
+                      VerticalScrollBarVisibility="Auto">
+            <StackPanel Orientation="Vertical">
+                <!-- Display each TimelineTrackViewModel as a TimelineTrackView -->
+                <ItemsControl ItemsSource="{Binding Tracks}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate DataType="vm:TimelineTrackViewModel">
+                            <views:TimelineTrackView DataContext="{Binding}" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

@@ -10,7 +10,7 @@
             <Setter Property="AllowAutoHide" Value="False" />
         </Style>
     </Application.Styles>
-    
+
     <Application.Resources>
         <converters:TimeToPixelConverter x:Key="TimeToPixelConverter" PixelsPerBeat="80" />
     </Application.Resources>
