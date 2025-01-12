@@ -6,7 +6,7 @@
     Height="60"
     HorizontalAlignment="Left">
 
-    <Grid RowDefinitions="*" ColumnDefinitions="*,Auto" Height="60">
+    <Grid RowDefinitions="*" ColumnDefinitions="*" Height="60">
         <Border Grid.Column="0" Background="#1E1E1E"
                 BorderBrush="#333333"
                 BorderThickness="0,0,0,1">
@@ -28,19 +28,6 @@
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
-        </Border>
-
-        <Border Grid.Column="1"
-                Background="#333333">
-            <StackPanel Orientation="Vertical"
-                        Margin="0,0,0,1">
-                <TextBlock Text="{Binding TrackName}"
-                           Foreground="#FFFFFF"
-                           FontSize="12" />
-                <TextBlock Text="{Binding Track.Id}"
-                           Foreground="#BBBBBB"
-                           FontSize="10" />
-            </StackPanel>
         </Border>
     </Grid>
 </UserControl>
