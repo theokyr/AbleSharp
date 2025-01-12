@@ -24,13 +24,23 @@ public static class ClipGatherer
                     result.Add(slot.ClipData.Clip);
                 }
 
+        // Audio Clips
         if (mainSeq?.Sample?.ArrangerAutomation?.Events != null)
         {
             var count = mainSeq.Sample.ArrangerAutomation.Events.Count();
-            _logger.LogTrace("Found {Count} events in main-sequencer Sample.ArrangerAutomation", count);
+            _logger.LogTrace("Found {Count} Audio events in main-sequencer Sample.ArrangerAutomation", count);
             result.AddRange(mainSeq.Sample.ArrangerAutomation.Events);
         }
+        
+        // Midi Clips
+        if (mainSeq?.ClipTimeable?.ArrangerAutomation?.Events != null)
+        {
+            var clips = mainSeq.ClipTimeable.ArrangerAutomation.Events;
+            _logger.LogTrace("Found {Count} MIDI clips in main-sequencer ClipTimeable.ArrangerAutomation", clips.Count);
+            result.AddRange(clips);
+        }
 
+        // Freeze Samples
         var freezeSeq = track.DeviceChain?.FreezeSequencer;
         if (freezeSeq?.Sample?.ArrangerAutomation?.Events != null)
         {

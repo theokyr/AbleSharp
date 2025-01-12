@@ -5,10 +5,9 @@
     xmlns:vm="clr-namespace:AbleSharp.GUI.ViewModels"
     xmlns:views="clr-namespace:AbleSharp.GUI.Views"
     Height="60">
-
+    
     <Border Background="#1E1E1E"
-            Margin="{Binding IndentLevel, Converter={StaticResource IndentConverter}}"
-            BorderBrush="#333333"
+            BorderBrush="#333333" 
             BorderThickness="0,0,0,1">
         <ItemsControl ItemsSource="{Binding Clips}">
             <ItemsControl.ItemsPanel>
@@ -28,26 +27,24 @@
                             ToolTip.Tip="{Binding ClipName}"
                             Canvas.Left="{Binding Start, Converter={StaticResource TimeToPixelConverter}, ConverterParameter={Binding DataContext, RelativeSource={RelativeSource AncestorType=views:TimelineView}}}"
                             Width="{Binding Length, Converter={StaticResource TimeToPixelConverter}, ConverterParameter={Binding DataContext, RelativeSource={RelativeSource AncestorType=views:TimelineView}}}">
-
+                        
                         <Grid>
-                            <!-- Clip header -->
-                            <Border Height="16"
+                            <Border Height="16" 
                                     VerticalAlignment="Top"
                                     Background="#3A80D2">
                                 <TextBlock Text="{Binding ClipName}"
-                                           Margin="5,0,5,0"
-                                           FontSize="10"
-                                           Foreground="White"
-                                           TextTrimming="CharacterEllipsis" />
+                                         Margin="5,0,5,0"
+                                         FontSize="10"
+                                         Foreground="White"
+                                         TextTrimming="CharacterEllipsis" />
                             </Border>
-
-                            <!-- Main clip area -->
+                            
                             <Border Margin="0,16,0,0">
                                 <TextBlock Text="{Binding Length, StringFormat='Length: {0:F2}'}"
-                                           Margin="5,2"
-                                           FontSize="9"
-                                           Foreground="#CCFFFFFF"
-                                           VerticalAlignment="Top" />
+                                         Margin="5,2"
+                                         FontSize="9"
+                                         Foreground="#CCFFFFFF"
+                                         VerticalAlignment="Top"/>
                             </Border>
                         </Grid>
                     </Border>

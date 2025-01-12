@@ -5,7 +5,7 @@ using AbleSharp.Lib;
 namespace AbleSharp.GUI.ViewModels;
 
 /// <summary>
-/// Represents a single clip. We'll use the converter in XAML to place it.
+/// Represents a single clip. 
 /// </summary>
 public class ClipViewModel : INotifyPropertyChanged
 {
@@ -15,7 +15,6 @@ public class ClipViewModel : INotifyPropertyChanged
     private decimal _end;
     private string _clipName;
 
-    // In your .als file, "CurrentStart" might be the beginning, etc.
     public decimal Start
     {
         get => _start;
@@ -63,7 +62,6 @@ public class ClipViewModel : INotifyPropertyChanged
 
     public ClipViewModel(Clip clip)
     {
-        // Copy from your AbleSharp.Lib Clip
         Start = clip.CurrentStart?.Val ?? 0;
         End = clip.CurrentEnd?.Val ?? 0;
         ClipName = clip.Name?.Val ?? "Unnamed Clip";
