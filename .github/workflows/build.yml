@@ -22,12 +22,15 @@ jobs:
           - os: windows-latest
             runtime: 'win-x64'
             output_name: 'AbleSharp.GUI-windows'
+            artifact_extension: '.exe'
           - os: ubuntu-latest
             runtime: 'linux-x64'
             output_name: 'AbleSharp.GUI-linux'
+            artifact_extension: ''
           - os: macos-latest
             runtime: 'osx-x64'
             output_name: 'AbleSharp.GUI-macos'
+            artifact_extension: ''
 
     runs-on: ${{ matrix.os }}
 
@@ -49,41 +52,67 @@ jobs:
         run: dotnet build ${{ env.SOLUTION_FILE }} --configuration ${{ matrix.configuration }} --no-restore
 
       - name: Publish
-        run: dotnet publish ${{ env.PROJECT_PATH }} --configuration ${{ matrix.configuration }} --runtime ${{ matrix.runtime }} --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true --output ./publish/${{ matrix.output_name }}
-
-      - name: Create ZIP archive
+        run: dotnet publish ${{ env.PROJECT_PATH }} --configuration ${{ matrix.configuration }} --runtime ${{ matrix.runtime }} --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true --output ./publish
+      
+      # We'll compress the build output before uploading to save bandwidth
+      - name: Compress artifact
         shell: bash
         run: |
           cd publish
+          # Get the executable name based on platform
           if [ "${{ matrix.os }}" = "windows-latest" ]; then
-            7z a -tzip ${{ matrix.output_name }}.zip ./${{ matrix.output_name }}/*
+            executable="AbleSharp.GUI.exe"
           else
-            zip -r ${{ matrix.output_name }}.zip ./${{ matrix.output_name }}/*
+            executable="AbleSharp.GUI"
+          fi
+          # Check if file exists and is not empty
+          if [ ! -f "$executable" ] || [ ! -s "$executable" ]; then
+            echo "::error::Executable $executable not found or empty"
+            exit 1
+          fi
+          # Compress with maximum compression
+          if [ "${{ matrix.os }}" = "windows-latest" ]; then
+            7z a -tzip "../${{ matrix.output_name }}.zip" "$executable"
+          else
+            zip -9 "../${{ matrix.output_name }}.zip" "$executable"
           fi
 
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v3
+        id: upload-artifacts
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.output_name }}
-          path: publish/${{ matrix.output_name }}.zip
+          path: ${{ matrix.output_name }}.zip
+          retention-days: 5
+          compression-level: 0  # Already compressed above
           if-no-files-found: error
 
   create-release:
     needs: build
     if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
+    permissions:
+      contents: write  # Required for creating releases
     
     steps:
       - name: Download all artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          merge-multiple: true
+      
+      # Calculate checksums for verification
+      - name: Generate SHA-256 checksums
+        run: |
+          cd artifacts
+          sha256sum *.zip > SHA256SUMS.txt
 
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            AbleSharp.GUI-windows/*.zip
-            AbleSharp.GUI-linux/*.zip
-            AbleSharp.GUI-macos/*.zip
+            artifacts/*.zip
+            artifacts/SHA256SUMS.txt
           draft: false
           prerelease: false
           generate_release_notes: true
