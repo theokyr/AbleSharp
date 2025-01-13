@@ -1,9 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
-using System;
 using System.Collections.ObjectModel;
-using System.Linq;
 using Microsoft.Extensions.Logging;
 using AbleSharp.GUI.Services;
 
@@ -14,7 +12,7 @@ public partial class TimeRulerView : UserControl
     private readonly ILogger<TimeRulerView> _logger;
     private ItemsControl _tickMarks;
     private readonly ObservableCollection<TickMarkModel> _ticks = new();
-    private double _pixelsPerBeat = Constants.DEFAULT_ZOOM_LEVEL;
+    private double _pixelsPerBeat = Constants.DEFAULT_ZOOM_LEVEL_X;
     private double _viewportStart = 0.0;
     private double _viewportEnd = 16.0;
     private double _totalWidth;

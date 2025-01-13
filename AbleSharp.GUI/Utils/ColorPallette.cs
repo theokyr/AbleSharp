@@ -73,7 +73,7 @@ public static class ColorPalette
         { 66, "#5659b0" },
         { 67, "#7e59b0" },
         { 68, "#a04684" },
-        { 69, "#2d394b" },
+        { 69, "#2d394b" }
     };
 
 

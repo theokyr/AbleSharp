@@ -70,10 +70,10 @@ public partial class TimelineView : UserControl
 
     private void ViewModelOnPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName == nameof(TimelineViewModel.Zoom) ||
+        if (e.PropertyName == nameof(TimelineViewModel.ZoomX) ||
             e.PropertyName == nameof(TimelineViewModel.TotalTimelineWidth))
         {
-            _logger.LogDebug($"Timeline zoom/width changed - Zoom: {ViewModel?.Zoom}, Width: {ViewModel?.TotalTimelineWidth}");
+            _logger.LogDebug($"Timeline X zoom/width changed - ZoomX: {ViewModel?.ZoomX}, Width: {ViewModel?.TotalTimelineWidth}");
             UpdateTimeRuler();
             UpdateGridLines();
         }
@@ -86,11 +86,11 @@ public partial class TimelineView : UserControl
         var scrollPosition = _horizontalScroller.Offset.X;
         var viewportWidth = _horizontalScroller.Viewport.Width;
 
-        var startBeat = scrollPosition / ViewModel.Zoom;
-        var endBeat = (scrollPosition + viewportWidth) / ViewModel.Zoom;
+        var startBeat = scrollPosition / ViewModel.ZoomX;
+        var endBeat = (scrollPosition + viewportWidth) / ViewModel.ZoomX;
 
         _timeRuler.UpdateRuler(
-            ViewModel.Zoom,
+            ViewModel.ZoomX,
             startBeat,
             endBeat,
             ViewModel.TotalTimelineWidth
@@ -102,7 +102,7 @@ public partial class TimelineView : UserControl
         if (ViewModel == null) return;
 
         _gridLines.UpdateGrid(
-            ViewModel.Zoom,
+            ViewModel.ZoomX,
             ViewModel.TotalTimelineWidth
         );
     }

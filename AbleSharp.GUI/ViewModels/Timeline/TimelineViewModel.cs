@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
@@ -19,28 +18,24 @@ public class TimelineViewModel : INotifyPropertyChanged
     private decimal _tempo;
     private int _timeSigNumerator;
     private int _timeSigDenominator;
-    private double _zoom = Constants.DEFAULT_ZOOM_LEVEL; // Pixel width per beat
+    private double _zoomX = Constants.DEFAULT_ZOOM_LEVEL_X;
+    private double _zoomY = Constants.DEFAULT_ZOOM_LEVEL_Y;
     private double _panX = 0.0;
     private double _totalTimelineWidth;
     private decimal _lastClipEndTime = 0;
 
-    // Zoom constants
-    private const double MIN_ZOOM = 0.125;
-    private const double MAX_ZOOM = 50.0;
-    private const double ZOOM_STEP = 4;
-
-    // Flattened list of all tracks for timeline display
     public ObservableCollection<TimelineTrackViewModel> Tracks { get; } = new();
 
-    public ICommand ZoomInCommand { get; }
-    public ICommand ZoomOutCommand { get; }
+    public ICommand ZoomInXCommand { get; }
+    public ICommand ZoomOutXCommand { get; }
+    public ICommand ZoomInYCommand { get; }
+    public ICommand ZoomOutYCommand { get; }
 
     public TimelineViewModel(AbletonProject project)
     {
         _logger = LoggerService.GetLogger<TimelineViewModel>();
         _logger.LogDebug("Creating TimelineViewModel");
 
-        // Basic project info (tempo, time sig, etc.)
         _tempo = project?.LiveSet?.MainTrack?.Tempo?.Val ?? 120m;
         _timeSigNumerator = 4;
         _timeSigDenominator = 4;
@@ -53,16 +48,16 @@ public class TimelineViewModel : INotifyPropertyChanged
             _timeSigDenominator = first.Denominator?.Val ?? 4;
         }
 
-        // Build track hierarchy
         if (project?.LiveSet?.Tracks != null) BuildTrackHierarchy(project.LiveSet.Tracks);
 
-        // Zoom commands
-        ZoomInCommand = AbleSharpUiCommand.Create(ZoomIn);
-        ZoomOutCommand = AbleSharpUiCommand.Create(ZoomOut);
+        ZoomInXCommand = AbleSharpUiCommand.Create(ZoomInX);
+        ZoomOutXCommand = AbleSharpUiCommand.Create(ZoomOutX);
+        ZoomInYCommand = AbleSharpUiCommand.Create(ZoomInY);
+        ZoomOutYCommand = AbleSharpUiCommand.Create(ZoomOutY);
 
         UpdateTimelineWidth();
 
-        _logger.LogDebug($"Timeline initialized with zoom={_zoom}, " +
+        _logger.LogDebug($"Timeline initialized with zoomX={_zoomX}, zoomY={_zoomY}, " +
                          $"tempo={_tempo}, timeSig={_timeSigNumerator}/{_timeSigDenominator}");
     }
 
@@ -71,17 +66,15 @@ public class TimelineViewModel : INotifyPropertyChanged
         var trackDict = new Dictionary<string, TimelineTrackViewModel>();
         var processedTracks = new HashSet<string>();
 
-        // 1) Create all track VMs and track the latest clip end time
         foreach (var track in tracks)
         {
             var vm = new TimelineTrackViewModel(track, this);
             trackDict[track.Id] = vm;
 
-            // Track the latest clip end time across all clips
-            foreach (var clipVM in vm.ClipViewModels) _lastClipEndTime = Math.Max(_lastClipEndTime, clipVM.Time + clipVM.Length);
+            foreach (var clipVM in vm.ClipViewModels)
+                _lastClipEndTime = Math.Max(_lastClipEndTime, clipVM.Time + clipVM.Length);
         }
 
-        // 2) Build hierarchy (indentation, children, etc.)
         void ProcessTrack(Track t, decimal indent = 0)
         {
             if (processedTracks.Contains(t.Id)) return;
@@ -92,7 +85,6 @@ public class TimelineViewModel : INotifyPropertyChanged
 
             Tracks.Add(tvm);
 
-            // Recursively find child tracks
             var childTracks = tracks.Where(ct =>
                 ct.TrackGroupId?.Val != null &&
                 ct.TrackGroupId.Val.ToString() == t.Id
@@ -101,7 +93,6 @@ public class TimelineViewModel : INotifyPropertyChanged
             foreach (var child in childTracks) ProcessTrack(child, indent + 1);
         }
 
-        // Start w/ root tracks (TrackGroupId = -1 or invalid group)
         foreach (var t in tracks)
         {
             var groupId = t.TrackGroupId?.Val ?? -1;
@@ -114,19 +105,15 @@ public class TimelineViewModel : INotifyPropertyChanged
 
     private void UpdateTimelineWidth()
     {
-        // Add some padding beyond the last clip
         var endPadding = 8m;
         var total = _lastClipEndTime + endPadding;
         var safeMinimum = 32m;
-
         var finalBeats = Math.Max(safeMinimum, total);
-
-        // Convert beats to pixels with current zoom
-        var newWidth = (double)(finalBeats * (decimal)Zoom);
+        var newWidth = (double)(finalBeats * (decimal)ZoomX);
 
         _logger.LogDebug($"Updating timeline width: LastClipEnd={_lastClipEndTime}, " +
                          $"Total={total}, FinalBeats={finalBeats}, " +
-                         $"Zoom={Zoom}, NewWidth={newWidth}");
+                         $"ZoomX={ZoomX}, NewWidth={newWidth}");
 
         TotalTimelineWidth = newWidth;
     }
@@ -170,19 +157,33 @@ public class TimelineViewModel : INotifyPropertyChanged
         }
     }
 
-    public double Zoom
+    public double ZoomX
     {
-        get => _zoom;
+        get => _zoomX;
         set
         {
-            var newZoom = Math.Max(MIN_ZOOM, Math.Min(MAX_ZOOM, value));
-            if (Math.Abs(_zoom - newZoom) > 0.001)
+            var newZoom = Math.Max(Constants.MIN_ZOOM_X, Math.Min(Constants.MAX_ZOOM_X, value));
+            if (Math.Abs(_zoomX - newZoom) > 0.001)
             {
-                _zoom = newZoom;
+                _zoomX = newZoom;
                 OnPropertyChanged();
                 UpdateTimelineWidth();
+                _logger.LogDebug($"ZoomX changed to {_zoomX}");
+            }
+        }
+    }
 
-                _logger.LogDebug($"Zoom changed to {_zoom}");
+    public double ZoomY
+    {
+        get => _zoomY;
+        set
+        {
+            var newZoom = Math.Max(Constants.MIN_ZOOM_Y, Math.Min(Constants.MAX_ZOOM_Y, value));
+            if (Math.Abs(_zoomY - newZoom) > 0.001)
+            {
+                _zoomY = newZoom;
+                OnPropertyChanged();
+                _logger.LogDebug($"ZoomY changed to {_zoomY}");
             }
         }
     }
@@ -213,16 +214,28 @@ public class TimelineViewModel : INotifyPropertyChanged
         }
     }
 
-    private void ZoomIn()
+    private void ZoomInX()
     {
-        Zoom *= ZOOM_STEP;
-        _logger.LogTrace("Zoomed in to {Zoom}", Zoom);
+        ZoomX *= Constants.ZOOM_STEP;
+        _logger.LogTrace("Zoomed in X to {ZoomX}", ZoomX);
     }
 
-    private void ZoomOut()
+    private void ZoomOutX()
     {
-        Zoom /= ZOOM_STEP;
-        _logger.LogTrace("Zoomed out to {Zoom}", Zoom);
+        ZoomX /= Constants.ZOOM_STEP;
+        _logger.LogTrace("Zoomed out X to {ZoomX}", ZoomX);
+    }
+
+    private void ZoomInY()
+    {
+        ZoomY *= Constants.ZOOM_STEP;
+        _logger.LogTrace("Zoomed in Y to {ZoomY}", ZoomY);
+    }
+
+    private void ZoomOutY()
+    {
+        ZoomY /= Constants.ZOOM_STEP;
+        _logger.LogTrace("Zoomed out Y to {ZoomY}", ZoomY);
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;

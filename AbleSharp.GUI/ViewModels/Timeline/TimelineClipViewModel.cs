@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using AbleSharp.Lib;
 
@@ -9,7 +10,8 @@ public class TimelineClipViewModel : INotifyPropertyChanged
     private decimal _time;
     private decimal _length;
     private string _clipName;
-    private double _zoom;
+    private double _zoomX;
+    private double _zoomY;
     private readonly int _colorIndex;
 
     public event PropertyChangedEventHandler? PropertyChanged;
@@ -53,14 +55,27 @@ public class TimelineClipViewModel : INotifyPropertyChanged
         }
     }
 
-    public double Zoom
+    public double ZoomX
     {
-        get => _zoom;
+        get => _zoomX;
         set
         {
-            if (Math.Abs(_zoom - value) > 0.001)
+            if (Math.Abs(_zoomX - value) > 0.001)
             {
-                _zoom = value;
+                _zoomX = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+
+    public double ZoomY
+    {
+        get => _zoomY;
+        set
+        {
+            if (Math.Abs(_zoomY - value) > 0.001)
+            {
+                _zoomY = value;
                 OnPropertyChanged();
             }
         }
@@ -71,14 +86,13 @@ public class TimelineClipViewModel : INotifyPropertyChanged
     public string LightColor => ColorPalette.GetLightColor(_colorIndex);
     public string DarkColor => ColorPalette.GetDarkColor(_colorIndex);
 
-    public TimelineClipViewModel(Clip clip, double zoom)
+    public TimelineClipViewModel(Clip clip, double zoomX, double zoomY)
     {
         Time = clip.Time;
         Length = (clip.CurrentEnd?.Val ?? 16) - (clip.CurrentStart?.Val ?? 0);
         ClipName = string.IsNullOrEmpty(clip.Name?.Val) ? "Unnamed Clip" : clip.Name.Val;
-        Zoom = zoom;
-
-        // Parse color index, defaulting to 0 if not valid
+        ZoomX = zoomX;
+        ZoomY = zoomY;
         _colorIndex = clip.Color?.Val ?? 0;
     }
 
