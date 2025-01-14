@@ -8,13 +8,13 @@ using System.ComponentModel;
 
 namespace AbleSharp.GUI.Views;
 
-public partial class TrackHeaderView : UserControl
+public partial class TimelineTrackHeaderView : UserControl
 {
-    private readonly ILogger<TrackHeaderView> _logger;
+    private readonly ILogger<TimelineTrackHeaderView> _logger;
 
-    public TrackHeaderView()
+    public TimelineTrackHeaderView()
     {
-        _logger = LoggerService.GetLogger<TrackHeaderView>();
+        _logger = LoggerService.GetLogger<TimelineTrackHeaderView>();
         InitializeComponent();
 
         DataContextChanged += OnDataContextChanged;

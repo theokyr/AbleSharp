@@ -1,5 +1,5 @@
 ﻿<UserControl
-    x:Class="AbleSharp.GUI.Views.TrackHeaderView"
+    x:Class="AbleSharp.GUI.Views.TimelineTrackHeaderView"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 

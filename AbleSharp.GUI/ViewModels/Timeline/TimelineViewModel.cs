@@ -24,6 +24,7 @@ public class TimelineViewModel : INotifyPropertyChanged
     private double _totalTimelineWidth;
     private decimal _lastClipEndTime = 0;
     private double _viewportWidth = 800; // Default viewport width
+    private double _viewportHeight = 600; // Default viewport height
 
     public ObservableCollection<TimelineTrackViewModel> Tracks { get; } = new();
 
@@ -32,6 +33,7 @@ public class TimelineViewModel : INotifyPropertyChanged
     public ICommand ZoomInYCommand { get; }
     public ICommand ZoomOutYCommand { get; }
     public ICommand FitHorizontalCommand { get; }
+    public ICommand FitVerticalCommand { get; }
 
     public TimelineViewModel(AbletonProject project)
     {
@@ -57,6 +59,7 @@ public class TimelineViewModel : INotifyPropertyChanged
         ZoomInYCommand = AbleSharpUiCommand.Create(ZoomInY);
         ZoomOutYCommand = AbleSharpUiCommand.Create(ZoomOutY);
         FitHorizontalCommand = AbleSharpUiCommand.Create(FitHorizontal);
+        FitVerticalCommand = AbleSharpUiCommand.Create(FitVertical);
 
         UpdateTimelineWidth();
 
@@ -130,6 +133,15 @@ public class TimelineViewModel : INotifyPropertyChanged
         }
     }
 
+    public void SetViewportHeight(double height)
+    {
+        if (Math.Abs(_viewportHeight - height) > 0.001)
+        {
+            _viewportHeight = height;
+            _logger.LogDebug($"Viewport height updated to {height}");
+        }
+    }
+
     private void FitHorizontal()
     {
         if (_viewportWidth <= 0 || _lastClipEndTime <= 0)
@@ -148,9 +160,33 @@ public class TimelineViewModel : INotifyPropertyChanged
         newZoom = Math.Max(Constants.MIN_ZOOM_X, Math.Min(Constants.MAX_ZOOM_X, newZoom));
 
         _logger.LogDebug($"Fitting horizontal: viewport={_viewportWidth}, " +
-                        $"beats={totalBeats}, newZoom={newZoom}");
+                         $"beats={totalBeats}, newZoom={newZoom}");
 
         ZoomX = newZoom;
+    }
+
+    private void FitVertical()
+    {
+        if (_viewportHeight <= 0 || Tracks.Count == 0)
+        {
+            _logger.LogWarning("Cannot fit vertical - invalid viewport height or no tracks");
+            return;
+        }
+
+        // Calculate the zoom level needed to fit the content
+        var padding = 20; // pixels of padding
+        var availableHeight = _viewportHeight - padding;
+        var baseTrackHeight = 60.0; // Our base track height
+        var totalTracks = Tracks.Count;
+        var newZoom = availableHeight / (baseTrackHeight * totalTracks);
+
+        // Clamp to min/max zoom levels
+        newZoom = Math.Max(Constants.MIN_ZOOM_Y, Math.Min(Constants.MAX_ZOOM_Y, newZoom));
+
+        _logger.LogDebug($"Fitting vertical: viewport={_viewportHeight}, " +
+                         $"tracks={totalTracks}, newZoom={newZoom}");
+
+        ZoomY = newZoom;
     }
 
     public decimal Tempo

@@ -1,6 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-
-<UserControl
+﻿<UserControl
     x:Class="AbleSharp.GUI.Views.TimelineView"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -80,8 +78,8 @@
 
                     <Button Command="{Binding FitHorizontalCommand}"
                             Classes="transport"
-                            ToolTip.Tip="Fit Horizontal">
-                        <TextBlock Text="Fit H" />
+                            ToolTip.Tip="Fit to width">
+                        <TextBlock Text="H" />
                     </Button>
                 </StackPanel>
 
@@ -109,6 +107,12 @@
                                Width="50"
                                TextAlignment="Center"
                                VerticalAlignment="Center" />
+
+                    <Button Command="{Binding FitVerticalCommand}"
+                            Classes="transport"
+                            ToolTip.Tip="Fit to height">
+                        <TextBlock Text="V" />
+                    </Button>
                 </StackPanel>
             </StackPanel>
         </Grid>
@@ -134,7 +138,7 @@
                     <ItemsControl ItemsSource="{Binding Tracks}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <views:TimelineTrackView DataContext="{Binding}"
+                                <views:TimelineTrackView DataContext="{Binding}" 
                                                         Height="{Binding ZoomY, Converter={StaticResource HeightMultiConverter}, ConverterParameter=60}" />
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
@@ -151,7 +155,7 @@
                 <ItemsControl ItemsSource="{Binding Tracks}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <views:TrackHeaderView DataContext="{Binding}"
+                            <views:TimelineTrackHeaderView DataContext="{Binding}"
                                                   Height="{Binding ZoomY, Converter={StaticResource HeightMultiConverter}, ConverterParameter=60}" />
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
