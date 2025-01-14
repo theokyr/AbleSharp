@@ -13,20 +13,36 @@ public partial class TimelineClipView : UserControl
     private Canvas _rootCanvas;
     private Border _clipBorder;
 
-    public static readonly DirectProperty<TimelineClipView, double> ZoomProperty =
+    public static readonly DirectProperty<TimelineClipView, double> ZoomXProperty =
         AvaloniaProperty.RegisterDirect<TimelineClipView, double>(
-            nameof(Zoom),
-            o => o.Zoom,
-            (o, v) => o.Zoom = v);
+            nameof(ZoomX),
+            o => o.ZoomX,
+            (o, v) => o.ZoomX = v);
 
-    private double _zoom = Constants.DEFAULT_ZOOM_LEVEL;
+    public static readonly DirectProperty<TimelineClipView, double> ZoomYProperty =
+        AvaloniaProperty.RegisterDirect<TimelineClipView, double>(
+            nameof(ZoomY),
+            o => o.ZoomY,
+            (o, v) => o.ZoomY = v);
 
-    public double Zoom
+    private double _zoomX = Constants.DEFAULT_ZOOM_LEVEL_X;
+    private double _zoomY = Constants.DEFAULT_ZOOM_LEVEL_Y;
+
+    public double ZoomX
     {
-        get => _zoom;
+        get => _zoomX;
         set
         {
-            if (SetAndRaise(ZoomProperty, ref _zoom, value)) UpdateClipPosition();
+            if (SetAndRaise(ZoomXProperty, ref _zoomX, value)) UpdateClipPosition();
+        }
+    }
+
+    public double ZoomY
+    {
+        get => _zoomY;
+        set
+        {
+            if (SetAndRaise(ZoomYProperty, ref _zoomY, value)) UpdateClipPosition();
         }
     }
 
@@ -50,13 +66,14 @@ public partial class TimelineClipView : UserControl
 
         if (DataContext is TimelineClipViewModel vm)
         {
-            Zoom = vm.Zoom;
+            ZoomX = vm.ZoomX;
+            ZoomY = vm.ZoomY;
             UpdateClipPosition();
 
-            // Subscribe to zoom changes
             vm.PropertyChanged += (sender, args) =>
             {
-                if (args.PropertyName == nameof(TimelineClipViewModel.Zoom)) Zoom = vm.Zoom;
+                if (args.PropertyName == nameof(TimelineClipViewModel.ZoomX)) ZoomX = vm.ZoomX;
+                if (args.PropertyName == nameof(TimelineClipViewModel.ZoomY)) ZoomY = vm.ZoomY;
             };
         }
     }
@@ -65,8 +82,8 @@ public partial class TimelineClipView : UserControl
     {
         if (DataContext is TimelineClipViewModel vm)
         {
-            var leftPos = (double)(vm.Time * (decimal)Zoom);
-            var width = (double)(vm.Length * (decimal)Zoom);
+            var leftPos = (double)(vm.Time * (decimal)ZoomX);
+            var width = (double)(vm.Length * (decimal)ZoomX);
 
             _logger.LogTrace($"Positioning clip '{vm.ClipName}' at x={leftPos}, width={width}");
 

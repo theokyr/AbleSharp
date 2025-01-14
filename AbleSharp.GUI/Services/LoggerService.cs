@@ -1,79 +1,67 @@
-﻿using System.Collections.ObjectModel;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
+using System.Collections.ObjectModel;
 using Avalonia.Threading;
 
 namespace AbleSharp.GUI.Services;
 
-/// <summary>
-/// A static service to provide a shared ILoggerFactory and log store.
-/// This sets up console logging plus our custom DebugLogProvider
-/// that writes logs into an in-memory list (for the DebugLog window).
-/// </summary>
 public static class LoggerService
 {
     private static ILoggerFactory? _loggerFactory;
-
-    /// <summary>
-    /// A thread-safe collection of log entries for display in the DebugLog window.
-    /// </summary>
     public static ObservableCollection<string> InMemoryLog { get; } = new();
 
     public static void Initialize()
     {
         if (_loggerFactory != null)
-            return; // Already initialized
+            return;
 
-        // Create a logger factory that writes to console + debug provider.
+        var logLevel = 
+#if DEBUG
+            LogLevel.Debug;
+#else
+            LogLevel.Warning; // Only warnings and errors in production
+#endif
+
         _loggerFactory = LoggerFactory.Create(builder =>
         {
             builder
-                .SetMinimumLevel(LogLevel.Trace)
-                .AddConsole() // Writes logs to console
-                .AddProvider(new DebugLogProvider()); // Writes logs to InMemoryLog
+                .SetMinimumLevel(logLevel)
+                .AddFilter("AbleSharp.GUI.Views.TimelineView", LogLevel.Warning)
+                .AddFilter("AbleSharp.GUI.Views.TimeRulerView", LogLevel.Warning)
+                .AddFilter("AbleSharp.GUI.Views.TimelineTrackView", LogLevel.Warning)
+                .AddFilter("AbleSharp.GUI.ViewModels.TimelineClipViewModel", LogLevel.Warning)
+                .AddFilter("AbleSharp.GUI.ViewModels.TimelineTrackViewModel", LogLevel.Warning)
+                .AddFilter("AbleSharp.GUI.ViewModels.TimelineViewModel", LogLevel.Warning)
+                .AddConsole();
+
+#if DEBUG
+            builder.AddProvider(new DebugLogProvider());
+#endif
         });
     }
 
-    /// <summary>
-    /// Retrieve a typed logger for use in any class.
-    /// </summary>
     public static ILogger<T> GetLogger<T>()
     {
-        return _loggerFactory?.CreateLogger<T>()
-               ?? throw new InvalidOperationException("LoggerService not initialized.");
+        if (_loggerFactory == null)
+            Initialize();
+
+        return _loggerFactory!.CreateLogger<T>();
     }
 }
 
-/// <summary>
-/// A provider that creates an ILogger which appends log messages to LoggerService.InMemoryLog.
-/// </summary>
 internal class DebugLogProvider : ILoggerProvider
 {
     private readonly DebugLogLogger _logger = new();
 
-    public ILogger CreateLogger(string categoryName)
-    {
-        return _logger;
-    }
+    public ILogger CreateLogger(string categoryName) => _logger;
 
-    public void Dispose()
-    {
-    }
+    public void Dispose() { }
 }
 
-/// <summary>
-/// An ILogger implementation that appends to LoggerService.InMemoryLog.
-/// </summary>
 internal class DebugLogLogger : ILogger
 {
-    public IDisposable BeginScope<TState>(TState state)
-    {
-        return NullScope.Instance;
-    }
+    public IDisposable? BeginScope<TState>(TState state) where TState : notnull => null;
 
-    public bool IsEnabled(LogLevel logLevel)
-    {
-        return true;
-    }
+    public bool IsEnabled(LogLevel logLevel) => true;
 
     public void Log<TState>(
         LogLevel logLevel,
@@ -87,18 +75,9 @@ internal class DebugLogLogger : ILogger
         var message = formatter(state, exception);
         var final = $"{DateTime.Now:HH:mm:ss} [{logLevel}] {message}";
 
-        if (exception != null) final += Environment.NewLine + exception;
+        if (exception != null)
+            final += Environment.NewLine + exception;
 
-        // Ensure we add to the collection on the UI thread.
-        Dispatcher.UIThread.Post(() => { LoggerService.InMemoryLog.Add(final); });
-    }
-
-    private class NullScope : IDisposable
-    {
-        public static NullScope Instance { get; } = new();
-
-        public void Dispose()
-        {
-        }
+        Dispatcher.UIThread.Post(() => LoggerService.InMemoryLog.Add(final));
     }
 }

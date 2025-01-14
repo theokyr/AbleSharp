@@ -37,7 +37,7 @@ public class TrackViewModel : INotifyPropertyChanged
     {
         Track = track;
         _trackName = track?.Name?.EffectiveName?.Val ?? "(Unnamed)";
-        _colorIndex = track.Color?.Val != null ? track.Color.Val : 0;
+        _colorIndex = track?.Color?.Val ?? 0;
     }
 
     protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)

@@ -17,7 +17,6 @@ public partial class TimelineView : UserControl
     private ScrollViewer _horizontalScroller;
     private ScrollViewer _headerScroller;
     private TimeRulerView _timeRuler;
-    private GridLinesView _gridLines;
 
     public TimelineView()
     {
@@ -27,17 +26,35 @@ public partial class TimelineView : UserControl
         _horizontalScroller = this.FindControl<ScrollViewer>("HorizontalScroller");
         _headerScroller = this.FindControl<ScrollViewer>("HeaderScroller");
         _timeRuler = this.FindControl<TimeRulerView>("TimeRuler");
-        _gridLines = this.FindControl<GridLinesView>("GridLines");
 
         // Handle scroll synchronization
         _horizontalScroller.ScrollChanged += OnHorizontalScrollChanged;
 
         DataContextChanged += OnDataContextChanged;
+
+        // Listen for size changes
+        _horizontalScroller.PropertyChanged += OnScrollerPropertyChanged;
     }
 
     private void InitializeComponent()
     {
         AvaloniaXamlLoader.Load(this);
+    }
+
+    private void OnScrollerPropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
+    {
+        if (e.Property == BoundsProperty || e.Property == ScrollViewer.ViewportProperty)
+        {
+            UpdateViewportSize();
+        }
+    }
+
+    private void UpdateViewportSize()
+    {
+        if (ViewModel != null && _horizontalScroller.Viewport.Width > 0)
+        {
+            ViewModel.SetViewportWidth(_horizontalScroller.Viewport.Width);
+        }
     }
 
     private void OnDataContextChanged(object? sender, EventArgs e)
@@ -52,7 +69,7 @@ public partial class TimelineView : UserControl
 
         // Force initial updates
         UpdateTimeRuler();
-        UpdateGridLines();
+        UpdateViewportSize();
     }
 
     private void OnHorizontalScrollChanged(object? sender, ScrollChangedEventArgs e)
@@ -70,12 +87,11 @@ public partial class TimelineView : UserControl
 
     private void ViewModelOnPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName == nameof(TimelineViewModel.Zoom) ||
+        if (e.PropertyName == nameof(TimelineViewModel.ZoomX) ||
             e.PropertyName == nameof(TimelineViewModel.TotalTimelineWidth))
         {
-            _logger.LogDebug($"Timeline zoom/width changed - Zoom: {ViewModel?.Zoom}, Width: {ViewModel?.TotalTimelineWidth}");
+            _logger.LogDebug($"Timeline X zoom/width changed - ZoomX: {ViewModel?.ZoomX}, Width: {ViewModel?.TotalTimelineWidth}");
             UpdateTimeRuler();
-            UpdateGridLines();
         }
     }
 
@@ -86,23 +102,13 @@ public partial class TimelineView : UserControl
         var scrollPosition = _horizontalScroller.Offset.X;
         var viewportWidth = _horizontalScroller.Viewport.Width;
 
-        var startBeat = scrollPosition / ViewModel.Zoom;
-        var endBeat = (scrollPosition + viewportWidth) / ViewModel.Zoom;
+        var startBeat = scrollPosition / ViewModel.ZoomX;
+        var endBeat = (scrollPosition + viewportWidth) / ViewModel.ZoomX;
 
         _timeRuler.UpdateRuler(
-            ViewModel.Zoom,
+            ViewModel.ZoomX,
             startBeat,
             endBeat,
-            ViewModel.TotalTimelineWidth
-        );
-    }
-
-    private void UpdateGridLines()
-    {
-        if (ViewModel == null) return;
-
-        _gridLines.UpdateGrid(
-            ViewModel.Zoom,
             ViewModel.TotalTimelineWidth
         );
     }
