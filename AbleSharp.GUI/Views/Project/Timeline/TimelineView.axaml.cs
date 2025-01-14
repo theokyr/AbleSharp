@@ -17,7 +17,6 @@ public partial class TimelineView : UserControl
     private ScrollViewer _horizontalScroller;
     private ScrollViewer _headerScroller;
     private TimeRulerView _timeRuler;
-    private GridLinesView _gridLines;
 
     public TimelineView()
     {
@@ -27,7 +26,6 @@ public partial class TimelineView : UserControl
         _horizontalScroller = this.FindControl<ScrollViewer>("HorizontalScroller");
         _headerScroller = this.FindControl<ScrollViewer>("HeaderScroller");
         _timeRuler = this.FindControl<TimeRulerView>("TimeRuler");
-        _gridLines = this.FindControl<GridLinesView>("GridLines");
 
         // Handle scroll synchronization
         _horizontalScroller.ScrollChanged += OnHorizontalScrollChanged;
@@ -52,7 +50,6 @@ public partial class TimelineView : UserControl
 
         // Force initial updates
         UpdateTimeRuler();
-        UpdateGridLines();
     }
 
     private void OnHorizontalScrollChanged(object? sender, ScrollChangedEventArgs e)
@@ -75,7 +72,6 @@ public partial class TimelineView : UserControl
         {
             _logger.LogDebug($"Timeline X zoom/width changed - ZoomX: {ViewModel?.ZoomX}, Width: {ViewModel?.TotalTimelineWidth}");
             UpdateTimeRuler();
-            UpdateGridLines();
         }
     }
 
@@ -93,16 +89,6 @@ public partial class TimelineView : UserControl
             ViewModel.ZoomX,
             startBeat,
             endBeat,
-            ViewModel.TotalTimelineWidth
-        );
-    }
-
-    private void UpdateGridLines()
-    {
-        if (ViewModel == null) return;
-
-        _gridLines.UpdateGrid(
-            ViewModel.ZoomX,
             ViewModel.TotalTimelineWidth
         );
     }

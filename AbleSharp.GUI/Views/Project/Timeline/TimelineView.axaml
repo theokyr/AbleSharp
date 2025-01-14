@@ -124,10 +124,6 @@
                           HorizontalScrollBarVisibility="Visible"
                           VerticalScrollBarVisibility="Visible">
                 <Grid>
-                    <!-- Background Grid -->
-                    <views:GridLinesView x:Name="GridLines"
-                                         Width="{Binding TotalTimelineWidth}" />
-
                     <!-- Track Lanes -->
                     <ItemsControl ItemsSource="{Binding Tracks}">
                         <ItemsControl.ItemTemplate>
