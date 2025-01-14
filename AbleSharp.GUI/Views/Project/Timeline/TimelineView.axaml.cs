@@ -31,11 +31,30 @@ public partial class TimelineView : UserControl
         _horizontalScroller.ScrollChanged += OnHorizontalScrollChanged;
 
         DataContextChanged += OnDataContextChanged;
+
+        // Listen for size changes
+        _horizontalScroller.PropertyChanged += OnScrollerPropertyChanged;
     }
 
     private void InitializeComponent()
     {
         AvaloniaXamlLoader.Load(this);
+    }
+
+    private void OnScrollerPropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
+    {
+        if (e.Property == BoundsProperty || e.Property == ScrollViewer.ViewportProperty)
+        {
+            UpdateViewportSize();
+        }
+    }
+
+    private void UpdateViewportSize()
+    {
+        if (ViewModel != null && _horizontalScroller.Viewport.Width > 0)
+        {
+            ViewModel.SetViewportWidth(_horizontalScroller.Viewport.Width);
+        }
     }
 
     private void OnDataContextChanged(object? sender, EventArgs e)
@@ -50,6 +69,7 @@ public partial class TimelineView : UserControl
 
         // Force initial updates
         UpdateTimeRuler();
+        UpdateViewportSize();
     }
 
     private void OnHorizontalScrollChanged(object? sender, ScrollChangedEventArgs e)

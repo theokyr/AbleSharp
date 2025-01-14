@@ -23,6 +23,7 @@ public class TimelineViewModel : INotifyPropertyChanged
     private double _panX = 0.0;
     private double _totalTimelineWidth;
     private decimal _lastClipEndTime = 0;
+    private double _viewportWidth = 800; // Default viewport width
 
     public ObservableCollection<TimelineTrackViewModel> Tracks { get; } = new();
 
@@ -30,6 +31,7 @@ public class TimelineViewModel : INotifyPropertyChanged
     public ICommand ZoomOutXCommand { get; }
     public ICommand ZoomInYCommand { get; }
     public ICommand ZoomOutYCommand { get; }
+    public ICommand FitHorizontalCommand { get; }
 
     public TimelineViewModel(AbletonProject project)
     {
@@ -54,6 +56,7 @@ public class TimelineViewModel : INotifyPropertyChanged
         ZoomOutXCommand = AbleSharpUiCommand.Create(ZoomOutX);
         ZoomInYCommand = AbleSharpUiCommand.Create(ZoomInY);
         ZoomOutYCommand = AbleSharpUiCommand.Create(ZoomOutY);
+        FitHorizontalCommand = AbleSharpUiCommand.Create(FitHorizontal);
 
         UpdateTimelineWidth();
 
@@ -116,6 +119,38 @@ public class TimelineViewModel : INotifyPropertyChanged
                          $"ZoomX={ZoomX}, NewWidth={newWidth}");
 
         TotalTimelineWidth = newWidth;
+    }
+
+    public void SetViewportWidth(double width)
+    {
+        if (Math.Abs(_viewportWidth - width) > 0.001)
+        {
+            _viewportWidth = width;
+            _logger.LogDebug($"Viewport width updated to {width}");
+        }
+    }
+
+    private void FitHorizontal()
+    {
+        if (_viewportWidth <= 0 || _lastClipEndTime <= 0)
+        {
+            _logger.LogWarning("Cannot fit horizontal - invalid viewport width or timeline length");
+            return;
+        }
+
+        // Calculate the zoom level needed to fit the content
+        var padding = 20; // pixels of padding
+        var availableWidth = _viewportWidth - padding;
+        var totalBeats = (double)_lastClipEndTime;
+        var newZoom = availableWidth / totalBeats;
+
+        // Clamp to min/max zoom levels
+        newZoom = Math.Max(Constants.MIN_ZOOM_X, Math.Min(Constants.MAX_ZOOM_X, newZoom));
+
+        _logger.LogDebug($"Fitting horizontal: viewport={_viewportWidth}, " +
+                        $"beats={totalBeats}, newZoom={newZoom}");
+
+        ZoomX = newZoom;
     }
 
     public decimal Tempo
