@@ -95,7 +95,7 @@ public static class AbletonProjectDumper
 
         // Dump ViewData
         if (liveSet.ViewData != null)
-            AppendLine(sb, indent + 1, $"ViewData: {liveSet.ViewData.Value}");
+            AppendLine(sb, indent + 1, $"ViewData: {liveSet.ViewData.Val}");
 
         // Dump ViewStates
         if (liveSet.ViewStates != null)
