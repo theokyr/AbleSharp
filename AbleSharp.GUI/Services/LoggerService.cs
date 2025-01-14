@@ -14,7 +14,7 @@ public static class LoggerService
         if (_loggerFactory != null)
             return;
 
-        var logLevel = 
+        var logLevel =
 #if DEBUG
             LogLevel.Debug;
 #else
@@ -52,16 +52,27 @@ internal class DebugLogProvider : ILoggerProvider
 {
     private readonly DebugLogLogger _logger = new();
 
-    public ILogger CreateLogger(string categoryName) => _logger;
+    public ILogger CreateLogger(string categoryName)
+    {
+        return _logger;
+    }
 
-    public void Dispose() { }
+    public void Dispose()
+    {
+    }
 }
 
 internal class DebugLogLogger : ILogger
 {
-    public IDisposable? BeginScope<TState>(TState state) where TState : notnull => null;
+    public IDisposable? BeginScope<TState>(TState state) where TState : notnull
+    {
+        return null;
+    }
 
-    public bool IsEnabled(LogLevel logLevel) => true;
+    public bool IsEnabled(LogLevel logLevel)
+    {
+        return true;
+    }
 
     public void Log<TState>(
         LogLevel logLevel,

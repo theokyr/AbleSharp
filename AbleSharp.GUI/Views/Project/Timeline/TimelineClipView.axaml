@@ -31,20 +31,20 @@
                     <Grid ColumnDefinitions="*,Auto">
                         <!-- Clip Name -->
                         <TextBlock Grid.Column="0"
-                                 Text="{Binding ClipName}"
-                                 Margin="5,2"
-                                 FontSize="{Binding ZoomY, Converter={StaticResource FontSizeMultiConverter}, ConverterParameter=10}"
-                                 Foreground="White"
-                                 TextTrimming="CharacterEllipsis"
-                                 VerticalAlignment="Center" />
+                                   Text="{Binding ClipName}"
+                                   Margin="5,2"
+                                   FontSize="{Binding ZoomY, Converter={StaticResource FontSizeMultiConverter}, ConverterParameter=10}"
+                                   Foreground="White"
+                                   TextTrimming="CharacterEllipsis"
+                                   VerticalAlignment="Center" />
 
                         <!-- Length Display -->
                         <TextBlock Grid.Column="1"
-                                 Text="{Binding Length, StringFormat='{}{0:F1}'}"
-                                 Margin="5,2"
-                                 FontSize="{Binding ZoomY, Converter={StaticResource FontSizeMultiConverter}, ConverterParameter=9}"
-                                 Foreground="#AAFFFFFF"
-                                 VerticalAlignment="Center" />
+                                   Text="{Binding Length, StringFormat='{}{0:F1}'}"
+                                   Margin="5,2"
+                                   FontSize="{Binding ZoomY, Converter={StaticResource FontSizeMultiConverter}, ConverterParameter=9}"
+                                   Foreground="#AAFFFFFF"
+                                   VerticalAlignment="Center" />
                     </Grid>
                 </Border>
 
@@ -55,10 +55,10 @@
                     <!-- Place for waveform/midi data visualization -->
                     <Grid>
                         <TextBlock Text="∿∿∿∿"
-                                 Foreground="#fff"
-                                 FontSize="{Binding ZoomY, Converter={StaticResource FontSizeMultiConverter}, ConverterParameter=14}"
-                                 HorizontalAlignment="Center"
-                                 VerticalAlignment="Center" />
+                                   Foreground="#fff"
+                                   FontSize="{Binding ZoomY, Converter={StaticResource FontSizeMultiConverter}, ConverterParameter=14}"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center" />
                     </Grid>
                 </Border>
             </Grid>

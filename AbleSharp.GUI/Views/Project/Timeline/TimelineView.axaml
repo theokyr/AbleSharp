@@ -138,8 +138,8 @@
                     <ItemsControl ItemsSource="{Binding Tracks}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <views:TimelineTrackView DataContext="{Binding}" 
-                                                        Height="{Binding ZoomY, Converter={StaticResource HeightMultiConverter}, ConverterParameter=60}" />
+                                <views:TimelineTrackView DataContext="{Binding}"
+                                                         Height="{Binding ZoomY, Converter={StaticResource HeightMultiConverter}, ConverterParameter=60}" />
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
@@ -156,7 +156,7 @@
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <views:TimelineTrackHeaderView DataContext="{Binding}"
-                                                  Height="{Binding ZoomY, Converter={StaticResource HeightMultiConverter}, ConverterParameter=60}" />
+                                                           Height="{Binding ZoomY, Converter={StaticResource HeightMultiConverter}, ConverterParameter=60}" />
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>

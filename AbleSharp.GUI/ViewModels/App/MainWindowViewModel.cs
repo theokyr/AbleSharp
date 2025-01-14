@@ -20,6 +20,7 @@ public class MainWindowViewModel : INotifyPropertyChanged
     public event PropertyChangedEventHandler? PropertyChanged;
 
     public ICommand OpenProjectCommand { get; }
+    public ICommand OpenMergeProjectsCommand { get; }
     public ICommand OpenDebugLogCommand { get; }
     public ICommand ExitCommand { get; }
 
@@ -30,6 +31,7 @@ public class MainWindowViewModel : INotifyPropertyChanged
         _logger.LogDebug("Constructing MainWindowViewModel");
 
         OpenProjectCommand = new OpenProjectCommand(this);
+        OpenMergeProjectsCommand = new OpenMergeProjectsCommand(this);
 
         OpenDebugLogCommand = AbleSharpUiCommand.Create(ShowDebugLog);
 

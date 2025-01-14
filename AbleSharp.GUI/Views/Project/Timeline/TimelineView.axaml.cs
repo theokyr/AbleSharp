@@ -43,18 +43,12 @@ public partial class TimelineView : UserControl
 
     private void OnScrollerPropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
     {
-        if (e.Property == BoundsProperty || e.Property == ScrollViewer.ViewportProperty)
-        {
-            UpdateViewportSize();
-        }
+        if (e.Property == BoundsProperty || e.Property == ScrollViewer.ViewportProperty) UpdateViewportSize();
     }
 
     private void UpdateViewportSize()
     {
-        if (ViewModel != null && _horizontalScroller.Viewport.Width > 0)
-        {
-            ViewModel.SetViewportWidth(_horizontalScroller.Viewport.Width);
-        }
+        if (ViewModel != null && _horizontalScroller.Viewport.Width > 0) ViewModel.SetViewportWidth(_horizontalScroller.Viewport.Width);
     }
 
     private void OnDataContextChanged(object? sender, EventArgs e)
