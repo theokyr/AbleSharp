@@ -5,63 +5,92 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    d:DesignWidth="600" d:DesignHeight="400">
+    d:DesignWidth="800" d:DesignHeight="600">
 
-    <Grid RowDefinitions="Auto,*,Auto,*,Auto" Margin="10">
+    <Grid RowDefinitions="Auto,*,Auto,*,Auto" Margin="16">
         <!-- Title -->
-        <TextBlock Text="Merge Projects"
-                   FontSize="20"
-                   FontWeight="Bold"
-                   HorizontalAlignment="Center"
-                   Margin="0,0,0,10" />
+        <TextBlock Grid.Row="0" 
+                 Text="Merge Projects"
+                 Classes="Heading1"
+                 HorizontalAlignment="Center"
+                 Margin="0,0,0,24"/>
 
         <!-- Project Selection Area -->
-        <Border Grid.Row="1" Margin="0,0,0,10" BorderBrush="#CCCCCC" BorderThickness="1" CornerRadius="5">
+        <Border Grid.Row="1" Classes="card">
             <StackPanel>
-                <TextBlock Text="Projects to Merge" FontWeight="Bold" Margin="5" />
-                <DockPanel Margin="5">
-                    <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Margin="0,0,0,5">
-                        <Button Content="Add Projects" Command="{Binding AddProjectsCommand}" Margin="0,0,5,0" />
-                        <Button Content="Remove Selected" Command="{Binding RemoveSelectedProjectsCommand}"
-                                IsEnabled="{Binding SelectedProjects.Count, Converter={StaticResource GreaterThanConverter}, ConverterParameter=0}" />
+                <TextBlock Text="Projects to Merge" 
+                         Classes="Heading3"/>
+                
+                <DockPanel>
+                    <StackPanel DockPanel.Dock="Top" 
+                              Orientation="Horizontal" 
+                              Spacing="8"
+                              Margin="0,0,0,8">
+                        <Button Content="Add Projects" 
+                                Command="{Binding AddProjectsCommand}"
+                                Classes="primary"/>
+                        <Button Content="Remove Selected"
+                                Command="{Binding RemoveSelectedProjectsCommand}"
+                                IsEnabled="{Binding SelectedProjects.Count, Converter={StaticResource GreaterThanConverter}, ConverterParameter=0}"/>
                     </StackPanel>
-                    <ListBox x:Name="ProjectsListBox" ItemsSource="{Binding SelectedProjects}" SelectionMode="Single" />
+                    
+                    <ListBox x:Name="ProjectsListBox" 
+                            ItemsSource="{Binding SelectedProjects}" 
+                            SelectionMode="Single"/>
                 </DockPanel>
             </StackPanel>
         </Border>
 
         <!-- Output File Selection -->
-        <Border Grid.Row="3" Margin="0,0,0,10" BorderBrush="#CCCCCC" BorderThickness="1" CornerRadius="5">
+        <Border Grid.Row="3" Classes="card">
             <StackPanel>
-                <TextBlock Text="Output File" FontWeight="Bold" Margin="5" />
-                <DockPanel Margin="5">
-                    <TextBox Text="{Binding OutputFilePath}" IsReadOnly="True" DockPanel.Dock="Left" Width="400" />
-                    <Button Content="Browse..." Command="{Binding SelectOutputFileCommand}" Margin="5,0,0,0" />
-                </DockPanel>
+                <TextBlock Text="Output File" 
+                         Classes="Heading3"/>
+                
+                <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto">
+                    <TextBox Text="{Binding OutputFilePath}"
+                            IsReadOnly="True"
+                            Grid.Column="0"
+                            Margin="0,0,8,0"/>
+                    
+                    <Button Content="Browse..."
+                            Command="{Binding SelectOutputFileCommand}"
+                            Grid.Column="1"/>
+                </Grid>
             </StackPanel>
         </Border>
 
         <!-- Merge Settings -->
-        <Border Grid.Row="5" Margin="0,0,0,10" BorderBrush="#CCCCCC" BorderThickness="1" CornerRadius="5">
+        <Border Grid.Row="4" Classes="card">
             <StackPanel>
-                <TextBlock Text="Merge Settings" FontWeight="Bold" Margin="5" />
-                <StackPanel Margin="5">
-                    <!-- Example Settings -->
-                    <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                        <TextBlock Text="Resolve Conflicts:" VerticalAlignment="Center" Width="150" />
-                        <ComboBox SelectedItem="{Binding MergeSettingExample}" Width="200">
-                            <ComboBoxItem Content="Keep All" />
-                            <ComboBoxItem Content="Overwrite Existing" />
-                            <ComboBoxItem Content="Skip Duplicates" />
-                        </ComboBox>
-                    </StackPanel>
-                    <!-- Add more settings as needed -->
-                </StackPanel>
+                <TextBlock Text="Merge Settings" 
+                         Classes="Heading3"/>
+                
+                <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto">
+                    <TextBlock Text="Resolve Conflicts:"
+                             Classes="Body"
+                             VerticalAlignment="Center"
+                             Grid.Column="0"
+                             Margin="0,0,16,0"/>
+                    
+                    <ComboBox SelectedItem="{Binding MergeSettingExample}"
+                             Grid.Column="1"
+                             Width="200"
+                             HorizontalAlignment="Left">
+                        <ComboBoxItem Content="Keep All"/>
+                        <ComboBoxItem Content="Overwrite Existing"/>
+                        <ComboBoxItem Content="Skip Duplicates"/>
+                    </ComboBox>
+                </Grid>
+                
+                <!-- Merge Button -->
+                <Button Content="Merge Projects"
+                        Command="{Binding MergeProjectsCommand}"
+                        Classes="primary"
+                        HorizontalAlignment="Right"
+                        Margin="0,16,0,0"
+                        Width="120"/>
             </StackPanel>
         </Border>
-
-        <!-- Merge Button -->
-        <Button Content="Merge Projects" Command="{Binding MergeProjectsCommand}"
-                Grid.Row="6" HorizontalAlignment="Right" Width="120" />
     </Grid>
 </UserControl>

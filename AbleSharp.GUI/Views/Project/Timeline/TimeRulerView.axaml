@@ -1,54 +1,54 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-
-<UserControl
+﻿<UserControl
     x:Class="AbleSharp.GUI.Views.TimeRulerView"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    Height="30">
+    Height="32">
 
-    <Canvas Name="RulerCanvas" Background="#333333">
-        <ItemsControl Name="TickMarks">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <Canvas />
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
+    <Border Classes="timeline-header">
+        <Canvas Name="RulerCanvas">
+            <ItemsControl Name="TickMarks">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Canvas/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
 
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <Grid Canvas.Left="{Binding Position}">
-                        <!-- Major tick -->
-                        <Line StartPoint="0,15"
-                              EndPoint="0,30"
-                              Stroke="White"
-                              StrokeThickness="1" />
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Canvas.Left="{Binding Position}">
+                            <!-- Major tick -->
+                            <Line StartPoint="0,16"
+                                  EndPoint="0,32"
+                                  Stroke="{StaticResource TextPrimaryBrush}"
+                                  StrokeThickness="1"/>
 
-                        <!-- Minor ticks -->
-                        <ItemsControl ItemsSource="{Binding MinorTicks}">
-                            <ItemsControl.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <Canvas />
-                                </ItemsPanelTemplate>
-                            </ItemsControl.ItemsPanel>
+                            <!-- Minor ticks -->
+                            <ItemsControl ItemsSource="{Binding MinorTicks}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <Canvas/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
 
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <Line StartPoint="{Binding StartPoint}"
-                                          EndPoint="{Binding EndPoint}"
-                                          Canvas.Left="{Binding Position}"
-                                          Stroke="#888888"
-                                          StrokeThickness="1" />
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Line StartPoint="{Binding StartPoint}"
+                                              EndPoint="{Binding EndPoint}"
+                                              Canvas.Left="{Binding Position}"
+                                              Stroke="{StaticResource TextTertiaryBrush}"
+                                              StrokeThickness="1"/>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
 
-                        <!-- Beat number label -->
-                        <TextBlock Text="{Binding Label}"
-                                   Foreground="White"
-                                   FontSize="10" />
-                    </Grid>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
-    </Canvas>
+                            <!-- Beat number label -->
+                            <TextBlock Text="{Binding Label}"
+                                     Classes="Caption"
+                                     Margin="4,0,0,0"/>
+                        </Grid>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </Canvas>
+    </Border>
 </UserControl>

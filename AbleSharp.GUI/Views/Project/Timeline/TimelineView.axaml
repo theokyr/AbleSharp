@@ -7,8 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:local="clr-namespace:AbleSharp.GUI"
     mc:Ignorable="d"
-    d:DesignWidth="1200"
-    d:DesignHeight="800"
+    d:DesignWidth="1200" d:DesignHeight="800"
     x:Name="TimelineViewRoot">
 
     <Grid RowDefinitions="Auto,Auto,*" ColumnDefinitions="*">
@@ -26,22 +25,22 @@
                 <StackPanel Orientation="Horizontal" Spacing="5">
                     <TextBlock Text="{Binding Tempo, StringFormat='{}{0:F1}'}"
                                Foreground="#CCCCCC"
-                               VerticalAlignment="Center" />
+                               VerticalAlignment="Center"/>
                     <TextBlock Text="BPM"
                                Foreground="#CCCCCC"
-                               VerticalAlignment="Center" />
+                               VerticalAlignment="Center"/>
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal" Spacing="2">
                     <TextBlock Text="{Binding TimeSigNumerator}"
                                Foreground="#CCCCCC"
-                               VerticalAlignment="Center" />
+                               VerticalAlignment="Center"/>
                     <TextBlock Text="/"
                                Foreground="#CCCCCC"
-                               VerticalAlignment="Center" />
+                               VerticalAlignment="Center"/>
                     <TextBlock Text="{Binding TimeSigDenominator}"
                                Foreground="#CCCCCC"
-                               VerticalAlignment="Center" />
+                               VerticalAlignment="Center"/>
                 </StackPanel>
             </StackPanel>
 
@@ -53,65 +52,65 @@
 
                 <!-- X Zoom -->
                 <StackPanel Orientation="Horizontal" Spacing="5">
-                    <TextBlock Text="X Zoom:" Foreground="#CCCCCC" VerticalAlignment="Center" />
+                    <TextBlock Text="X Zoom:" Foreground="#CCCCCC" VerticalAlignment="Center"/>
                     <Button Command="{Binding ZoomOutXCommand}"
                             Classes="transport">
-                        <TextBlock Text="-" />
+                        <TextBlock Text="-"/>
                     </Button>
 
                     <Slider Width="100"
-                            Minimum="{x:Static local:Constants.MIN_ZOOM_X}"
+                            Minimum="1"
                             Maximum="{x:Static local:Constants.MAX_ZOOM_X}"
                             Value="{Binding ZoomX}"
-                            VerticalAlignment="Center" />
+                            VerticalAlignment="Center"/>
 
                     <Button Command="{Binding ZoomInXCommand}"
                             Classes="transport">
-                        <TextBlock Text="+" />
+                        <TextBlock Text="+"/>
                     </Button>
 
                     <TextBlock Text="{Binding ZoomX, StringFormat='x{0:F1}'}"
                                Foreground="#CCCCCC"
                                Width="50"
                                TextAlignment="Center"
-                               VerticalAlignment="Center" />
+                               VerticalAlignment="Center"/>
 
                     <Button Command="{Binding FitHorizontalCommand}"
                             Classes="transport"
                             ToolTip.Tip="Fit to width">
-                        <TextBlock Text="H" />
+                        <TextBlock Text="H"/>
                     </Button>
                 </StackPanel>
 
                 <!-- Y Zoom -->
                 <StackPanel Orientation="Horizontal" Spacing="5">
-                    <TextBlock Text="Y Zoom:" Foreground="#CCCCCC" VerticalAlignment="Center" />
+                    <TextBlock Text="Y Zoom:" Foreground="#CCCCCC" VerticalAlignment="Center"/>
                     <Button Command="{Binding ZoomOutYCommand}"
                             Classes="transport">
-                        <TextBlock Text="-" />
+                        <TextBlock Text="-"/>
                     </Button>
 
                     <Slider Width="100"
-                            Minimum="{x:Static local:Constants.MIN_ZOOM_Y}"
+                            Minimum="1"
                             Maximum="{x:Static local:Constants.MAX_ZOOM_Y}"
                             Value="{Binding ZoomY}"
-                            VerticalAlignment="Center" />
+                            VerticalAlignment="Center"/>
 
                     <Button Command="{Binding ZoomInYCommand}"
                             Classes="transport">
-                        <TextBlock Text="+" />
+                        <TextBlock Text="+"/>
                     </Button>
 
                     <TextBlock Text="{Binding ZoomY, StringFormat='x{0:F1}'}"
                                Foreground="#CCCCCC"
                                Width="50"
                                TextAlignment="Center"
-                               VerticalAlignment="Center" />
+                               VerticalAlignment="Center"/>
 
                     <Button Command="{Binding FitVerticalCommand}"
                             Classes="transport"
                             ToolTip.Tip="Fit to height">
-                        <TextBlock Text="V" />
+                        <TextBlock Text="V"/>
                     </Button>
                 </StackPanel>
             </StackPanel>
@@ -124,7 +123,7 @@
             Width="{Binding TotalTimelineWidth}"
             Background="#1E1E1E"
             HorizontalAlignment="Left"
-            x:Name="TimeRuler" />
+            x:Name="TimeRuler"/>
 
         <!-- Main Content Area -->
         <Grid Grid.Row="2" ColumnDefinitions="*,Auto">
@@ -133,20 +132,18 @@
                           Name="HorizontalScroller"
                           HorizontalScrollBarVisibility="Visible"
                           VerticalScrollBarVisibility="Visible">
-                <Grid>
-                    <!-- Track Lanes -->
-                    <ItemsControl ItemsSource="{Binding Tracks}">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <views:TimelineTrackView DataContext="{Binding}"
-                                                         Height="{Binding ZoomY, Converter={StaticResource HeightMultiConverter}, ConverterParameter=60}" />
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                </Grid>
+                <ItemsControl ItemsSource="{Binding Tracks}"
+                            ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+                            ScrollViewer.VerticalScrollBarVisibility="Hidden">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <views:TimelineTrackView DataContext="{Binding}"
+                                                     Height="{Binding ZoomY, Converter={StaticResource HeightMultiConverter}, ConverterParameter=60}"/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
             </ScrollViewer>
 
-            <!-- Fixed Track Headers -->
             <ScrollViewer Grid.Column="1"
                           Name="HeaderScroller"
                           Width="200"
@@ -156,7 +153,7 @@
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <views:TimelineTrackHeaderView DataContext="{Binding}"
-                                                           Height="{Binding ZoomY, Converter={StaticResource HeightMultiConverter}, ConverterParameter=60}" />
+                                                           Height="{Binding ZoomY, Converter={StaticResource HeightMultiConverter}, ConverterParameter=60}"/>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
@@ -165,19 +162,17 @@
     </Grid>
 
     <UserControl.Styles>
-        <!-- Transport Button Style -->
         <Style Selector="Button.transport">
-            <Setter Property="Width" Value="24" />
-            <Setter Property="Height" Value="24" />
-            <Setter Property="CornerRadius" Value="12" />
-            <Setter Property="Background" Value="#444444" />
-            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Width" Value="32"/>
+            <Setter Property="Height" Value="32"/>
+            <Setter Property="CornerRadius" Value="4"/>
+            <Setter Property="BorderThickness" Value="0"/>
         </Style>
 
-        <!-- Slider Style -->
         <Style Selector="Slider">
-            <Setter Property="Foreground" Value="#666666" />
-            <Setter Property="Background" Value="#333333" />
+            <Setter Property="Height" Value="64"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="ClipToBounds" Value="False"/>
         </Style>
     </UserControl.Styles>
 </UserControl>

@@ -5,12 +5,32 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="Debug Log"
-    Width="600" Height="400"
+    Width="800" Height="600"
+    WindowStartupLocation="CenterOwner"
     mc:Ignorable="d">
 
-    <Grid>
-        <ListBox ItemsSource="{Binding LogEntries}"
-                 HorizontalAlignment="Stretch"
-                 VerticalAlignment="Stretch" />
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="Debug Log"
+                   Classes="Heading2"
+                   Margin="0,0,0,16"/>
+
+        <Border Grid.Row="1" 
+                Classes="card">
+            <ListBox ItemsSource="{Binding LogEntries}"
+                     Background="Transparent">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding}"
+                                   Classes="Body"
+                                   TextWrapping="Wrap"/>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </Border>
     </Grid>
 </Window>

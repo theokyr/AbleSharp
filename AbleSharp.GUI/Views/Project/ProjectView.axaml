@@ -1,4 +1,3 @@
-<!-- File: AbleSharp.GUI/Views/ProjectView.axaml -->
 <UserControl
     x:Class="AbleSharp.GUI.Views.ProjectView"
     xmlns="https://github.com/avaloniaui"
@@ -7,25 +6,11 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    d:DesignWidth="1000" d:DesignHeight="700">
+    d:DesignWidth="1200" d:DesignHeight="800">
 
-    <Grid RowDefinitions="*" Margin="10">
-        <!--
-        <TreeView Grid.Row="0"
-                  Height="10"
-                  ItemsSource="{Binding RootTracks}">
-            <TreeView.ItemTemplate>
-                <TreeDataTemplate
-                    DataType="vm:TrackViewModel"
-                    ItemsSource="{Binding Children}">
-                    <StackPanel Orientation="Horizontal" Spacing="5">
-                        <TextBlock Text="{Binding TrackName}" FontSize="14" />
-                    </StackPanel>
-                </TreeDataTemplate>
-            </TreeView.ItemTemplate>
-        </TreeView> -->
-
-        <views:TimelineView Grid.Row="0"
-                            DataContext="{Binding TimelineVM}" />
+    <Grid RowDefinitions="*">
+        <Border Classes="card" Margin="8">
+            <views:TimelineView DataContext="{Binding TimelineVM}" />
+        </Border>
     </Grid>
 </UserControl>

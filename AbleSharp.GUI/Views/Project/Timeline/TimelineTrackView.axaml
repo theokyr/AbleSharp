@@ -5,28 +5,23 @@
     xmlns:views="clr-namespace:AbleSharp.GUI.Views"
     HorizontalAlignment="Left">
 
-    <Grid RowDefinitions="*" ColumnDefinitions="*">
-        <Border Grid.Column="0" Background="#1E1E1E"
-                BorderBrush="#333333"
-                BorderThickness="0,0,0,1">
+    <Border Classes="timeline-track">
+        <ItemsControl ItemsSource="{Binding ClipViewModels}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Canvas
+                        Width="{Binding DataContext.TotalTimelineWidth, 
+                                      RelativeSource={RelativeSource AncestorType=views:TimelineView}}"
+                        HorizontalAlignment="Left"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
 
-            <ItemsControl ItemsSource="{Binding ClipViewModels}">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <Canvas
-                            Width="{Binding DataContext.TotalTimelineWidth, 
-                                          RelativeSource={RelativeSource AncestorType=views:TimelineView}}"
-                            HorizontalAlignment="Left" />
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <views:TimelineClipView DataContext="{Binding}"
-                                                ClipToBounds="False" />
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-        </Border>
-    </Grid>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <views:TimelineClipView DataContext="{Binding}"
+                                            ClipToBounds="False"/>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </Border>
 </UserControl>
