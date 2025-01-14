@@ -35,13 +35,9 @@ public static class AbletonProjectDumper
 
         // LiveSet
         if (project.LiveSet != null)
-        {
             DumpLiveSet(project.LiveSet, sb, indent + 1);
-        }
         else
-        {
             AppendLine(sb, indent + 1, "[LiveSet is null]");
-        }
     }
 
     private static void DumpLiveSet(LiveSet liveSet, StringBuilder sb, int indent)
@@ -105,7 +101,7 @@ public static class AbletonProjectDumper
         if (liveSet.ExpressionLanes != null && liveSet.ExpressionLanes.Count > 0)
         {
             AppendLine(sb, indent + 1, $"ExpressionLanes ({liveSet.ExpressionLanes.Count}):");
-            for (int i = 0; i < liveSet.ExpressionLanes.Count; i++)
+            for (var i = 0; i < liveSet.ExpressionLanes.Count; i++)
             {
                 var el = liveSet.ExpressionLanes[i];
                 AppendLine(sb, indent + 2, $"ExpressionLane[{i}]: Id={el.Id}, Type={el.Type?.Val}, Size={el.Size?.Val}, IsMinimized={el.IsMinimized?.Val}");
@@ -116,7 +112,7 @@ public static class AbletonProjectDumper
         if (liveSet.ContentLanes != null && liveSet.ContentLanes.Count > 0)
         {
             AppendLine(sb, indent + 1, $"ContentLanes ({liveSet.ContentLanes.Count}):");
-            for (int i = 0; i < liveSet.ContentLanes.Count; i++)
+            for (var i = 0; i < liveSet.ContentLanes.Count; i++)
             {
                 var cl = liveSet.ContentLanes[i];
                 AppendLine(sb, indent + 2, $"ContentLane[{i}]: Type={cl.Type?.Val}, Size={cl.Size?.Val}, IsMinimized={cl.IsMinimized?.Val}");
@@ -127,7 +123,7 @@ public static class AbletonProjectDumper
         if (liveSet.Tracks != null && liveSet.Tracks.Count > 0)
         {
             AppendLine(sb, indent + 1, $"Tracks ({liveSet.Tracks.Count}):");
-            for (int i = 0; i < liveSet.Tracks.Count; i++)
+            for (var i = 0; i < liveSet.Tracks.Count; i++)
             {
                 var track = liveSet.Tracks[i];
                 DumpTrack(track, sb, indent + 2, i);
@@ -142,7 +138,7 @@ public static class AbletonProjectDumper
         if (liveSet.Scenes != null && liveSet.Scenes.Count > 0)
         {
             AppendLine(sb, indent + 1, $"Scenes ({liveSet.Scenes.Count}):");
-            for (int i = 0; i < liveSet.Scenes.Count; i++)
+            for (var i = 0; i < liveSet.Scenes.Count; i++)
             {
                 var scene = liveSet.Scenes[i];
                 DumpScene(scene, sb, indent + 2, i);
@@ -150,26 +146,20 @@ public static class AbletonProjectDumper
         }
 
         // Transport
-        if (liveSet.Transport != null)
-        {
-            DumpTransport(liveSet.Transport, sb, indent + 1);
-        }
+        if (liveSet.Transport != null) DumpTransport(liveSet.Transport, sb, indent + 1);
 
         // Locators
         if (liveSet.Locators != null && liveSet.Locators.Count > 0)
         {
             AppendLine(sb, indent + 1, $"Locators ({liveSet.Locators.Count}):");
-            foreach (var locator in liveSet.Locators)
-            {
-                DumpLocator(locator, sb, indent + 2);
-            }
+            foreach (var locator in liveSet.Locators) DumpLocator(locator, sb, indent + 2);
         }
 
         // SendsPre
         if (liveSet.SendsPre != null && liveSet.SendsPre.Count > 0)
         {
             AppendLine(sb, indent + 1, $"SendsPre ({liveSet.SendsPre.Count}):");
-            for (int i = 0; i < liveSet.SendsPre.Count; i++)
+            for (var i = 0; i < liveSet.SendsPre.Count; i++)
             {
                 var s = liveSet.SendsPre[i];
                 AppendLine(sb, indent + 2, $"[SendsPre {i}] = {s.Value?.Val}");
@@ -182,6 +172,7 @@ public static class AbletonProjectDumper
             AppendLine(sb, indent + 1, "[MasterTrack:]");
             DumpTrack(liveSet.MainTrack, sb, indent + 2, -1);
         }
+
         if (liveSet.PreHearTrack != null)
         {
             AppendLine(sb, indent + 1, "[PreHearTrack:]");
@@ -189,17 +180,14 @@ public static class AbletonProjectDumper
         }
 
         // GroovePool
-        if (liveSet.GroovePool != null)
-        {
-            DumpGroovePool(liveSet.GroovePool, sb, indent + 1);
-        }
+        if (liveSet.GroovePool != null) DumpGroovePool(liveSet.GroovePool, sb, indent + 1);
     }
 
     private static void DumpTrack(Track track, StringBuilder sb, int indent, int trackIndex)
     {
         // Attempt to detect track type:
-        string indexPrefix = (trackIndex >= 0) ? $"[{trackIndex}]" : "";
-        string trackTypeName = track.GetType().Name;
+        var indexPrefix = trackIndex >= 0 ? $"[{trackIndex}]" : "";
+        var trackTypeName = track.GetType().Name;
         AppendLine(sb, indent, $"-- Track{indexPrefix}: {trackTypeName} --");
         AppendLine(sb, indent + 1, $"Id: {track.Id}");
         AppendLine(sb, indent + 1, $"LomId: {track.LomId?.Val}");
@@ -233,23 +221,22 @@ public static class AbletonProjectDumper
             AppendLine(sb, indent + 1, $"SavedPlayingSlot: {midiTrack.SavedPlayingSlot?.Val}");
             AppendLine(sb, indent + 1, $"SavedPlayingOffset: {midiTrack.SavedPlayingOffset?.Val}");
             AppendLine(sb, indent + 1, $"VelocityDetail: {midiTrack.VelocityDetail?.Val}");
-            if (midiTrack.ControllerLayoutCustomization != null)
-            {
-                DumpControllerLayoutCustomization(midiTrack.ControllerLayoutCustomization, sb, indent + 2);
-            }
+            if (midiTrack.ControllerLayoutCustomization != null) DumpControllerLayoutCustomization(midiTrack.ControllerLayoutCustomization, sb, indent + 2);
         }
+
         if (track is AudioTrack audioTrack)
         {
             AppendLine(sb, indent + 1, $"SavedPlayingSlot: {audioTrack.SavedPlayingSlot?.Val}");
             AppendLine(sb, indent + 1, $"SavedPlayingOffset: {audioTrack.SavedPlayingOffset?.Val}");
             AppendLine(sb, indent + 1, $"VelocityDetail: {audioTrack.VelocityDetail?.Val}");
         }
+
         if (track is GroupTrack groupTrack)
         {
             if (groupTrack.Slots != null && groupTrack.Slots.Count > 0)
             {
                 AppendLine(sb, indent + 1, $"Slots ({groupTrack.Slots.Count}):");
-                for (int i = 0; i < groupTrack.Slots.Count; i++)
+                for (var i = 0; i < groupTrack.Slots.Count; i++)
                 {
                     var slot = groupTrack.Slots[i];
                     AppendLine(sb, indent + 2, $"GroupTrackSlot[{i}]: Id={slot.Id}, LomId={slot.LomId?.Val}");
@@ -262,18 +249,14 @@ public static class AbletonProjectDumper
         }
 
         // If there is a DeviceChain in all tracks:
-        if (track.DeviceChain != null)
-        {
-            DumpDeviceChain(track.DeviceChain, sb, indent + 1);
-        }
+        if (track.DeviceChain != null) DumpDeviceChain(track.DeviceChain, sb, indent + 1);
 
         // Dump TakeLanes if needed
         if (track.TakeLanes != null)
         {
             AppendLine(sb, indent + 1, "-- TakeLanes --");
             if (track.TakeLanes.LaneCollection != null)
-            {
-                for (int i = 0; i < track.TakeLanes.LaneCollection.Count; i++)
+                for (var i = 0; i < track.TakeLanes.LaneCollection.Count; i++)
                 {
                     var lane = track.TakeLanes.LaneCollection[i];
                     AppendLine(sb, indent + 2, $"TakeLane[{i}] Id={lane.Id?.Val}");
@@ -281,21 +264,15 @@ public static class AbletonProjectDumper
                     AppendLine(sb, indent + 3, $"IsContentSelectedInDocument={lane.IsContentSelectedInDocument?.Val}");
                     AppendLine(sb, indent + 3, $"Name={lane.Name?.Val}");
                     AppendLine(sb, indent + 3, $"Annotation={lane.Annotation?.Val}");
-                    if (lane.ClipAutomation != null && lane.ClipAutomation.Events != null)
-                    {
-                        AppendLine(sb, indent + 3, $"ClipAutomation MidiClip count: {lane.ClipAutomation.Events.Count}");
-                        // Possibly loop over lane.ClipAutomation.Events
-                    }
+                    if (lane.ClipAutomation != null && lane.ClipAutomation.Events != null) AppendLine(sb, indent + 3, $"ClipAutomation MidiClip count: {lane.ClipAutomation.Events.Count}");
+                    // Possibly loop over lane.ClipAutomation.Events
                 }
-            }
+
             AppendLine(sb, indent + 1, $"AreTakeLanesFolded={track.TakeLanes.AreTakeLanesFolded?.Val}");
         }
 
         // ClipSlotsListWrapper if you want
-        if (track.ClipSlotsListWrapper != null)
-        {
-            AppendLine(sb, indent + 1, $"ClipSlotsListWrapper LomId: {track.ClipSlotsListWrapper.LomId}");
-        }
+        if (track.ClipSlotsListWrapper != null) AppendLine(sb, indent + 1, $"ClipSlotsListWrapper LomId: {track.ClipSlotsListWrapper.LomId}");
 
         // AutomationEnvelopes
         if (track.AutomationEnvelopes != null && track.AutomationEnvelopes.Envelopes != null)
@@ -318,7 +295,7 @@ public static class AbletonProjectDumper
         if (deviceChain.AutomationLanes?.Lanes != null)
         {
             AppendLine(sb, indent + 1, $"AutomationLanes ({deviceChain.AutomationLanes.Lanes.Count}):");
-            for (int i = 0; i < deviceChain.AutomationLanes.Lanes.Count; i++)
+            for (var i = 0; i < deviceChain.AutomationLanes.Lanes.Count; i++)
             {
                 var lane = deviceChain.AutomationLanes.Lanes[i];
                 AppendLine(sb, indent + 2, $"Lane[{i}]: Id={lane.Id}, LaneHeight={lane.LaneHeight?.Val}");
@@ -326,16 +303,13 @@ public static class AbletonProjectDumper
         }
 
         // Dump Mixer if present
-        if (deviceChain.Mixer != null)
-        {
-            DumpMixer(deviceChain.Mixer, sb, indent + 1);
-        }
+        if (deviceChain.Mixer != null) DumpMixer(deviceChain.Mixer, sb, indent + 1);
 
         // Dump devices array
         if (deviceChain.Devices != null && deviceChain.Devices.Count > 0)
         {
             AppendLine(sb, indent + 1, $"Devices Count: {deviceChain.Devices.Count}");
-            for (int i = 0; i < deviceChain.Devices.Count; i++)
+            for (var i = 0; i < deviceChain.Devices.Count; i++)
             {
                 var dev = deviceChain.Devices[i];
                 DumpDevice(dev, sb, indent + 2, i);
@@ -355,33 +329,15 @@ public static class AbletonProjectDumper
             AppendLine(sb, indent + 2, $"PreferModulationVisible: {deviceChain.ClipEnvelopeChooserViewState.PreferModulationVisible?.Val}");
         }
 
-        if (deviceChain.AudioInputRouting != null)
-        {
-            DumpRouting("AudioInputRouting", deviceChain.AudioInputRouting, sb, indent + 1);
-        }
-        if (deviceChain.AudioOutputRouting != null)
-        {
-            DumpRouting("AudioOutputRouting", deviceChain.AudioOutputRouting, sb, indent + 1);
-        }
-        if (deviceChain.MidiInputRouting != null)
-        {
-            DumpRouting("MidiInputRouting", deviceChain.MidiInputRouting, sb, indent + 1);
-        }
-        if (deviceChain.MidiOutputRouting != null)
-        {
-            DumpRouting("MidiOutputRouting", deviceChain.MidiOutputRouting, sb, indent + 1);
-        }
+        if (deviceChain.AudioInputRouting != null) DumpRouting("AudioInputRouting", deviceChain.AudioInputRouting, sb, indent + 1);
+        if (deviceChain.AudioOutputRouting != null) DumpRouting("AudioOutputRouting", deviceChain.AudioOutputRouting, sb, indent + 1);
+        if (deviceChain.MidiInputRouting != null) DumpRouting("MidiInputRouting", deviceChain.MidiInputRouting, sb, indent + 1);
+        if (deviceChain.MidiOutputRouting != null) DumpRouting("MidiOutputRouting", deviceChain.MidiOutputRouting, sb, indent + 1);
 
         // MainSequencer
-        if (deviceChain.MainSequencer != null)
-        {
-            DumpMainSequencer(deviceChain.MainSequencer, sb, indent + 1);
-        }
+        if (deviceChain.MainSequencer != null) DumpMainSequencer(deviceChain.MainSequencer, sb, indent + 1);
         // FreezeSequencer
-        if (deviceChain.FreezeSequencer != null)
-        {
-            DumpFreezeSequencer(deviceChain.FreezeSequencer, sb, indent + 1);
-        }
+        if (deviceChain.FreezeSequencer != null) DumpFreezeSequencer(deviceChain.FreezeSequencer, sb, indent + 1);
     }
 
     private static void DumpMainSequencer(MainSequencer mainSequencer, StringBuilder sb, int indent)
@@ -390,15 +346,9 @@ public static class AbletonProjectDumper
         AppendLine(sb, indent + 1, $"LomId: {mainSequencer.LomId?.Val}");
         AppendLine(sb, indent + 1, $"IsExpanded: {mainSequencer.IsExpanded?.Val}");
         // more fields...
-        if (mainSequencer.ClipTimeable?.ArrangerAutomation != null)
-        {
-            DumpArrangerAutomation(mainSequencer.ClipTimeable.ArrangerAutomation, sb, indent + 1);
-        }
+        if (mainSequencer.ClipTimeable?.ArrangerAutomation != null) DumpArrangerAutomation(mainSequencer.ClipTimeable.ArrangerAutomation, sb, indent + 1);
 
-        if (mainSequencer.Sample?.ArrangerAutomation != null)
-        {
-            DumpArrangerAutomation(mainSequencer.Sample.ArrangerAutomation, sb, indent + 1);
-        }
+        if (mainSequencer.Sample?.ArrangerAutomation != null) DumpArrangerAutomation(mainSequencer.Sample.ArrangerAutomation, sb, indent + 1);
     }
 
     private static void DumpFreezeSequencer(FreezeSequencer freezeSequencer, StringBuilder sb, int indent)
@@ -407,19 +357,13 @@ public static class AbletonProjectDumper
         AppendLine(sb, indent + 1, $"LomId: {freezeSequencer.LomId?.Val}");
         AppendLine(sb, indent + 1, $"IsExpanded: {freezeSequencer.IsExpanded?.Val}");
         // more fields...
-        if (freezeSequencer.Sample?.ArrangerAutomation != null)
-        {
-            DumpArrangerAutomation(freezeSequencer.Sample.ArrangerAutomation, sb, indent + 1);
-        }
+        if (freezeSequencer.Sample?.ArrangerAutomation != null) DumpArrangerAutomation(freezeSequencer.Sample.ArrangerAutomation, sb, indent + 1);
 
         // ClipSlotList
         if (freezeSequencer.ClipSlotList != null && freezeSequencer.ClipSlotList.Count > 0)
         {
             AppendLine(sb, indent + 1, $"ClipSlotList ({freezeSequencer.ClipSlotList.Count}):");
-            for (int i = 0; i < freezeSequencer.ClipSlotList.Count; i++)
-            {
-                DumpClipSlot(freezeSequencer.ClipSlotList[i], sb, indent + 2, i);
-            }
+            for (var i = 0; i < freezeSequencer.ClipSlotList.Count; i++) DumpClipSlot(freezeSequencer.ClipSlotList[i], sb, indent + 2, i);
         }
     }
 
@@ -429,15 +373,10 @@ public static class AbletonProjectDumper
         if (arrangerAutomation.Events != null)
         {
             AppendLine(sb, indent + 1, $"Events Count: {arrangerAutomation.Events.Count}");
-            for (int i = 0; i < arrangerAutomation.Events.Count; i++)
-            {
-                DumpClip(arrangerAutomation.Events[i], sb, indent + 2, i);
-            }
+            for (var i = 0; i < arrangerAutomation.Events.Count; i++) DumpClip(arrangerAutomation.Events[i], sb, indent + 2, i);
         }
-        if (arrangerAutomation.AutomationTransformViewState != null)
-        {
-            DumpAutomationTransformViewState(arrangerAutomation.AutomationTransformViewState, sb, indent + 1);
-        }
+
+        if (arrangerAutomation.AutomationTransformViewState != null) DumpAutomationTransformViewState(arrangerAutomation.AutomationTransformViewState, sb, indent + 1);
     }
 
     private static void DumpControllerLayoutCustomization(ControllerLayoutCustomization clc, StringBuilder sb, int indent)
@@ -461,22 +400,13 @@ public static class AbletonProjectDumper
         AppendLine(sb, indent + 1, $"PanMode: {mixer.PanMode?.Val}");
 
         // Print volume, pan, sends, tempo, etc.
-        if (mixer.Volume != null)
-        {
-            AppendLine(sb, indent + 1, $"Volume = {mixer.Volume.Manual?.Val}");
-        }
-        if (mixer.Pan != null)
-        {
-            AppendLine(sb, indent + 1, $"Pan = {mixer.Pan.Manual?.Val}");
-        }
-        if (mixer.Tempo != null)
-        {
-            AppendLine(sb, indent + 1, $"Tempo = {mixer.Tempo.Manual?.Val}");
-        }
+        if (mixer.Volume != null) AppendLine(sb, indent + 1, $"Volume = {mixer.Volume.Manual?.Val}");
+        if (mixer.Pan != null) AppendLine(sb, indent + 1, $"Pan = {mixer.Pan.Manual?.Val}");
+        if (mixer.Tempo != null) AppendLine(sb, indent + 1, $"Tempo = {mixer.Tempo.Manual?.Val}");
         if (mixer.Sends != null && mixer.Sends.Count > 0)
         {
             AppendLine(sb, indent + 1, $"Sends: {mixer.Sends.Count}");
-            for (int i = 0; i < mixer.Sends.Count; i++)
+            for (var i = 0; i < mixer.Sends.Count; i++)
             {
                 var send = mixer.Sends[i];
                 AppendLine(sb, indent + 2, $"Send[{i}] = {send.Manual?.Val}");
@@ -496,7 +426,7 @@ public static class AbletonProjectDumper
         if (device.Parameters != null && device.Parameters.Count > 0)
         {
             AppendLine(sb, indent + 1, $"Parameters: {device.Parameters.Count}");
-            for (int i = 0; i < device.Parameters.Count; i++)
+            for (var i = 0; i < device.Parameters.Count; i++)
             {
                 var param = device.Parameters[i];
                 AppendLine(sb, indent + 2, $"Param[{i}] Id={param.Id?.Val} Value={param.Value?.Val}");
@@ -518,10 +448,7 @@ public static class AbletonProjectDumper
         AppendLine(sb, indent, "-- AutomationTransformViewState --");
         AppendLine(sb, indent + 1, $"IsTransformPending: {atvs.IsTransformPending?.Val}");
         // TimeAndValueTransforms
-        if (atvs.TimeAndValueTransforms != null)
-        {
-            AppendLine(sb, indent + 1, "[TimeAndValueTransforms is present]");
-        }
+        if (atvs.TimeAndValueTransforms != null) AppendLine(sb, indent + 1, "[TimeAndValueTransforms is present]");
     }
 
     private static void DumpClip(Clip clip, StringBuilder sb, int indent, int clipIndex)
@@ -542,31 +469,24 @@ public static class AbletonProjectDumper
 
         // AudioClip vs MidiClip specifics
         if (clip is AudioClip audioClip)
-        {
             DumpAudioClip(audioClip, sb, indent + 1);
-        }
-        else if (clip is MidiClip midiClip)
-        {
-            DumpMidiClip(midiClip, sb, indent + 1);
-        }
+        else if (clip is MidiClip midiClip) DumpMidiClip(midiClip, sb, indent + 1);
     }
 
     private static void DumpAudioClip(AudioClip audioClip, StringBuilder sb, int indent)
     {
         AppendLine(sb, indent, "-- AudioClip --");
-        if (audioClip.SampleRef != null)
-        {
-            DumpSampleRef(audioClip.SampleRef, sb, indent + 1);
-        }
+        if (audioClip.SampleRef != null) DumpSampleRef(audioClip.SampleRef, sb, indent + 1);
         if (audioClip.WarpMarkers != null && audioClip.WarpMarkers.Count > 0)
         {
             AppendLine(sb, indent + 1, $"WarpMarkers: {audioClip.WarpMarkers.Count}");
-            for (int i = 0; i < audioClip.WarpMarkers.Count; i++)
+            for (var i = 0; i < audioClip.WarpMarkers.Count; i++)
             {
                 var wm = audioClip.WarpMarkers[i];
                 AppendLine(sb, indent + 2, $"WarpMarker[{i}] Id={wm.Id}, SecTime={wm.SecTime?.Val}, BeatTime={wm.BeatTime?.Val}");
             }
         }
+
         AppendLine(sb, indent + 1, $"WarpMode: {audioClip.WarpMode?.Val}");
         AppendLine(sb, indent + 1, $"HiQ: {audioClip.HiQ?.Val}");
         AppendLine(sb, indent + 1, $"PitchCoarse: {audioClip.PitchCoarse?.Val}");
@@ -586,14 +506,14 @@ public static class AbletonProjectDumper
         if (midiClip.KeyTracks != null && midiClip.KeyTracks.Count > 0)
         {
             AppendLine(sb, indent + 1, $"KeyTracks ({midiClip.KeyTracks.Count}):");
-            for (int i = 0; i < midiClip.KeyTracks.Count; i++)
+            for (var i = 0; i < midiClip.KeyTracks.Count; i++)
             {
                 var kt = midiClip.KeyTracks[i];
                 AppendLine(sb, indent + 2, $"KeyTrack[{i}] Id={kt.Id}, MidiKey={kt.MidiKey?.Val}");
                 if (kt.Notes != null && kt.Notes.Count > 0)
                 {
                     AppendLine(sb, indent + 3, $"Notes ({kt.Notes.Count}):");
-                    for (int n = 0; n < kt.Notes.Count; n++)
+                    for (var n = 0; n < kt.Notes.Count; n++)
                     {
                         var note = kt.Notes[n];
                         AppendLine(sb, indent + 4,
@@ -613,10 +533,7 @@ public static class AbletonProjectDumper
         AppendLine(sb, indent + 1, $"HasStop: {slot.HasStop?.Val}");
         AppendLine(sb, indent + 1, $"NeedRefreeze: {slot.NeedRefreeze?.Val}");
 
-        if (slot.ClipData?.Clip != null)
-        {
-            DumpClip(slot.ClipData.Clip, sb, indent + 1, slotIndex);
-        }
+        if (slot.ClipData?.Clip != null) DumpClip(slot.ClipData.Clip, sb, indent + 1, slotIndex);
     }
 
     private static void DumpScene(Scene scene, StringBuilder sb, int indent, int sceneIndex)
@@ -649,10 +566,7 @@ public static class AbletonProjectDumper
         }
 
         // ClipSlotsListWrapper
-        if (scene.ClipSlotsListWrapper != null)
-        {
-            AppendLine(sb, indent + 1, $"ClipSlotsListWrapper LomId: {scene.ClipSlotsListWrapper.LomId}");
-        }
+        if (scene.ClipSlotsListWrapper != null) AppendLine(sb, indent + 1, $"ClipSlotsListWrapper LomId: {scene.ClipSlotsListWrapper.LomId}");
     }
 
     private static void DumpTransport(Transport transport, StringBuilder sb, int indent)
@@ -706,18 +620,9 @@ public static class AbletonProjectDumper
     private static void DumpSequencerNavigator(SequencerNavigator nav, StringBuilder sb, int indent)
     {
         AppendLine(sb, indent, "-- SequencerNavigator --");
-        if (nav.BeatTimeHelper != null)
-        {
-            AppendLine(sb, indent + 1, $"CurrentZoom: {nav.BeatTimeHelper.CurrentZoom?.Val}");
-        }
-        if (nav.ScrollerPos != null)
-        {
-            AppendLine(sb, indent + 1, $"ScrollerPos X={nav.ScrollerPos.X?.Val}, Y={nav.ScrollerPos.Y?.Val}");
-        }
-        if (nav.ClientSize != null)
-        {
-            AppendLine(sb, indent + 1, $"ClientSize X={nav.ClientSize.X?.Val}, Y={nav.ClientSize.Y?.Val}");
-        }
+        if (nav.BeatTimeHelper != null) AppendLine(sb, indent + 1, $"CurrentZoom: {nav.BeatTimeHelper.CurrentZoom?.Val}");
+        if (nav.ScrollerPos != null) AppendLine(sb, indent + 1, $"ScrollerPos X={nav.ScrollerPos.X?.Val}, Y={nav.ScrollerPos.Y?.Val}");
+        if (nav.ClientSize != null) AppendLine(sb, indent + 1, $"ClientSize X={nav.ClientSize.X?.Val}, Y={nav.ClientSize.Y?.Val}");
     }
 
     private static void DumpViewStates(ViewStates vs, StringBuilder sb, int indent)
@@ -747,10 +652,7 @@ public static class AbletonProjectDumper
         if (groovePool.Grooves != null && groovePool.Grooves.Count > 0)
         {
             AppendLine(sb, indent + 1, $"Grooves Count: {groovePool.Grooves.Count}");
-            for (int i = 0; i < groovePool.Grooves.Count; i++)
-            {
-                DumpGroove(groovePool.Grooves[i], sb, indent + 2, i);
-            }
+            for (var i = 0; i < groovePool.Grooves.Count; i++) DumpGroove(groovePool.Grooves[i], sb, indent + 2, i);
         }
     }
 

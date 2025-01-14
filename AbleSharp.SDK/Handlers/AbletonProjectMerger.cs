@@ -15,7 +15,7 @@ public static class AbletonProjectMerger
     {
         if (projects == null || !projects.Any())
             throw new ArgumentException("At least one project must be provided for merging");
-        
+
         // Prepare ID Generator
         IdGenerator.Reset();
 
@@ -39,17 +39,14 @@ public static class AbletonProjectMerger
 
             // Add each track from the source project
             foreach (var track in sourceProject.LiveSet.Tracks)
-            {
                 try
                 {
                     // Deep clone the track to avoid reference issues
                     var clonedTrack = CloneTrack(track);
 
                     if (clonedTrack != null)
-                    {
                         // Add to our merged project
                         mergedProject.LiveSet.Tracks.Add(clonedTrack);
-                    }
                 }
                 catch (Exception ex)
                 {
@@ -57,7 +54,6 @@ public static class AbletonProjectMerger
                     Console.WriteLine($"Warning: Failed to clone track {track.Name?.EffectiveName?.Val}. Error: {ex.Message}");
                     continue;
                 }
-            }
         }
 
         // Update the NextPointeeId to be higher than any existing IDs
@@ -65,7 +61,7 @@ public static class AbletonProjectMerger
 
         // Update ViewData and other settings
         UpdateViewSettings(mergedProject);
-        
+
         // Validations
         ValidatePointeeIds(mergedProject);
 
@@ -107,17 +103,14 @@ public static class AbletonProjectMerger
 
             // Copy track delay
             if (sourceTrack.TrackDelay != null)
-            {
                 newTrack.TrackDelay = new TrackDelay
                 {
                     Value = sourceTrack.TrackDelay.Value,
                     IsValueSampleBased = sourceTrack.TrackDelay.IsValueSampleBased
                 };
-            }
 
             // Copy track name
             if (sourceTrack.Name != null)
-            {
                 newTrack.Name = new TrackName
                 {
                     EffectiveName = sourceTrack.Name.EffectiveName,
@@ -125,19 +118,16 @@ public static class AbletonProjectMerger
                     Annotation = sourceTrack.Name.Annotation,
                     MemorizedFirstClipName = sourceTrack.Name.MemorizedFirstClipName
                 };
-            }
 
             // Copy color
             newTrack.Color = sourceTrack.Color;
 
             // Copy automation envelopes
             if (sourceTrack.AutomationEnvelopes?.Envelopes != null)
-            {
                 newTrack.AutomationEnvelopes = new AutomationEnvelopes
                 {
                     Envelopes = sourceTrack.AutomationEnvelopes.Envelopes.Select(CloneAutomationEnvelope).ToList()
                 };
-            }
 
             // Copy track group info
             newTrack.TrackGroupId = sourceTrack.TrackGroupId;
@@ -145,10 +135,7 @@ public static class AbletonProjectMerger
             newTrack.LinkedTrackGroupId = sourceTrack.LinkedTrackGroupId;
 
             // Copy device chain
-            if (sourceTrack.DeviceChain != null)
-            {
-                newTrack.DeviceChain = CloneDeviceChain(sourceTrack.DeviceChain);
-            }
+            if (sourceTrack.DeviceChain != null) newTrack.DeviceChain = CloneDeviceChain(sourceTrack.DeviceChain);
 
             // Copy specific properties based on track type
             if (sourceTrack is FreezableTrack sourceFreezable && newTrack is FreezableTrack newFreezable)
@@ -168,7 +155,6 @@ public static class AbletonProjectMerger
                 newMidi.ControllerLayoutRemoteable = sourceMidi.ControllerLayoutRemoteable;
 
                 if (sourceMidi.ControllerLayoutCustomization != null)
-                {
                     newMidi.ControllerLayoutCustomization = new ControllerLayoutCustomization
                     {
                         PitchClassSource = sourceMidi.ControllerLayoutCustomization.PitchClassSource,
@@ -179,7 +165,6 @@ public static class AbletonProjectMerger
                         AllowedKeys = sourceMidi.ControllerLayoutCustomization.AllowedKeys,
                         FillerKeysMapTo = sourceMidi.ControllerLayoutCustomization.FillerKeysMapTo
                     };
-                }
             }
 
             if (sourceTrack is AudioTrack sourceAudio && newTrack is AudioTrack newAudio)
@@ -190,16 +175,12 @@ public static class AbletonProjectMerger
             }
 
             if (sourceTrack is GroupTrack sourceGroup && newTrack is GroupTrack newGroup)
-            {
                 if (sourceGroup.Slots != null)
-                {
                     newGroup.Slots = sourceGroup.Slots.Select(slot => new GroupTrackSlot
                     {
                         Id = IdGenerator.GetNextId(),
                         LomId = new Value<int> { Val = int.Parse(IdGenerator.GetNextId()) }
                     }).ToList();
-                }
-            }
 
             return newTrack;
         }
@@ -226,7 +207,6 @@ public static class AbletonProjectMerger
         };
 
         if (source.Automation != null)
-        {
             newEnvelope.Automation = new Automation
             {
                 Events = source.Automation.Events?.ToList(),
@@ -238,7 +218,6 @@ public static class AbletonProjectMerger
                     }
                     : null
             };
-        }
 
         return newEnvelope;
     }
@@ -246,8 +225,8 @@ public static class AbletonProjectMerger
     private static DeviceChain CloneDeviceChain(DeviceChain source)
     {
         if (source == null) return null;
-        
-        string pointeeId = IdGenerator.GetNextId();
+
+        var pointeeId = IdGenerator.GetNextId();
 
         var newChain = new DeviceChain
         {
@@ -301,8 +280,8 @@ public static class AbletonProjectMerger
     private static MainSequencer CloneMainSequencer(MainSequencer source)
     {
         if (source == null) return null;
-        
-        string pointeeId = IdGenerator.GetNextId();
+
+        var pointeeId = IdGenerator.GetNextId();
 
         var newSequencer = new MainSequencer
         {
@@ -337,8 +316,8 @@ public static class AbletonProjectMerger
     private static FreezeSequencer CloneFreezeSequencer(FreezeSequencer source)
     {
         if (source == null) return null;
-        
-        string pointeeId = IdGenerator.GetNextId();
+
+        var pointeeId = IdGenerator.GetNextId();
 
         return new FreezeSequencer
         {
@@ -563,20 +542,14 @@ public static class AbletonProjectMerger
         project.LiveSet.ViewData = new Value<string> { Val = "{}" };
 
         // Ensure proper track indexing
-        for (int i = 0; i < project.LiveSet.Tracks.Count; i++)
+        for (var i = 0; i < project.LiveSet.Tracks.Count; i++)
         {
             var track = project.LiveSet.Tracks[i];
-            if (track.DeviceChain?.Mixer != null)
-            {
-                track.DeviceChain.Mixer.ViewStateSesstionTrackWidth = new Value<decimal> { Val = 93 };
-            }
+            if (track.DeviceChain?.Mixer != null) track.DeviceChain.Mixer.ViewStateSesstionTrackWidth = new Value<decimal> { Val = 93 };
         }
 
         // Update ViewStates for optimal visibility
-        if (project.LiveSet.ViewStates == null)
-        {
-            project.LiveSet.ViewStates = new ViewStates();
-        }
+        if (project.LiveSet.ViewStates == null) project.LiveSet.ViewStates = new ViewStates();
 
         project.LiveSet.ViewStates.MixerInSession = new Value<int> { Val = 1 };
         project.LiveSet.ViewStates.SessionIO = new Value<int> { Val = 1 };
@@ -787,7 +760,6 @@ public static class AbletonProjectMerger
 
         // Deep clone KeyTracks if they exist
         if (source.KeyTracks != null)
-        {
             newClip.KeyTracks = source.KeyTracks.Select(kt => new KeyTrack
             {
                 Id = IdGenerator.GetNextId(),
@@ -804,7 +776,6 @@ public static class AbletonProjectMerger
                 }).ToList(),
                 MidiKey = kt.MidiKey
             }).ToList();
-        }
 
         return newClip;
     }
@@ -858,14 +829,12 @@ public static class AbletonProjectMerger
 
         // Clone WarpMarkers if they exist
         if (source.WarpMarkers != null)
-        {
             newClip.WarpMarkers = source.WarpMarkers.Select(wm => new WarpMarker
             {
                 Id = IdGenerator.GetNextId(),
                 SecTime = wm.SecTime,
                 BeatTime = wm.BeatTime
             }).ToList();
-        }
 
         return newClip;
     }
@@ -918,16 +887,13 @@ public static class AbletonProjectMerger
             }).ToList()
         };
     }
-    
+
     private static void ValidatePointeeIds(AbletonProject project)
     {
         if (project?.LiveSet == null) return;
 
         // Ensure NextPointeeId is higher than any used ID
-        int highestUsedId = IdGenerator.GetLastId();
-        if (project.LiveSet.NextPointeeId.Val <= highestUsedId)
-        {
-            project.LiveSet.NextPointeeId = new Value<int> { Val = highestUsedId + 100 };
-        }
+        var highestUsedId = IdGenerator.GetLastId();
+        if (project.LiveSet.NextPointeeId.Val <= highestUsedId) project.LiveSet.NextPointeeId = new Value<int> { Val = highestUsedId + 100 };
     }
 }
