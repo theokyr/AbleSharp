@@ -12,23 +12,23 @@
     <DockPanel Margin="0">
         <Menu DockPanel.Dock="Top" Padding="0">
             <MenuItem Header="_File">
-                <MenuItem Header="_Open .als" Command="{Binding OpenProjectCommand}"/>
-                <Separator/>
-                <MenuItem Header="_Settings"/>
-                <Separator/>
-                <MenuItem Header="_Exit" Command="{Binding ExitCommand}"/>
+                <MenuItem Header="_Open .als" Command="{Binding OpenProjectDialogCommand}" />
+                <Separator />
+                <MenuItem Header="_Settings " Command="{Binding OpenSettingsWindowCommand}" />
+                <Separator />
+                <MenuItem Header="_Exit" Command="{Binding ExitCommand}" />
             </MenuItem>
 
             <MenuItem Header="_Tools">
-                <MenuItem Header="Open Debug Log" Command="{Binding OpenDebugLogCommand}"/>
-                <MenuItem Header="Merge Projects" Command="{Binding OpenMergeProjectsCommand}"/>
+                <MenuItem Header="Open Debug Log" Command="{Binding OpenDebugLogWindowCommand}" />
+                <MenuItem Header="Merge Projects" Command="{Binding OpenMergeProjectsWindowCommand}" />
             </MenuItem>
 
             <MenuItem Header="_Help">
-                <MenuItem Header="About"/>
+                <MenuItem Header="About" Command="{Binding OpenAboutWindowCommand}" />
             </MenuItem>
         </Menu>
 
-        <ContentControl Content="{Binding CurrentView}"/>
+        <ContentControl Content="{Binding CurrentView}" />
     </DockPanel>
 </Window>

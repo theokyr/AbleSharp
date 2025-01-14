@@ -12,14 +12,14 @@
                     <Canvas
                         Width="{Binding DataContext.TotalTimelineWidth, 
                                       RelativeSource={RelativeSource AncestorType=views:TimelineView}}"
-                        HorizontalAlignment="Left"/>
+                        HorizontalAlignment="Left" />
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
 
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <views:TimelineClipView DataContext="{Binding}"
-                                            ClipToBounds="False"/>
+                                            ClipToBounds="False" />
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>

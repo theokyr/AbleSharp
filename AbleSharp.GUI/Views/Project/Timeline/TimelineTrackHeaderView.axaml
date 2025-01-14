@@ -13,13 +13,13 @@
                            Foreground="#666666"
                            FontSize="{Binding ZoomY, Converter={StaticResource FontSizeMultiConverter}, ConverterParameter=10}"
                            Margin="0,0,4,0"
-                           VerticalAlignment="Center"/>
-                          
+                           VerticalAlignment="Center" />
+
                 <TextBlock Grid.Column="1"
                            Text="{Binding TrackName}"
                            Foreground="White"
                            FontSize="{Binding ZoomY, Converter={StaticResource FontSizeMultiConverter}, ConverterParameter=12}"
-                           VerticalAlignment="Center"/>
+                           VerticalAlignment="Center" />
             </Grid>
         </Grid>
     </Border>

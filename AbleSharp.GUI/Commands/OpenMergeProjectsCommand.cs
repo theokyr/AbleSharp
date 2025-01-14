@@ -9,15 +9,15 @@ using AbleSharp.GUI.Views.Tools;
 
 namespace AbleSharp.GUI.Commands;
 
-public class OpenMergeProjectsCommand : ICommand
+public class OpenMergeProjectsWindowCommand : ICommand
 {
     private readonly MainWindowViewModel _mainWindowViewModel;
-    private readonly ILogger<OpenMergeProjectsCommand> _logger;
+    private readonly ILogger<OpenMergeProjectsWindowCommand> _logger;
 
-    public OpenMergeProjectsCommand(MainWindowViewModel vm)
+    public OpenMergeProjectsWindowCommand(MainWindowViewModel vm)
     {
         _mainWindowViewModel = vm;
-        _logger = LoggerService.GetLogger<OpenMergeProjectsCommand>();
+        _logger = LoggerService.GetLogger<OpenMergeProjectsWindowCommand>();
     }
 
     public bool CanExecute(object? parameter)

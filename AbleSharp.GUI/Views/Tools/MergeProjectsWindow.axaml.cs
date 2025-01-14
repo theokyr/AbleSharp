@@ -19,6 +19,9 @@ public partial class MergeProjectsWindow : Window
         _viewModel = DataContext as MergeProjectsViewModel ?? new MergeProjectsViewModel();
         DataContext = _viewModel;
         _logger = LoggerService.GetLogger<MergeProjectsWindow>();
+#if DEBUG
+        this.AttachDevTools();
+#endif
     }
 
     private void InitializeComponent()

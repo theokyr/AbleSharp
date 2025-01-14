@@ -9,7 +9,7 @@
             <ItemsControl Name="TickMarks">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <Canvas/>
+                        <Canvas />
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
 
@@ -20,13 +20,13 @@
                             <Line StartPoint="0,16"
                                   EndPoint="0,32"
                                   Stroke="{StaticResource TextPrimaryBrush}"
-                                  StrokeThickness="1"/>
+                                  StrokeThickness="1" />
 
                             <!-- Minor ticks -->
                             <ItemsControl ItemsSource="{Binding MinorTicks}">
                                 <ItemsControl.ItemsPanel>
                                     <ItemsPanelTemplate>
-                                        <Canvas/>
+                                        <Canvas />
                                     </ItemsPanelTemplate>
                                 </ItemsControl.ItemsPanel>
 
@@ -36,15 +36,15 @@
                                               EndPoint="{Binding EndPoint}"
                                               Canvas.Left="{Binding Position}"
                                               Stroke="{StaticResource TextTertiaryBrush}"
-                                              StrokeThickness="1"/>
+                                              StrokeThickness="1" />
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
 
                             <!-- Beat number label -->
                             <TextBlock Text="{Binding Label}"
-                                     Classes="Caption"
-                                     Margin="4,0,0,0"/>
+                                       Classes="Caption"
+                                       Margin="4,0,0,0" />
                         </Grid>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
