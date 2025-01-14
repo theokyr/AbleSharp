@@ -24,94 +24,73 @@
                         Spacing="20">
                 <StackPanel Orientation="Horizontal" Spacing="5">
                     <TextBlock Text="{Binding Tempo, StringFormat='{}{0:F1}'}"
-                               Foreground="#CCCCCC"
-                               VerticalAlignment="Center"/>
+                               Foreground="{StaticResource TextSecondaryColor}"
+                               VerticalAlignment="Center" />
                     <TextBlock Text="BPM"
-                               Foreground="#CCCCCC"
-                               VerticalAlignment="Center"/>
+                               Foreground="{StaticResource TextSecondaryColor}"
+                               VerticalAlignment="Center" />
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal" Spacing="2">
                     <TextBlock Text="{Binding TimeSigNumerator}"
-                               Foreground="#CCCCCC"
-                               VerticalAlignment="Center"/>
+                               Foreground="{StaticResource TextSecondaryColor}"
+                               VerticalAlignment="Center" />
                     <TextBlock Text="/"
-                               Foreground="#CCCCCC"
-                               VerticalAlignment="Center"/>
+                               Foreground="{StaticResource TextSecondaryColor}"
+                               VerticalAlignment="Center" />
                     <TextBlock Text="{Binding TimeSigDenominator}"
-                               Foreground="#CCCCCC"
-                               VerticalAlignment="Center"/>
+                               Foreground="{StaticResource TextSecondaryColor}"
+                               VerticalAlignment="Center" />
                 </StackPanel>
             </StackPanel>
 
             <!-- Right: Zoom Controls -->
             <StackPanel Grid.Column="2"
                         Orientation="Horizontal"
-                        Margin="10,0"
+                        Margin="10 0 10 0"
                         Spacing="10">
 
-                <!-- X Zoom -->
+                <!-- Fit to... -->
                 <StackPanel Orientation="Horizontal" Spacing="5">
-                    <TextBlock Text="X Zoom:" Foreground="#CCCCCC" VerticalAlignment="Center"/>
-                    <Button Command="{Binding ZoomOutXCommand}"
-                            Classes="transport">
-                        <TextBlock Text="-"/>
-                    </Button>
-
-                    <Slider Width="100"
-                            Minimum="1"
-                            Maximum="{x:Static local:Constants.MAX_ZOOM_X}"
-                            Value="{Binding ZoomX}"
-                            VerticalAlignment="Center"/>
-
-                    <Button Command="{Binding ZoomInXCommand}"
-                            Classes="transport">
-                        <TextBlock Text="+"/>
-                    </Button>
-
-                    <TextBlock Text="{Binding ZoomX, StringFormat='x{0:F1}'}"
-                               Foreground="#CCCCCC"
-                               Width="50"
-                               TextAlignment="Center"
-                               VerticalAlignment="Center"/>
-
                     <Button Command="{Binding FitHorizontalCommand}"
                             Classes="transport"
                             ToolTip.Tip="Fit to width">
-                        <TextBlock Text="H"/>
+                        <TextBlock Text="H" />
                     </Button>
-                </StackPanel>
-
-                <!-- Y Zoom -->
-                <StackPanel Orientation="Horizontal" Spacing="5">
-                    <TextBlock Text="Y Zoom:" Foreground="#CCCCCC" VerticalAlignment="Center"/>
-                    <Button Command="{Binding ZoomOutYCommand}"
-                            Classes="transport">
-                        <TextBlock Text="-"/>
-                    </Button>
-
-                    <Slider Width="100"
-                            Minimum="1"
-                            Maximum="{x:Static local:Constants.MAX_ZOOM_Y}"
-                            Value="{Binding ZoomY}"
-                            VerticalAlignment="Center"/>
-
-                    <Button Command="{Binding ZoomInYCommand}"
-                            Classes="transport">
-                        <TextBlock Text="+"/>
-                    </Button>
-
-                    <TextBlock Text="{Binding ZoomY, StringFormat='x{0:F1}'}"
-                               Foreground="#CCCCCC"
-                               Width="50"
-                               TextAlignment="Center"
-                               VerticalAlignment="Center"/>
 
                     <Button Command="{Binding FitVerticalCommand}"
                             Classes="transport"
                             ToolTip.Tip="Fit to height">
-                        <TextBlock Text="V"/>
+                        <TextBlock Text="V" />
                     </Button>
+                </StackPanel>
+
+                <!-- X Zoom -->
+                <StackPanel Orientation="Horizontal" Spacing="5" VerticalAlignment="Center"
+                            Margin="0 10 0 0">
+                    <TextBlock Text="X Zoom:" Foreground="{StaticResource TextSecondaryColor}" />
+                    <Slider Width="100"
+                            Minimum="1"
+                            Maximum="{x:Static local:Constants.MAX_ZOOM_X}"
+                            Value="{Binding ZoomX}" />
+                    <TextBlock Text="{Binding ZoomX, StringFormat='x{0:F1}'}"
+                               Foreground="{StaticResource TextSecondaryColor}"
+                               Width="50"
+                               TextAlignment="Center" />
+                </StackPanel>
+
+                <!-- Y Zoom -->
+                <StackPanel Orientation="Horizontal" Spacing="5" VerticalAlignment="Center"
+                            Margin="0 10 0 0">
+                    <TextBlock Text="Y Zoom:" Foreground="{StaticResource TextSecondaryColor}" />
+                    <Slider Width="100"
+                            Minimum="{x:Static local:Constants.MIN_ZOOM_Y}"
+                            Maximum="{x:Static local:Constants.MAX_ZOOM_Y}"
+                            Value="{Binding ZoomY}" />
+                    <TextBlock Text="{Binding ZoomY, StringFormat='x{0:F1}'}"
+                               Foreground="{StaticResource TextSecondaryColor}"
+                               Width="50"
+                               TextAlignment="Center" />
                 </StackPanel>
             </StackPanel>
         </Grid>
@@ -123,7 +102,7 @@
             Width="{Binding TotalTimelineWidth}"
             Background="#1E1E1E"
             HorizontalAlignment="Left"
-            x:Name="TimeRuler"/>
+            x:Name="TimeRuler" />
 
         <!-- Main Content Area -->
         <Grid Grid.Row="2" ColumnDefinitions="*,Auto">
@@ -133,12 +112,12 @@
                           HorizontalScrollBarVisibility="Visible"
                           VerticalScrollBarVisibility="Visible">
                 <ItemsControl ItemsSource="{Binding Tracks}"
-                            ScrollViewer.HorizontalScrollBarVisibility="Hidden"
-                            ScrollViewer.VerticalScrollBarVisibility="Hidden">
+                              ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+                              ScrollViewer.VerticalScrollBarVisibility="Hidden">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <views:TimelineTrackView DataContext="{Binding}"
-                                                     Height="{Binding ZoomY, Converter={StaticResource HeightMultiConverter}, ConverterParameter=60}"/>
+                                                     Height="{Binding ZoomY, Converter={StaticResource HeightMultiConverter}, ConverterParameter=60}" />
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
@@ -153,7 +132,7 @@
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <views:TimelineTrackHeaderView DataContext="{Binding}"
-                                                           Height="{Binding ZoomY, Converter={StaticResource HeightMultiConverter}, ConverterParameter=60}"/>
+                                                           Height="{Binding ZoomY, Converter={StaticResource HeightMultiConverter}, ConverterParameter=60}" />
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
@@ -163,16 +142,22 @@
 
     <UserControl.Styles>
         <Style Selector="Button.transport">
-            <Setter Property="Width" Value="32"/>
-            <Setter Property="Height" Value="32"/>
-            <Setter Property="CornerRadius" Value="4"/>
-            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Foreground" Value="{StaticResource TextSecondaryColor}" />
+            <Setter Property="Width" Value="32" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="Height" Value="32" />
+            <Setter Property="CornerRadius" Value="4" />
+            <Setter Property="BorderThickness" Value="0" />
         </Style>
 
         <Style Selector="Slider">
-            <Setter Property="Height" Value="64"/>
-            <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="ClipToBounds" Value="False"/>
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Foreground" Value="{StaticResource TextSecondaryColor}" />
+            <Setter Property="Height" Value="64" />
+            <Setter Property="ClipToBounds" Value="False" />
         </Style>
     </UserControl.Styles>
 </UserControl>
