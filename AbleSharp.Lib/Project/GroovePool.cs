@@ -9,5 +9,5 @@ public class GroovePool
 
     [XmlArray("Grooves")]
     [XmlArrayItem("Groove")]
-    public List<Groove> Grooves { get; set; } = new List<Groove>();
+    public List<Groove> Grooves { get; set; } = new();
 }

@@ -85,7 +85,7 @@ public class LiveSet
     public Value<bool> UseWarperLegacyHiQMode { get; set; }
 
     [XmlElement("SignalModulations")]
-    public object SignalModulationsTop { get; set; } = new object();
+    public object SignalModulationsTop { get; set; } = new();
 
     [XmlElement("TracksListWrapper")]
     public TracksListWrapper TracksListWrapper { get; set; }
@@ -103,5 +103,5 @@ public class LiveSet
     public TracksListWrapper CuePointsListWrapper { get; set; }
 
     [XmlElement("GroovePool")]
-    public GroovePool GroovePool { get; set; } = new GroovePool();
+    public GroovePool GroovePool { get; set; } = new();
 }

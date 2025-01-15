@@ -49,7 +49,13 @@ public class DeviceChain
         set => _freezeSequencer = value;
     }
 
-    public bool ShouldSerializeMainSequencer() => MainSequencer != null;
+    public bool ShouldSerializeMainSequencer()
+    {
+        return MainSequencer != null;
+    }
 
-    public bool ShouldSerializeFreezeSequencer() => FreezeSequencer != null;
+    public bool ShouldSerializeFreezeSequencer()
+    {
+        return FreezeSequencer != null;
+    }
 }

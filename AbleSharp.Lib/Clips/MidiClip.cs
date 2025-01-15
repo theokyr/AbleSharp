@@ -65,4 +65,7 @@ public class MidiClip : Clip
 
     [XmlElement("ExpressionGrid")]
     public ExpressionGrid ExpressionGrid { get; set; }
+
+    [XmlElement("Notes")]
+    public Notes Notes { get; set; }
 }
