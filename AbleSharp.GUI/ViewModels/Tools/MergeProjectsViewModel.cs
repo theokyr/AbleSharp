@@ -137,31 +137,47 @@ public class MergeProjectsViewModel : ReactiveObject
             outputScheduler: AvaloniaScheduler.Instance
         );
 
-        // Subscribe to collection changes to update HasFiles
-        SelectedProjects.CollectionChanged += (s, e) => this.RaisePropertyChanged(nameof(HasFiles));
+        SelectedProjects.CollectionChanged += (s, e) =>
+        {
+            _logger.LogDebug($"[MergeProjectsViewModel] SelectedProjects updated: {string.Join(", ", SelectedProjects)}");
+            this.RaisePropertyChanged(nameof(HasFiles));
+        };
     }
 
-    public void AddProject(string projectPath)
+    public void AddProjects(IEnumerable<string> projectPaths)
     {
-        if (!SelectedProjects.Contains(projectPath))
+        foreach (var path in projectPaths)
         {
-            SelectedProjects.Add(projectPath);
-            _logger.LogInformation($"[MergeProjectsViewModel] Added project: {projectPath}");
+            if (!path.EndsWith(".als", StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+
+            var normalizedPath = NormalizePath(path);
+            if (SelectedProjects.Contains(normalizedPath))
+            {
+                continue;
+            }
+
+            SelectedProjects.Add(normalizedPath);
+            _logger.LogInformation($"Added project: {normalizedPath}");
         }
     }
 
+
     private async Task AddProjectsAsync()
     {
+        _logger.LogDebug($"[MergeProjectsWindow] AddProjectsAsync ViewModel instance: {this.GetHashCode()}");
         _logger.LogInformation("[MergeProjectsViewModel] Adding projects to merge");
 
         var filePaths = await FileDialogService.ShowOpenFilesDialogAsync();
 
-        if (filePaths != null)
-            foreach (var path in filePaths)
-                if (path.EndsWith(".als", StringComparison.OrdinalIgnoreCase))
-                    AddProject(path);
-                else
-                    _logger.LogWarning($"Skipped non-ALS file: {path}");
+        if (filePaths == null)
+        {
+            return;
+        }
+
+        AddProjects(filePaths);
     }
 
     private void RemoveSelectedProjects()
@@ -307,5 +323,10 @@ public class MergeProjectsViewModel : ReactiveObject
             IsMerging = false;
             IsMergeProgressIndeterminate = false;
         }
+    }
+
+    private string NormalizePath(string path)
+    {
+        return Path.GetFullPath(path).Replace('/', Path.DirectorySeparatorChar);
     }
 }

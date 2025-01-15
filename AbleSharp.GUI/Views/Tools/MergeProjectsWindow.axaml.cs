@@ -15,9 +15,9 @@ public partial class MergeProjectsWindow : Window
     private readonly ILogger<MergeProjectsWindow> _logger;
     private Border? _fileDropZone;
 
-    public MergeProjectsWindow()
+    public MergeProjectsWindow(MergeProjectsViewModel? viewModel = null)
     {
-        _viewModel = new MergeProjectsViewModel();
+        _viewModel = viewModel ?? new MergeProjectsViewModel();
         DataContext = _viewModel;
         _logger = LoggerService.GetLogger<MergeProjectsWindow>();
         InitializeComponent();
@@ -135,25 +135,33 @@ public partial class MergeProjectsWindow : Window
 
             if (!isValid)
             {
-                _logger.LogWarning("Drop data contains no valid files");
+                _logger.LogWarning("[MergeProjectsWindow] Drop data contains no valid files");
                 return;
             }
 
-            foreach (var file in validFiles)
+            await Dispatcher.UIThread.InvokeAsync(() =>
             {
-                await Dispatcher.UIThread.InvokeAsync(() => _viewModel.AddProject(file));
-                _logger.LogInformation($"[MergeProjectsWindow] Added dropped file: {file}");
+                var projectPaths = validFiles.ToList();
+                foreach (var file in projectPaths)
+                {
+                    _logger.LogInformation($"[MergeProjectsWindow] Adding dropped file: {file}");
+                }
+
+                _logger.LogDebug($"[MergeProjectsWindow] DROP ViewModel instance: {_viewModel.GetHashCode()}");
+                _viewModel.AddProjects(projectPaths);
+            });
+
+            if (!invalidFiles.Any())
+            {
+                return;
             }
 
-            if (invalidFiles.Any())
-            {
-                _logger.LogWarning($"Skipped {invalidFiles.Count()} non-ALS files");
-                await ShowInvalidFileTypesMessage(invalidFiles);
-            }
+            _logger.LogWarning($"[MergeProjectsWindow] Skipped {invalidFiles.Count()} non-ALS files");
+            await ShowInvalidFileTypesMessage(invalidFiles);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error handling file drop");
+            _logger.LogError(ex, "[MergeProjectsWindow] Error handling file drop");
         }
         finally
         {
