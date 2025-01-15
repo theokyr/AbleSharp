@@ -15,9 +15,9 @@ public partial class MergeProjectsWindow : Window
     private readonly ILogger<MergeProjectsWindow> _logger;
     private Border? _fileDropZone;
 
-    public MergeProjectsWindow(MergeProjectsViewModel? viewModel = null)
+    public MergeProjectsWindow(MergeProjectsViewModel viewModel)
     {
-        _viewModel = viewModel ?? new MergeProjectsViewModel();
+        _viewModel = viewModel;
         DataContext = _viewModel;
         _logger = LoggerService.GetLogger<MergeProjectsWindow>();
         InitializeComponent();
