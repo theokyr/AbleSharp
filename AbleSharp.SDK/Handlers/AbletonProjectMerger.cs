@@ -95,8 +95,8 @@ public static class AbletonProjectMerger
             }
 
             newTrack.Id = IdGenerator.GetNextId();
-            newTrack.LomId = new Value<int> { Val = int.Parse(IdGenerator.GetNextId()) };
-            newTrack.LomIdView = new Value<int> { Val = int.Parse(IdGenerator.GetNextId()) };
+            newTrack.LomId = new Value<int> { Val = IdGenerator.GetNextId() };
+            newTrack.LomIdView = new Value<int> { Val = IdGenerator.GetNextId() };
 
             newTrack.IsContentSelectedInDocument = sourceTrack.IsContentSelectedInDocument;
             newTrack.PreferredContentViewMode = sourceTrack.PreferredContentViewMode;
@@ -179,7 +179,7 @@ public static class AbletonProjectMerger
                     newGroup.Slots = sourceGroup.Slots.Select(slot => new GroupTrackSlot
                     {
                         Id = IdGenerator.GetNextId(),
-                        LomId = new Value<int> { Val = int.Parse(IdGenerator.GetNextId()) }
+                        LomId = new Value<int> { Val = IdGenerator.GetNextId() }
                     }).ToList();
 
             return newTrack;
@@ -285,8 +285,8 @@ public static class AbletonProjectMerger
 
         var newSequencer = new MainSequencer
         {
-            LomId = new Value<int> { Val = int.Parse(IdGenerator.GetNextId()) },
-            LomIdView = new Value<int> { Val = int.Parse(IdGenerator.GetNextId()) },
+            LomId = new Value<int> { Val = IdGenerator.GetNextId() },
+            LomIdView = new Value<int> { Val = IdGenerator.GetNextId() },
             IsExpanded = source.IsExpanded,
             On = CloneOn(source.On),
             ModulationSourceCount = source.ModulationSourceCount,
@@ -321,8 +321,8 @@ public static class AbletonProjectMerger
 
         return new FreezeSequencer
         {
-            LomId = new Value<int> { Val = int.Parse(IdGenerator.GetNextId()) },
-            LomIdView = new Value<int> { Val = int.Parse(IdGenerator.GetNextId()) },
+            LomId = new Value<int> { Val = IdGenerator.GetNextId() },
+            LomIdView = new Value<int> { Val = IdGenerator.GetNextId() },
             IsExpanded = source.IsExpanded,
             On = CloneOn(source.On),
             ModulationSourceCount = source.ModulationSourceCount,
@@ -408,14 +408,14 @@ public static class AbletonProjectMerger
         return newRouting;
     }
 
-    private static Mixer CloneMixer(Mixer source, string pointeeId)
+    private static Mixer CloneMixer(Mixer source, int pointeeId)
     {
         if (source == null) return null;
 
         return new Mixer
         {
-            LomId = new Value<int> { Val = int.Parse(IdGenerator.GetNextId()) },
-            LomIdView = new Value<int> { Val = int.Parse(IdGenerator.GetNextId()) },
+            LomId = new Value<int> { Val = IdGenerator.GetNextId() },
+            LomIdView = new Value<int> { Val = IdGenerator.GetNextId() },
             IsExpanded = source.IsExpanded,
             On = CloneOn(source.On),
             ModulationSourceCount = source.ModulationSourceCount,
@@ -449,7 +449,7 @@ public static class AbletonProjectMerger
         return new Device
         {
             Id = IdGenerator.GetNextId(),
-            LomId = new Value<int> { Val = int.Parse(IdGenerator.GetNextId()) },
+            LomId = new Value<int> { Val = IdGenerator.GetNextId() },
             IsExpanded = source.IsExpanded,
             On = CloneOn(source.On),
             ModulationSourceCount = source.ModulationSourceCount,
@@ -569,7 +569,7 @@ public static class AbletonProjectMerger
 
         return new On
         {
-            LomId = new Value<int> { Val = int.Parse(IdGenerator.GetNextId()) },
+            LomId = new Value<int> { Val = IdGenerator.GetNextId() },
             Manual = source.Manual,
             AutomationTarget = CloneAutomationTarget(source.AutomationTarget),
             MidiCCOnOffThresholds = source.MidiCCOnOffThresholds != null
@@ -599,7 +599,7 @@ public static class AbletonProjectMerger
 
         return new Send
         {
-            LomId = new Value<int> { Val = int.Parse(IdGenerator.GetNextId()) },
+            LomId = new Value<int> { Val = IdGenerator.GetNextId() },
             Manual = source.Manual,
             MidiControllerRange = source.MidiControllerRange != null
                 ? new MidiControllerRange
@@ -619,7 +619,7 @@ public static class AbletonProjectMerger
 
         return new Speaker
         {
-            LomId = new Value<int> { Val = int.Parse(IdGenerator.GetNextId()) },
+            LomId = new Value<int> { Val = IdGenerator.GetNextId() },
             Manual = source.Manual,
             AutomationTarget = CloneAutomationTarget(source.AutomationTarget),
             MidiCCOnOffThresholds = source.MidiCCOnOffThresholds != null
@@ -638,7 +638,7 @@ public static class AbletonProjectMerger
 
         return new Pan
         {
-            LomId = new Value<int> { Val = int.Parse(IdGenerator.GetNextId()) },
+            LomId = new Value<int> { Val = IdGenerator.GetNextId() },
             Manual = source.Manual,
             MidiControllerRange = source.MidiControllerRange != null
                 ? new MidiControllerRange
@@ -658,7 +658,7 @@ public static class AbletonProjectMerger
 
         return new Volume
         {
-            LomId = new Value<int> { Val = int.Parse(IdGenerator.GetNextId()) },
+            LomId = new Value<int> { Val = IdGenerator.GetNextId() },
             Manual = source.Manual,
             MidiControllerRange = source.MidiControllerRange != null
                 ? new MidiControllerRange
@@ -689,7 +689,7 @@ public static class AbletonProjectMerger
 
         return new CrossFadeState
         {
-            LomId = new Value<int> { Val = int.Parse(IdGenerator.GetNextId()) },
+            LomId = new Value<int> { Val = IdGenerator.GetNextId() },
             Manual = source.Manual,
             AutomationTarget = CloneAutomationTarget(source.AutomationTarget)
         };
@@ -727,8 +727,8 @@ public static class AbletonProjectMerger
         {
             Id = IdGenerator.GetNextId(),
             Time = source.Time,
-            LomId = new Value<int> { Val = int.Parse(IdGenerator.GetNextId()) },
-            LomIdView = new Value<int> { Val = int.Parse(IdGenerator.GetNextId()) },
+            LomId = new Value<int> { Val = IdGenerator.GetNextId() },
+            LomIdView = new Value<int> { Val = IdGenerator.GetNextId() },
             CurrentStart = source.CurrentStart,
             CurrentEnd = source.CurrentEnd,
             Loop = CloneLoop(source.Loop),
@@ -750,7 +750,7 @@ public static class AbletonProjectMerger
             FreezeStart = source.FreezeStart,
             FreezeEnd = source.FreezeEnd,
             IsWarped = source.IsWarped,
-            TakeId = source.TakeId, 
+            TakeId = source.TakeId,
             NoteSpellingPreference = source.NoteSpellingPreference,
             BankSelectCoarse = source.BankSelectCoarse,
             BankSelectFine = source.BankSelectFine,
@@ -785,7 +785,7 @@ public static class AbletonProjectMerger
                     OffVelocity = n.OffVelocity,
                     Probability = n.Probability,
                     IsEnabled = n.IsEnabled,
-                    NoteId = int.Parse(IdGenerator.GetNextId())
+                    NoteId = IdGenerator.GetNextId()
                 }).ToList() ?? new List<MidiNoteEvent>()
             }).ToList();
 
@@ -798,8 +798,8 @@ public static class AbletonProjectMerger
         {
             Id = IdGenerator.GetNextId(),
             Time = source.Time,
-            LomId = new Value<int> { Val = int.Parse(IdGenerator.GetNextId()) },
-            LomIdView = new Value<int> { Val = int.Parse(IdGenerator.GetNextId()) },
+            LomId = new Value<int> { Val = IdGenerator.GetNextId() },
+            LomIdView = new Value<int> { Val = IdGenerator.GetNextId() },
             CurrentStart = source.CurrentStart,
             CurrentEnd = source.CurrentEnd,
             Loop = CloneLoop(source.Loop),
@@ -821,6 +821,9 @@ public static class AbletonProjectMerger
             FreezeStart = source.FreezeStart,
             FreezeEnd = source.FreezeEnd,
             IsWarped = source.IsWarped,
+            TakeId = source.TakeId,
+            SampleRef = CloneSampleRef(source.SampleRef),
+            Onsets = CloneOnsets(source.Onsets),
             WarpMode = source.WarpMode,
             GranularityTones = source.GranularityTones,
             GranularityTexture = source.GranularityTexture,
@@ -833,13 +836,14 @@ public static class AbletonProjectMerger
             Sync = source.Sync,
             HiQ = source.HiQ,
             Fade = source.Fade,
-            SampleRef = source.SampleRef, // This is a simple property copy, assuming SampleRef is immutable
-            SampleVolume = source.SampleVolume,
+            Fades = CloneFades(source.Fades),
             PitchCoarse = source.PitchCoarse,
-            PitchFine = source.PitchFine
+            PitchFine = source.PitchFine,
+            SampleVolume = source.SampleVolume,
+            IsSongTempoLeader = source.IsSongTempoLeader,
+            MarkersGenerated = source.MarkersGenerated
         };
 
-        // Clone WarpMarkers if they exist
         if (source.WarpMarkers != null)
             newClip.WarpMarkers = source.WarpMarkers.Select(wm => new WarpMarker
             {
@@ -848,7 +852,96 @@ public static class AbletonProjectMerger
                 BeatTime = wm.BeatTime
             }).ToList();
 
+        if (source.SavedWarpMarkersForStretched != null) newClip.SavedWarpMarkersForStretched = new SavedWarpMarkers();
+
         return newClip;
+    }
+
+    private static SampleRef CloneSampleRef(SampleRef source)
+    {
+        if (source == null) return null;
+
+        var fileRef = source.FileRef != null
+            ? new FileRef // Note: using non-Id version
+            {
+                RelativePathType = source.FileRef.RelativePathType,
+                RelativePath = source.FileRef.RelativePath,
+                Path = source.FileRef.Path,
+                Type = source.FileRef.Type,
+                LivePackName = source.FileRef.LivePackName,
+                LivePackId = source.FileRef.LivePackId,
+                OriginalFileSize = source.FileRef.OriginalFileSize,
+                OriginalCrc = source.FileRef.OriginalCrc
+            }
+            : null;
+
+        var sourceContext = new SourceContext
+        {
+            Inner = new InnerSourceContext
+            {
+                Id = "0",
+                OriginalFileRef = new OriginalFileRef
+                {
+                    FileRef = new SourceContextFileRef // Note: using Id version
+                    {
+                        Id = IdGenerator.GetNextId(),
+                        RelativePathType = source.FileRef?.RelativePathType,
+                        RelativePath = source.FileRef?.RelativePath,
+                        Path = source.FileRef?.Path,
+                        Type = source.FileRef?.Type,
+                        LivePackName = source.FileRef?.LivePackName,
+                        LivePackId = source.FileRef?.LivePackId,
+                        OriginalFileSize = source.FileRef?.OriginalFileSize,
+                        OriginalCrc = source.FileRef?.OriginalCrc
+                    }
+                },
+                BrowserContentPath = new Value<string>
+                {
+                    Val = ConvertPathToBrowserContentPath(source.FileRef?.Path?.Val)
+                },
+                LocalFiltersJson = new Value<string> { Val = "" }
+            }
+        };
+
+        return new SampleRef
+        {
+            FileRef = fileRef,
+            LastModDate = source.LastModDate,
+            SourceContext = sourceContext,
+            SampleUsageHint = source.SampleUsageHint,
+            DefaultDuration = source.DefaultDuration,
+            DefaultSampleRate = source.DefaultSampleRate
+        };
+    }
+
+    private static Onsets CloneOnsets(Onsets source)
+    {
+        if (source == null) return null;
+
+        return new Onsets
+        {
+            UserOnsets = source.UserOnsets != null ? new List<UserOnset>(source.UserOnsets) : new List<UserOnset>(),
+            HasUserOnsets = source.HasUserOnsets
+        };
+    }
+
+    private static Fades CloneFades(Fades source)
+    {
+        if (source == null) return null;
+
+        return new Fades
+        {
+            FadeInLength = source.FadeInLength,
+            FadeOutLength = source.FadeOutLength,
+            ClipFadesAreInitialized = source.ClipFadesAreInitialized,
+            CrossfadeInState = source.CrossfadeInState,
+            FadeInCurveSkew = source.FadeInCurveSkew,
+            FadeInCurveSlope = source.FadeInCurveSlope,
+            FadeOutCurveSkew = source.FadeOutCurveSkew,
+            FadeOutCurveSlope = source.FadeOutCurveSlope,
+            IsDefaultFadeIn = source.IsDefaultFadeIn,
+            IsDefaultFadeOut = source.IsDefaultFadeOut
+        };
     }
 
     private static Loop CloneLoop(Loop source)
@@ -900,6 +993,7 @@ public static class AbletonProjectMerger
         };
     }
 
+    // Utility methods
     private static void ValidatePointeeIds(AbletonProject project)
     {
         if (project?.LiveSet == null) return;
@@ -907,5 +1001,15 @@ public static class AbletonProjectMerger
         // Ensure NextPointeeId is higher than any used ID
         var highestUsedId = IdGenerator.GetLastId();
         if (project.LiveSet.NextPointeeId.Val <= highestUsedId) project.LiveSet.NextPointeeId = new Value<int> { Val = highestUsedId + 100 };
+    }
+
+    private static string ConvertPathToBrowserContentPath(string path)
+    {
+        if (string.IsNullOrEmpty(path)) return "";
+
+        // Convert Windows path to Ableton browser path format
+        var parts = path.Split('\\', '/').Where(p => !string.IsNullOrEmpty(p)).ToList();
+        var encoded = parts.Select(Uri.EscapeDataString);
+        return "userfolder:" + string.Join(":", encoded);
     }
 }

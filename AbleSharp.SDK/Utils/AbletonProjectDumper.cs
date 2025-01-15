@@ -483,7 +483,7 @@ public static class AbletonProjectDumper
             for (var i = 0; i < audioClip.WarpMarkers.Count; i++)
             {
                 var wm = audioClip.WarpMarkers[i];
-                AppendLine(sb, indent + 2, $"WarpMarker[{i}] Id={wm.Id}, SecTime={wm.SecTime?.Val}, BeatTime={wm.BeatTime?.Val}");
+                AppendLine(sb, indent + 2, $"WarpMarker[{i}] Id={wm.Id}, SecTime={wm.SecTime}, BeatTime={wm.BeatTime}");
             }
         }
 

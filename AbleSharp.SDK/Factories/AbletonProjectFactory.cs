@@ -35,8 +35,8 @@ public class AbletonProjectFactory
             LomIdView = new Value<int> { Val = 0 },
             Tracks = new List<Track>
             {
-                CreateBlankMidiTrack("12", "Generated Midi Track"),
-                CreateBlankAudioTrack("13", "Generated Audio Track")
+                CreateBlankMidiTrack(12, "Generated Midi Track"),
+                CreateBlankAudioTrack(13, "Generated Audio Track")
             },
             MainTrack = CreateMainTrack(),
             PreHearTrack = CreatePreHearTrack(),
@@ -130,7 +130,7 @@ public class AbletonProjectFactory
             {
                 new()
                 {
-                    Id = "0",
+                    Id = 0,
                     EnvelopeTarget = new EnvelopeTarget
                     {
                         PointeeId = new Value<string> { Val = "10" }
@@ -141,7 +141,7 @@ public class AbletonProjectFactory
                         {
                             new EnumEvent
                             {
-                                Id = "0",
+                                Id = 0,
                                 Time = -63072000,
                                 Value = 201
                             }
@@ -151,7 +151,7 @@ public class AbletonProjectFactory
                 },
                 new()
                 {
-                    Id = "1",
+                    Id = 1,
                     EnvelopeTarget = new EnvelopeTarget
                     {
                         PointeeId = new Value<string> { Val = "8" }
@@ -162,7 +162,7 @@ public class AbletonProjectFactory
                         {
                             new FloatEvent
                             {
-                                Id = "0",
+                                Id = 0,
                                 Time = -63072000,
                                 Value = 112
                             }
@@ -235,7 +235,7 @@ public class AbletonProjectFactory
         };
     }
 
-    public static MidiTrack CreateBlankMidiTrack(string id, string name)
+    public static MidiTrack CreateBlankMidiTrack(int id, string name)
     {
         return new MidiTrack
         {
@@ -270,7 +270,7 @@ public class AbletonProjectFactory
         };
     }
 
-    public static AudioTrack CreateBlankAudioTrack(string id, string name)
+    public static AudioTrack CreateBlankAudioTrack(int id, string name)
     {
         return new AudioTrack
         {
@@ -376,7 +376,7 @@ public class AbletonProjectFactory
             {
                 new()
                 {
-                    Id = "0",
+                    Id = 0,
                     SelectedDevice = new Value<int> { Val = 1 },
                     SelectedEnvelope = new Value<int> { Val = 0 },
                     IsContentSelectedInDocument = new Value<bool> { Val = false },
@@ -555,7 +555,7 @@ public class AbletonProjectFactory
         {
             new()
             {
-                Id = "0",
+                Id = 0,
                 FollowAction = new FollowAction
                 {
                     FollowTime = new Value<decimal> { Val = 4 },
@@ -668,8 +668,8 @@ public class AbletonProjectFactory
             SampleOffsetModulationTarget = CreateModulationTarget(),
             ComplexProFormantsModulationTarget = CreateModulationTarget(),
             ComplexProEnvelopeModulationTarget = CreateModulationTarget(),
-            PitchViewScrollPosition = new Value<decimal> { Val = -1073741824 },
-            SampleOffsetModulationScrollPosition = new Value<decimal> { Val = -1073741824 },
+            PitchViewScrollPosition = new Value<int> { Val = -1073741824 },
+            SampleOffsetModulationScrollPosition = new Value<int> { Val = -1073741824 },
             Recorder = CreateDefaultRecorder()
         };
     }
@@ -680,7 +680,7 @@ public class AbletonProjectFactory
         for (var i = 0; i < 8; i++)
             clipSlots.Add(new ClipSlot
             {
-                Id = i.ToString(),
+                Id = i,
                 LomId = new Value<int> { Val = 0 },
                 ClipData = new ClipSlotValue { Value = "" },
                 HasStop = new Value<bool> { Val = true },
