@@ -7,8 +7,7 @@
     mc:Ignorable="d"
     Title="Merge Projects"
     Width="600" Height="800"
-    WindowStartupLocation="CenterOwner"
-    DragDrop.AllowDrop="True">
+    WindowStartupLocation="CenterOwner">
 
     <Grid RowDefinitions="Auto,*,Auto,Auto" Margin="16">
         <!-- Title -->
@@ -42,62 +41,66 @@
                 </StackPanel>
 
                 <!-- Drop Zone and List -->
-                <Grid Grid.Row="2" RowDefinitions="*">
+                <Border Name="FileDropZone"
+                        Grid.Row="2"
+                        DragDrop.AllowDrop="True"
+                        Background="{Binding IsDragOver, Converter={StaticResource IsDragOverToBackgroundConverter}}"
+                        BorderBrush="{Binding IsDragOver, Converter={StaticResource IsDragOverToBorderBrushConverter}}"
+                        BorderThickness="2"
+                        CornerRadius="8"
+                        Margin="0,4"
+                        Classes.dragover="{Binding IsDragOver}">
                     <!-- List of Selected Projects -->
-                    <ListBox x:Name="ProjectsListBox"
-                             ItemsSource="{Binding SelectedProjects}"
-                             SelectionMode="Single"
-                             Background="Transparent"
-                             IsVisible="{Binding SelectedProjects.Count, Converter={StaticResource GreaterThanConverter}, ConverterParameter=0}">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding}"
-                                           TextWrapping="Wrap"
-                                           ToolTip.Tip="{Binding}" />
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
+                    <Grid>
+                        <ListBox ItemsSource="{Binding SelectedProjects}"
+                                 SelectionMode="Multiple"
+                                 Background="Transparent"
+                                 IsVisible="{Binding HasFiles}"
+                                 Margin="4">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <TextBlock Text="{Binding}"
+                                                   TextWrapping="Wrap"
+                                                   ToolTip.Tip="{Binding}" />
+                                        <Button Grid.Column="1"
+                                                Command="{Binding DataContext.RemoveProjectCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                CommandParameter="{Binding}"
+                                                Classes="icon"
+                                                ToolTip.Tip="Remove">
+                                            <TextBlock Text="✕"
+                                                       FontSize="14" />
+                                        </Button>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
 
-                    <!-- Drop Zone Overlay -->
-                    <Border Name="DropZone"
-                            Background="{Binding IsDragOver, Converter={StaticResource IsDragOverToBackgroundConverter}}"
-                            BorderBrush="{Binding IsDragOver, Converter={StaticResource IsDragOverToBorderBrushConverter}}"
-                            CornerRadius="8"
-                            Padding="32"
-                            IsVisible="{Binding SelectedProjects.Count, Converter={StaticResource GreaterThanConverter}, ConverterParameter=0, Converter={StaticResource InvertBoolConverter}}"
-                            Opacity="{Binding IsDragOver, Converter={StaticResource BoolToOpacityConverter}}">
-                        <Grid>
-                            <!-- Dashed border rectangle -->
-                            <Rectangle Stroke="{Binding IsDragOver, Converter={StaticResource IsDragOverToBorderBrushConverter}}"
-                                       StrokeThickness="2"
-                                       StrokeDashArray="4,4"
-                                       Margin="1"
-                                       Fill="Transparent" />
-
-                            <!-- Drop zone content -->
-                            <Grid RowDefinitions="Auto,Auto"
-                                  HorizontalAlignment="Center"
-                                  VerticalAlignment="Center">
-                                <TextBlock Grid.Row="0"
-                                           Text="⬇"
-                                           FontSize="48"
-                                           HorizontalAlignment="Center"
+                        <!-- Empty State / Drop Zone Message -->
+                        <Grid IsVisible="{Binding !HasFiles}"
+                              RowDefinitions="Auto,Auto"
+                              HorizontalAlignment="Center"
+                              VerticalAlignment="Center"
+                              Margin="32">
+                            <TextBlock Grid.Row="0"
+                                       Text="⬇"
+                                       FontSize="48"
+                                       HorizontalAlignment="Center"
+                                       Foreground="{DynamicResource TextTertiaryBrush}"
+                                       Margin="0,0,0,16" />
+                            <StackPanel Grid.Row="1" Spacing="8">
+                                <TextBlock Text="Drag and drop .als files here"
+                                           Classes="Body"
+                                           Foreground="{DynamicResource TextSecondaryBrush}"
+                                           HorizontalAlignment="Center" />
+                                <TextBlock Text="or use the Add Projects button above"
+                                           Classes="Caption"
                                            Foreground="{DynamicResource TextTertiaryBrush}"
-                                           Margin="0,0,0,16" />
-                                <StackPanel Grid.Row="1" Spacing="8">
-                                    <TextBlock Text="Drag and drop .als files here"
-                                               Classes="Body"
-                                               Foreground="{DynamicResource TextSecondaryBrush}"
-                                               HorizontalAlignment="Center" />
-                                    <TextBlock Text="or use the Add Projects button above"
-                                               Classes="Caption"
-                                               Foreground="{DynamicResource TextTertiaryBrush}"
-                                               HorizontalAlignment="Center" />
-                                </StackPanel>
-                            </Grid>
+                                           HorizontalAlignment="Center" />
+                            </StackPanel>
                         </Grid>
-                    </Border>
-                </Grid>
+                    </Grid>
+                </Border>
             </Grid>
         </Border>
 
@@ -151,20 +154,31 @@
                 <!-- Progress & Status -->
                 <StackPanel Grid.Row="1"
                             Margin="0,16,0,16"
-                            IsVisible="{Binding IsMerging}">
+                            IsVisible="{Binding ShowStatusMessage}">
                     <Grid ColumnDefinitions="*,Auto">
                         <ProgressBar Value="{Binding MergeProgress}"
                                      IsIndeterminate="{Binding IsMergeProgressIndeterminate}"
                                      Height="4"
-                                     Margin="0,0,8,4" />
+                                     Margin="0,0,8,4"
+                                     IsVisible="{Binding IsMerging}" />
                         <TextBlock Text="{Binding MergeProgressText}"
                                    Grid.Column="1"
-                                   Classes="Caption" />
+                                   Classes="Caption"
+                                   IsVisible="{Binding IsMerging}" />
                     </Grid>
-                    <TextBlock Text="{Binding StatusMessage}"
-                               Classes="Caption"
-                               Foreground="{Binding StatusMessageColor}"
-                               TextWrapping="Wrap" />
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Text="{Binding StatusMessage}"
+                                   Classes="Caption"
+                                   Foreground="{Binding StatusMessageColor}"
+                                   TextWrapping="Wrap" />
+                        <Button Grid.Column="1"
+                                Command="{Binding ClearStatusCommand}"
+                                Classes="icon"
+                                Margin="8,0,0,0"
+                                ToolTip.Tip="Clear message">
+                            <TextBlock Text="✕" FontSize="12" />
+                        </Button>
+                    </Grid>
                 </StackPanel>
 
                 <!-- Merge Button -->
@@ -176,13 +190,32 @@
                         Width="120">
                     <Button.IsEnabled>
                         <MultiBinding Converter="{StaticResource AllTrueMultiConverter}">
-                            <Binding Path="SelectedProjects.Count" Converter="{StaticResource GreaterThanConverter}" ConverterParameter="1" />
-                            <Binding Path="OutputFilePath" Converter="{StaticResource IsNotEmptyConverter}" />
-                            <Binding Path="IsMerging" Converter="{StaticResource InvertBoolConverter}" />
+                            <Binding Path="SelectedProjects.Count"
+                                     Converter="{StaticResource GreaterThanConverter}"
+                                     ConverterParameter="1" />
+                            <Binding Path="OutputFilePath"
+                                     Converter="{StaticResource IsNotEmptyConverter}" />
+                            <Binding Path="IsMerging"
+                                     Converter="{StaticResource InvertBoolConverter}" />
                         </MultiBinding>
                     </Button.IsEnabled>
                 </Button>
             </Grid>
         </Border>
     </Grid>
+
+    <Window.Styles>
+        <Style Selector="Border.dragover">
+            <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}" />
+            <Setter Property="Background" Value="{DynamicResource BackgroundAltBrush}" />
+            <Setter Property="Opacity" Value="0.9" />
+        </Style>
+
+        <Style Selector="Button.icon">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="8,4" />
+            <Setter Property="Cursor" Value="Hand" />
+        </Style>
+    </Window.Styles>
 </Window>

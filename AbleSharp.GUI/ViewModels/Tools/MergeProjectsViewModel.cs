@@ -27,8 +27,9 @@ public class MergeProjectsViewModel : ReactiveObject
     private string _statusMessage = string.Empty;
     private IBrush _statusMessageColor;
     private bool _isDragOver;
+    private bool _showStatusMessage;
 
-    public ObservableCollection<string> SelectedProjects { get; set; } = new();
+    public ObservableCollection<string> SelectedProjects { get; } = new();
 
     public string OutputFilePath
     {
@@ -72,33 +73,44 @@ public class MergeProjectsViewModel : ReactiveObject
         private set => this.RaiseAndSetIfChanged(ref _statusMessageColor, value);
     }
 
-    /// <summary>
-    /// Indicates whether a drag operation is currently over the drop zone.
-    /// Used to provide visual feedback in the UI.
-    /// </summary>
+    public bool ShowStatusMessage
+    {
+        get => _showStatusMessage;
+        private set => this.RaiseAndSetIfChanged(ref _showStatusMessage, value);
+    }
+
     public bool IsDragOver
     {
         get => _isDragOver;
         set => this.RaiseAndSetIfChanged(ref _isDragOver, value);
     }
 
+    public bool HasFiles => SelectedProjects.Count > 0;
+
     public ReactiveCommand<Unit, Unit> AddProjectsCommand { get; }
     public ReactiveCommand<Unit, Unit> RemoveSelectedProjectsCommand { get; }
+    public ReactiveCommand<string, Unit> RemoveProjectCommand { get; }
     public ReactiveCommand<Unit, Unit> SelectOutputFileCommand { get; }
     public ReactiveCommand<Unit, Unit> MergeProjectsCommand { get; }
+    public ReactiveCommand<Unit, Unit> ClearStatusCommand { get; }
 
     public MergeProjectsViewModel()
     {
         _logger = LoggerService.GetLogger<MergeProjectsViewModel>();
         _statusMessageColor = new SolidColorBrush(Color.Parse("#FFFFFF"));
 
-        // Initialize Commands with AvaloniaScheduler.Instance to ensure UI thread execution
+        // Initialize Commands
         AddProjectsCommand = ReactiveCommand.CreateFromTask(AddProjectsAsync, outputScheduler: AvaloniaScheduler.Instance);
 
         RemoveSelectedProjectsCommand = ReactiveCommand.Create(
             RemoveSelectedProjects,
             this.WhenAnyValue(vm => vm.SelectedProjects.Count, count => count > 0),
             AvaloniaScheduler.Instance
+        );
+
+        RemoveProjectCommand = ReactiveCommand.Create<string>(
+            RemoveProject,
+            outputScheduler: AvaloniaScheduler.Instance
         );
 
         SelectOutputFileCommand = ReactiveCommand.CreateFromTask(SelectOutputFileAsync, outputScheduler: AvaloniaScheduler.Instance);
@@ -115,6 +127,18 @@ public class MergeProjectsViewModel : ReactiveObject
             canMerge,
             AvaloniaScheduler.Instance
         );
+
+        ClearStatusCommand = ReactiveCommand.Create(
+            () =>
+            {
+                ShowStatusMessage = false;
+                return Unit.Default;
+            },
+            outputScheduler: AvaloniaScheduler.Instance
+        );
+
+        // Subscribe to collection changes to update HasFiles
+        SelectedProjects.CollectionChanged += (s, e) => this.RaisePropertyChanged(nameof(HasFiles));
     }
 
     public void AddProject(string projectPath)
@@ -134,14 +158,22 @@ public class MergeProjectsViewModel : ReactiveObject
 
         if (filePaths != null)
             foreach (var path in filePaths)
-                AddProject(path);
+                if (path.EndsWith(".als", StringComparison.OrdinalIgnoreCase))
+                    AddProject(path);
+                else
+                    _logger.LogWarning($"Skipped non-ALS file: {path}");
     }
 
     private void RemoveSelectedProjects()
     {
-        if (SelectedProjects.Count > 0)
+        var selectedProjects = SelectedProjects.ToList();
+        foreach (var project in selectedProjects) RemoveProject(project);
+    }
+
+    private void RemoveProject(string projectPath)
+    {
+        if (SelectedProjects.Contains(projectPath))
         {
-            var projectPath = SelectedProjects[SelectedProjects.Count - 1];
             SelectedProjects.Remove(projectPath);
             _logger.LogInformation($"Removed project: {projectPath}");
         }
@@ -158,6 +190,29 @@ public class MergeProjectsViewModel : ReactiveObject
             OutputFilePath = filePath;
             _logger.LogInformation($"Selected output file: {filePath}");
         }
+    }
+
+    private void ShowError(string message)
+    {
+        StatusMessage = message;
+        StatusMessageColor = new SolidColorBrush(Color.Parse("#FF4444"));
+        ShowStatusMessage = true;
+        _logger.LogError(message);
+    }
+
+    private void ShowSuccess(string message)
+    {
+        StatusMessage = message;
+        StatusMessageColor = new SolidColorBrush(Color.Parse("#44FF44"));
+        ShowStatusMessage = true;
+        _logger.LogInformation(message);
+    }
+
+    private void UpdateProgress(string message)
+    {
+        StatusMessage = message;
+        StatusMessageColor = new SolidColorBrush(Color.Parse("#FFFFFF"));
+        ShowStatusMessage = true;
     }
 
     private async Task MergeProjectsAsync()
@@ -178,7 +233,7 @@ public class MergeProjectsViewModel : ReactiveObject
         {
             IsMerging = true;
             IsMergeProgressIndeterminate = true;
-            ShowStatus("Starting merge process...", "#FFFFFF");
+            UpdateProgress("Starting merge process...");
 
             var projects = new List<AbletonProject>();
             var totalSteps = SelectedProjects.Count + 2; // Loading + Merging + Saving
@@ -188,7 +243,7 @@ public class MergeProjectsViewModel : ReactiveObject
             foreach (var path in SelectedProjects)
                 try
                 {
-                    ShowStatus($"Loading: {Path.GetFileName(path)}", "#FFFFFF");
+                    UpdateProgress($"Loading: {Path.GetFileName(path)}");
                     var project = await Task.Run(() => AbletonProjectHandler.LoadFromFile(path));
 
                     if (project != null)
@@ -217,7 +272,7 @@ public class MergeProjectsViewModel : ReactiveObject
             }
 
             // Merge projects
-            ShowStatus("Merging projects...", "#FFFFFF");
+            UpdateProgress("Merging projects...");
             IsMergeProgressIndeterminate = true;
             var mergedProject = await Task.Run(() => AbletonProjectMerger.MergeProjects(projects));
             currentStep++;
@@ -230,13 +285,13 @@ public class MergeProjectsViewModel : ReactiveObject
             }
 
             // Save merged project
-            ShowStatus("Saving merged project...", "#FFFFFF");
+            UpdateProgress("Saving merged project...");
             await Task.Run(() => AbletonProjectHandler.SaveToFile(mergedProject, OutputFilePath));
             currentStep++;
             MergeProgress = 100;
 
             // Show success message
-            ShowSuccess("Projects merged successfully!");
+            ShowSuccess($"Projects merged successfully!\nOutput saved to: {Path.GetFileName(OutputFilePath)}");
 
             // Clear selection after successful merge
             SelectedProjects.Clear();
@@ -252,26 +307,5 @@ public class MergeProjectsViewModel : ReactiveObject
             IsMerging = false;
             IsMergeProgressIndeterminate = false;
         }
-    }
-
-    private void ShowStatus(string message, string colorHex)
-    {
-        StatusMessage = message;
-        StatusMessageColor = new SolidColorBrush(Color.Parse(colorHex));
-        _logger.LogInformation(message);
-    }
-
-    private void ShowError(string message)
-    {
-        StatusMessage = message;
-        StatusMessageColor = new SolidColorBrush(Color.Parse("#FF4444"));
-        _logger.LogError(message);
-    }
-
-    private void ShowSuccess(string message)
-    {
-        StatusMessage = message;
-        StatusMessageColor = new SolidColorBrush(Color.Parse("#44FF44"));
-        _logger.LogInformation(message);
     }
 }
