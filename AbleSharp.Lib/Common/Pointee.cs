@@ -5,5 +5,5 @@ namespace AbleSharp.Lib;
 public class Pointee
 {
     [XmlAttribute("Id")]
-    public string Id { get; set; }
+    public int Id { get; set; }
 }

@@ -5,7 +5,7 @@ namespace AbleSharp.Lib;
 public class RemoteableTimeSignature
 {
     [XmlAttribute("Id")]
-    public string Id { get; set; }
+    public int Id { get; set; }
 
     [XmlElement("Numerator")]
     public Value<int> Numerator { get; set; }

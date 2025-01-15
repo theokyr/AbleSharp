@@ -2,7 +2,8 @@ using System.Xml.Serialization;
 
 namespace AbleSharp.Lib;
 
-public class FileRef
+// Base FileRef class with common properties
+public abstract class FileRefBase
 {
     [XmlElement("RelativePathType")]
     public Value<int> RelativePathType { get; set; }
@@ -27,4 +28,16 @@ public class FileRef
 
     [XmlElement("OriginalCrc")]
     public Value<int> OriginalCrc { get; set; }
+}
+
+// FileRef for SampleRef - no Id attribute
+public class FileRef : FileRefBase
+{
+}
+
+// FileRef for SourceContext - includes Id attribute
+public class SourceContextFileRef : FileRefBase
+{
+    [XmlAttribute("Id")]
+    public int Id { get; set; }
 }

@@ -5,7 +5,7 @@ namespace AbleSharp.Lib;
 public class AutomationEvent
 {
     [XmlAttribute("Id")]
-    public string Id { get; set; }
+    public int Id { get; set; }
 
     [XmlAttribute("Time")]
     public decimal Time { get; set; }
@@ -20,7 +20,7 @@ public class AutomationEvent
 public abstract class AutomationEventBase
 {
     [XmlAttribute("Id")]
-    public string Id { get; set; }
+    public int Id { get; set; }
 
     [XmlAttribute("Time")]
     public decimal Time { get; set; }

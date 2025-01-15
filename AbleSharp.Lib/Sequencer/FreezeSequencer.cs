@@ -90,10 +90,10 @@ public class FreezeSequencer
     public ModulationTarget ComplexProEnvelopeModulationTarget { get; set; }
 
     [XmlElement("PitchViewScrollPosition")]
-    public Value<decimal> PitchViewScrollPosition { get; set; }
+    public Value<int> PitchViewScrollPosition { get; set; } = new() { Val = -1073741824 };
 
     [XmlElement("SampleOffsetModulationScrollPosition")]
-    public Value<decimal> SampleOffsetModulationScrollPosition { get; set; }
+    public Value<int> SampleOffsetModulationScrollPosition { get; set; } = new() { Val = -1073741824 };
 
     [XmlElement("Recorder")]
     public Recorder Recorder { get; set; }

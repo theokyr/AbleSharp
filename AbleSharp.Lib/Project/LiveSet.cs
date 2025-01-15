@@ -31,9 +31,16 @@ public class LiveSet
     public Value<bool> AutomationMode { get; set; }
     public Value<bool> SnapAutomationToGrid { get; set; }
     public Value<bool> ArrangementOverdub { get; set; }
-    public Value<int> GlobalQuantisation { get; set; }
-    public Value<int> AutoQuantisation { get; set; }
-    public Grid Grid { get; set; }
+
+    [XmlElement("GlobalQuantisation")]
+    public Value<int> GlobalQuantisation { get; set; } = new() { Val = 4 };
+
+    [XmlElement("AutoQuantisation")]
+    public Value<int> AutoQuantisation { get; set; } = new() { Val = 0 };
+
+    [XmlElement("Grid")]
+    public Grid Grid { get; set; } = new();
+
     public Value<string> ViewData { get; set; }
     public Value<bool> MidiFoldIn { get; set; }
     public Value<int> MidiFoldMode { get; set; }
@@ -81,9 +88,6 @@ public class LiveSet
     [XmlElement("PreferFlatRootNote")]
     public Value<bool> PreferFlatRootNote { get; set; }
 
-    [XmlElement("UseWarperLegacyHiQMode")]
-    public Value<bool> UseWarperLegacyHiQMode { get; set; }
-
     [XmlElement("SignalModulations")]
     public object SignalModulationsTop { get; set; } = new();
 
@@ -104,4 +108,73 @@ public class LiveSet
 
     [XmlElement("GroovePool")]
     public GroovePool GroovePool { get; set; } = new();
+
+    [XmlElement("NoteAlgorithms")]
+    public NoteAlgorithms NoteAlgorithms { get; set; } = new();
+
+    [XmlElement("WaveformVerticalZoomFactor")]
+    public Value<int> WaveformVerticalZoomFactor { get; set; } = new() { Val = 1 };
+
+    [XmlElement("IsWaveformVerticalZoomActive")]
+    public Value<bool> IsWaveformVerticalZoomActive { get; set; } = new() { Val = true };
+
+    [XmlElement("ViewStateMainWindowClipDetailOpen")]
+    public Value<bool> ViewStateMainWindowClipDetailOpen { get; set; } = new() { Val = true };
+
+    [XmlElement("ViewStateMainWindowDeviceDetailOpen")]
+    public Value<bool> ViewStateMainWindowDeviceDetailOpen { get; set; } = new() { Val = false };
+
+    [XmlElement("ViewStateSecondWindowClipDetailOpen")]
+    public Value<bool> ViewStateSecondWindowClipDetailOpen { get; set; } = new() { Val = false };
+
+    [XmlElement("ViewStateSecondWindowDeviceDetailOpen")]
+    public Value<bool> ViewStateSecondWindowDeviceDetailOpen { get; set; } = new() { Val = true };
+
+    [XmlElement("ViewStateMainWindowHiddenOtherDocViewTypeClipDetailOpen")]
+    public Value<bool> ViewStateMainWindowHiddenOtherDocViewTypeClipDetailOpen { get; set; } = new() { Val = false };
+
+    [XmlElement("ViewStateMainWindowHiddenOtherDocViewTypeDeviceDetailOpen")]
+    public Value<bool> ViewStateMainWindowHiddenOtherDocViewTypeDeviceDetailOpen { get; set; } = new() { Val = true };
+
+    [XmlElement("ShowVideoWindow")]
+    public Value<bool> ShowVideoWindow { get; set; } = new() { Val = true };
+
+    [XmlElement("TrackHeaderWidth")]
+    public Value<int> TrackHeaderWidth { get; set; } = new() { Val = 93 };
+
+    [XmlElement("ViewStateFxSlotCount")]
+    public Value<int> ViewStateFxSlotCount { get; set; } = new() { Val = 4 };
+
+    [XmlElement("ViewStateSessionMixerHeight")]
+    public Value<int> ViewStateSessionMixerHeight { get; set; } = new() { Val = 120 };
+
+    [XmlElement("ViewStateArrangerMixerVolumeSectionHeight")]
+    public Value<int> ViewStateArrangerMixerVolumeSectionHeight { get; set; } = new() { Val = 120 };
+
+    [XmlElement("ShouldSceneTempoAndTimeSignatureBeVisible")]
+    public Value<bool> ShouldSceneTempoAndTimeSignatureBeVisible { get; set; } = new() { Val = false };
+
+    [XmlElement("AutoColorPickerForPlayerAndGroupTracks")]
+    public AutoColorPicker AutoColorPickerForPlayerAndGroupTracks { get; set; } = new();
+
+    [XmlElement("AutoColorPickerForReturnAndMainTracks")]
+    public AutoColorPicker AutoColorPickerForReturnAndMainTracks { get; set; } = new();
+
+    [XmlElement("VideoWindowRect")]
+    public VideoWindowRect VideoWindowRect { get; set; } = new();
+
+    [XmlElement("SessionScrollPos")]
+    public ScrollPosition SessionScrollPos { get; set; } = new();
+
+    [XmlElement("LinkedTrackGroups")]
+    public LinkedTrackGroups LinkedTrackGroups { get; set; } = new();
+
+    [XmlElement("DetailClipKeyMidis")]
+    public DetailClipKeyMidis DetailClipKeyMidis { get; set; } = new();
+
+    [XmlElement("UseWarperLegacyHiQMode")]
+    public Value<bool> UseWarperLegacyHiQMode { get; set; } = new() { Val = false };
+
+    [XmlElement("TuningSystems")]
+    public TuningSystems TuningSystems { get; set; } = new();
 }

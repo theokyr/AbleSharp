@@ -10,52 +10,34 @@ public class DeviceChain
     [XmlElement("ClipEnvelopeChooserViewState")]
     public ClipEnvelopeChooserViewState ClipEnvelopeChooserViewState { get; set; }
 
+    [XmlElement("MidiInputRouting")]
+    public MidiInputRouting MidiInputRouting { get; set; }
+
     [XmlElement("AudioInputRouting")]
     public AudioInputRouting AudioInputRouting { get; set; }
 
     [XmlElement("AudioOutputRouting")]
     public AudioOutputRouting AudioOutputRouting { get; set; }
 
-    [XmlElement("MidiInputRouting")]
-    public MidiInputRouting MidiInputRouting { get; set; }
-
     [XmlElement("MidiOutputRouting")]
     public MidiOutputRouting MidiOutputRouting { get; set; }
 
-    [XmlElement("Mixer")]
+    [XmlElement("Mixer")]  
     public Mixer Mixer { get; set; }
+
+    [XmlElement("MainSequencer")]
+    public MainSequencer MainSequencer { get; set; }
+
+    [XmlElement("FreezeSequencer")]
+    public FreezeSequencer FreezeSequencer { get; set; }
+
+    [XmlElement("DeviceChain")]
+    public DeviceChain InnerDeviceChain { get; set; }
 
     [XmlArray("Devices")]
     [XmlArrayItem("Device")]
-    public List<Device> Devices { get; set; }
+    public List<Device> Devices { get; set; } = new();
 
     [XmlElement("SignalModulations")]
-    public SignalModulations SignalModulations { get; set; }
-
-    private MainSequencer _mainSequencer;
-    private FreezeSequencer _freezeSequencer;
-
-    [XmlElement("MainSequencer")]
-    public MainSequencer MainSequencer
-    {
-        get => _mainSequencer;
-        set => _mainSequencer = value;
-    }
-
-    [XmlElement("FreezeSequencer")]
-    public FreezeSequencer FreezeSequencer
-    {
-        get => _freezeSequencer;
-        set => _freezeSequencer = value;
-    }
-
-    public bool ShouldSerializeMainSequencer()
-    {
-        return MainSequencer != null;
-    }
-
-    public bool ShouldSerializeFreezeSequencer()
-    {
-        return FreezeSequencer != null;
-    }
+    public SignalModulations SignalModulations { get; set; } = new();
 }

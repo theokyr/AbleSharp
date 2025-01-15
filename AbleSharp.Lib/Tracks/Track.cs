@@ -3,7 +3,7 @@ using System.Xml.Serialization;
 namespace AbleSharp.Lib;
 
 [XmlInclude(typeof(MidiTrack))]
-[XmlInclude(typeof(AudioTrack))]
+[XmlInclude(typeof(AudioTrack))] 
 [XmlInclude(typeof(ReturnTrack))]
 [XmlInclude(typeof(MainTrack))]
 [XmlInclude(typeof(PreHearTrack))]
@@ -11,7 +11,7 @@ namespace AbleSharp.Lib;
 public abstract class Track
 {
     [XmlAttribute("Id")]
-    public string Id { get; set; }
+    public int Id { get; set; }
 
     [XmlElement("LomId")]
     public Value<int> LomId { get; set; }
@@ -52,7 +52,7 @@ public abstract class Track
     [XmlElement("ViewData")]
     public Value<string> ViewData { get; set; }
 
-    [XmlElement("TakeLanes")]
+    [XmlElement("TakeLanes")] 
     public TakeLanes TakeLanes { get; set; }
 
     [XmlElement("LinkedTrackGroupId")]
@@ -63,4 +63,13 @@ public abstract class Track
 
     [XmlElement("ReWireDeviceMidiTargetId")]
     public Value<int> ReWireDeviceMidiTargetId { get; set; }
+
+    [XmlElement("SavedPlayingSlot")]
+    public Value<int> SavedPlayingSlot { get; set; }
+
+    [XmlElement("SavedPlayingOffset")]
+    public Value<decimal> SavedPlayingOffset { get; set; }
+
+    [XmlElement("VelocityDetail")]
+    public Value<int> VelocityDetail { get; set; }
 }

@@ -5,11 +5,11 @@ namespace AbleSharp.Lib;
 public class WarpMarker
 {
     [XmlAttribute("Id")]
-    public string Id { get; set; }
+    public int Id { get; set; }
 
-    [XmlElement("SecTime")]
-    public Value<decimal> SecTime { get; set; }
+    [XmlAttribute("SecTime")]
+    public string SecTime { get; set; } = "Invalid";
 
-    [XmlElement("BeatTime")]
-    public Value<decimal> BeatTime { get; set; }
+    [XmlAttribute("BeatTime")]
+    public string BeatTime { get; set; } = "Invalid";
 }

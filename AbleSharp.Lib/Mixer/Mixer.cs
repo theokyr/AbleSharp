@@ -54,7 +54,7 @@ public class Mixer
 
     [XmlArray("Sends")]
     [XmlArrayItem("Send")]
-    public List<Send> Sends { get; set; }
+    public List<Send> Sends { get; set; } = new();
 
     [XmlElement("Speaker")]
     public Speaker Speaker { get; set; }
@@ -67,6 +67,12 @@ public class Mixer
 
     [XmlElement("Pan")]
     public Pan Pan { get; set; }
+
+    [XmlElement("SplitStereoPanL")]
+    public SplitStereoPanL SplitStereoPanL { get; set; }
+
+    [XmlElement("SplitStereoPanR")]
+    public SplitStereoPanR SplitStereoPanR { get; set; }
 
     [XmlElement("Volume")]
     public Volume Volume { get; set; }
