@@ -26,7 +26,7 @@
                 <!-- Clip Header -->
                 <Border Grid.Row="0"
                         Background="{Binding DarkColor}"
-                        Height="{Binding ZoomY, Converter={StaticResource HeightMultiConverter}, ConverterParameter=16}">
+                        Height="16">
                     <Grid ColumnDefinitions="*" Margin="4,2">
                         <!-- Clip Name -->
                         <TextBlock Grid.Column="0"
@@ -47,7 +47,7 @@
                         <TextBlock Grid.Column="0"
                                    Foreground="{StaticResource TextPrimaryBrush}"
                                    Text="{Binding Length, StringFormat='{}{0:F1}'}"
-                                   FontSize="{Binding ZoomY, Converter={StaticResource FontSizeMultiConverter}, ConverterParameter=14}"
+                                   FontSize="14"
                                    Classes="Caption"
                                    Opacity="0.3"
                                    HorizontalAlignment="Center"

@@ -69,8 +69,8 @@ public class TimelineViewModel : INotifyPropertyChanged
 
     private void BuildTrackHierarchy(List<Track> tracks)
     {
-        var trackDict = new Dictionary<string, TimelineTrackViewModel>();
-        var processedTracks = new HashSet<string>();
+        var trackDict = new Dictionary<int, TimelineTrackViewModel>();
+        var processedTracks = new HashSet<int>();
 
         foreach (var track in tracks)
         {
@@ -93,7 +93,7 @@ public class TimelineViewModel : INotifyPropertyChanged
 
             var childTracks = tracks.Where(ct =>
                 ct.TrackGroupId?.Val != null &&
-                ct.TrackGroupId.Val.ToString() == t.Id
+                ct.TrackGroupId.Val == t.Id
             ).ToList();
 
             foreach (var child in childTracks) ProcessTrack(child, indent + 1);
@@ -102,7 +102,7 @@ public class TimelineViewModel : INotifyPropertyChanged
         foreach (var t in tracks)
         {
             var groupId = t.TrackGroupId?.Val ?? -1;
-            if (groupId == -1 || !trackDict.ContainsKey(groupId.ToString())) ProcessTrack(t);
+            if (groupId == -1 || !trackDict.ContainsKey(groupId)) ProcessTrack(t);
         }
 
         _logger.LogDebug("Built track hierarchy with {Count} total tracks in timeline", Tracks.Count);
