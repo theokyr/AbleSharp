@@ -35,6 +35,7 @@ public class MainWindowViewModel : INotifyPropertyChanged
         _logger.LogDebug("Constructing MainWindowViewModel");
 
         OpenProjectDialogCommand = new OpenProjectDialogCommand(this);
+
         OpenMergeProjectsWindowCommand = new OpenMergeProjectsWindowCommand(this);
 
         OpenDebugLogWindowCommand = AbleSharpUiCommand.Create(ShowDebugLogWindow);
