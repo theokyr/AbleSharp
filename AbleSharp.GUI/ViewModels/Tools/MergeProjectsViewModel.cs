@@ -148,16 +148,10 @@ public class MergeProjectsViewModel : ReactiveObject
     {
         foreach (var path in projectPaths)
         {
-            if (!path.EndsWith(".als", StringComparison.OrdinalIgnoreCase))
-            {
-                continue;
-            }
+            if (!path.EndsWith(".als", StringComparison.OrdinalIgnoreCase)) continue;
 
             var normalizedPath = NormalizePath(path);
-            if (SelectedProjects.Contains(normalizedPath))
-            {
-                continue;
-            }
+            if (SelectedProjects.Contains(normalizedPath)) continue;
 
             SelectedProjects.Add(normalizedPath);
             _logger.LogInformation($"Added project: {normalizedPath}");
@@ -167,15 +161,12 @@ public class MergeProjectsViewModel : ReactiveObject
 
     private async Task AddProjectsAsync()
     {
-        _logger.LogDebug($"[MergeProjectsWindow] AddProjectsAsync ViewModel instance: {this.GetHashCode()}");
+        _logger.LogDebug($"[MergeProjectsWindow] AddProjectsAsync ViewModel instance: {GetHashCode()}");
         _logger.LogInformation("[MergeProjectsViewModel] Adding projects to merge");
 
         var filePaths = await FileDialogService.ShowOpenFilesDialogAsync();
 
-        if (filePaths == null)
-        {
-            return;
-        }
+        if (filePaths == null) return;
 
         AddProjects(filePaths);
     }

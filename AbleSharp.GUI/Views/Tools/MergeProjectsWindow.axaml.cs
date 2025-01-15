@@ -142,19 +142,13 @@ public partial class MergeProjectsWindow : Window
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
                 var projectPaths = validFiles.ToList();
-                foreach (var file in projectPaths)
-                {
-                    _logger.LogInformation($"[MergeProjectsWindow] Adding dropped file: {file}");
-                }
+                foreach (var file in projectPaths) _logger.LogInformation($"[MergeProjectsWindow] Adding dropped file: {file}");
 
                 _logger.LogDebug($"[MergeProjectsWindow] DROP ViewModel instance: {_viewModel.GetHashCode()}");
                 _viewModel.AddProjects(projectPaths);
             });
 
-            if (!invalidFiles.Any())
-            {
-                return;
-            }
+            if (!invalidFiles.Any()) return;
 
             _logger.LogWarning($"[MergeProjectsWindow] Skipped {invalidFiles.Count()} non-ALS files");
             await ShowInvalidFileTypesMessage(invalidFiles);

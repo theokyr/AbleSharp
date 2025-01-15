@@ -47,7 +47,7 @@ public partial class App : Application
 
     private void ConfigureServices(IServiceCollection services)
     {
-        services.AddSingleton<MergeProjectsViewModel>(); 
-        services.AddTransient<MainWindow>(); 
+        services.AddSingleton<MergeProjectsViewModel>();
+        services.AddTransient<MainWindow>();
     }
 }

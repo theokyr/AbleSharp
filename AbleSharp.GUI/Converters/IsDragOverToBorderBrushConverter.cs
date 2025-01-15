@@ -9,8 +9,8 @@ public class IsDragOverToBorderBrushConverter : IValueConverter
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
         return value is bool isDragOver && isDragOver
-            ? Brushes.Blue // Replace with your desired accent border color
-            : Brushes.Gray; // Replace with your default border color
+            ? Brushes.LightGray
+            : Brushes.Gray; 
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

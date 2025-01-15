@@ -9,8 +9,8 @@ public class IsDragOverToBackgroundConverter : IValueConverter
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
         return value is bool isDragOver && isDragOver
-            ? Brushes.LightBlue // Replace with your desired accent color
-            : Brushes.LightGray; // Replace with your default background color
+            ? Brushes.DarkSlateGray
+            : Brushes.Transparent;
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
