@@ -17,10 +17,10 @@ public partial class MergeProjectsWindow : Window
 
     public MergeProjectsWindow()
     {
-        InitializeComponent();
-        _viewModel = DataContext as MergeProjectsViewModel ?? new MergeProjectsViewModel();
+        _viewModel = new MergeProjectsViewModel();
         DataContext = _viewModel;
         _logger = LoggerService.GetLogger<MergeProjectsWindow>();
+        InitializeComponent();
 
 #if DEBUG
         this.AttachDevTools();
@@ -36,6 +36,8 @@ public partial class MergeProjectsWindow : Window
 
         if (_fileDropZone != null)
         {
+            _logger.LogDebug($"[MergeProjectsWindow] Setting up drag-drop handlers for FileDropZone");
+
             // Set up drag-drop handlers
             _fileDropZone.AddHandler(DragDrop.DragEnterEvent, OnDragEnter);
             _fileDropZone.AddHandler(DragDrop.DragLeaveEvent, OnDragLeave);
@@ -50,6 +52,7 @@ public partial class MergeProjectsWindow : Window
 
     private void OnDragEnter(object? sender, DragEventArgs e)
     {
+        _logger.LogDebug($"[MergeProjectsWindow] DragEnter event received");
         if (ValidateDragData(e))
         {
             _viewModel.IsDragOver = true;
@@ -66,19 +69,54 @@ public partial class MergeProjectsWindow : Window
 
     private void OnDragLeave(object? sender, DragEventArgs e)
     {
+        _logger.LogDebug($"[MergeProjectsWindow] DragLeave event received");
         _viewModel.IsDragOver = false;
         e.Handled = true;
     }
 
+    private (bool IsValid, IEnumerable<string> ValidFiles, IEnumerable<string> InvalidFiles) ValidateAndCategorizeFiles(DragEventArgs e)
+    {
+        _logger.LogDebug($"[MergeProjectsWindow] Validating drag data: {e.Data.GetType()}");
+
+        if (!e.Data.Contains(DataFormats.Files))
+        {
+            _logger.LogDebug($"[MergeProjectsWindow] Drag data does not contain file names");
+            return (false, Enumerable.Empty<string>(), Enumerable.Empty<string>());
+        }
+
+        var files = e.Data.GetFiles();
+        if (files == null || !files.Any())
+        {
+            _logger.LogDebug($"[MergeProjectsWindow] No files found in drag data");
+            return (false, Enumerable.Empty<string>(), Enumerable.Empty<string>());
+        }
+
+        var validFiles = files.Select(file => file.Path.AbsolutePath.ToString())
+            .Where(file => file.EndsWith(".als", StringComparison.OrdinalIgnoreCase));
+        var invalidFiles = files.Select(file => file.Path.AbsolutePath.ToString())
+            .Where(file => !file.EndsWith(".als", StringComparison.OrdinalIgnoreCase));
+
+        _logger.LogDebug($"[MergeProjectsWindow] Valid files: {string.Join(", ", validFiles)}");
+        _logger.LogDebug($"[MergeProjectsWindow] Invalid files: {string.Join(", ", invalidFiles)}");
+
+        return (validFiles.Any(), validFiles, invalidFiles);
+    }
+
     private void OnDragOver(object? sender, DragEventArgs e)
     {
-        if (ValidateDragData(e))
+        var (isValid, _, _) = ValidateAndCategorizeFiles(e);
+
+        if (isValid)
         {
+            if (!_viewModel.IsDragOver) _logger.LogDebug($"[MergeProjectsWindow] Valid ALS files detected during DragOver");
+
             _viewModel.IsDragOver = true;
             e.DragEffects = DragDropEffects.Copy;
         }
         else
         {
+            if (_viewModel.IsDragOver) _logger.LogDebug($"[MergeProjectsWindow] Invalid files detected during DragOver");
+
             _viewModel.IsDragOver = false;
             e.DragEffects = DragDropEffects.None;
         }
@@ -90,28 +128,21 @@ public partial class MergeProjectsWindow : Window
     {
         try
         {
+            _logger.LogDebug($"[MergeProjectsWindow] Drop event received");
             _viewModel.IsDragOver = false;
 
-            if (!e.Data.Contains(DataFormats.FileNames))
+            var (isValid, validFiles, invalidFiles) = ValidateAndCategorizeFiles(e);
+
+            if (!isValid)
             {
-                _logger.LogWarning("Drop data does not contain file names");
+                _logger.LogWarning("Drop data contains no valid files");
                 return;
             }
-
-            var files = e.Data.GetFileNames();
-            if (files == null)
-            {
-                _logger.LogWarning("No files in drop data");
-                return;
-            }
-
-            var validFiles = files.Where(f => f.EndsWith(".als", StringComparison.OrdinalIgnoreCase));
-            var invalidFiles = files.Where(f => !f.EndsWith(".als", StringComparison.OrdinalIgnoreCase));
 
             foreach (var file in validFiles)
             {
                 await Dispatcher.UIThread.InvokeAsync(() => _viewModel.AddProject(file));
-                _logger.LogInformation($"Added dropped file: {file}");
+                _logger.LogInformation($"[MergeProjectsWindow] Added dropped file: {file}");
             }
 
             if (invalidFiles.Any())
@@ -132,11 +163,8 @@ public partial class MergeProjectsWindow : Window
 
     private bool ValidateDragData(DragEventArgs e)
     {
-        if (!e.Data.Contains(DataFormats.FileNames))
-            return false;
-
-        var files = e.Data.GetFileNames();
-        return files != null && files.Any(file => file.EndsWith(".als", StringComparison.OrdinalIgnoreCase));
+        var (isValid, _, _) = ValidateAndCategorizeFiles(e);
+        return isValid;
     }
 
     private async Task ShowInvalidFileTypesMessage(IEnumerable<string> invalidFiles)

@@ -21,6 +21,7 @@
         <Border Grid.Row="1"
                 Classes="card"
                 ClipToBounds="True">
+
             <Grid RowDefinitions="Auto,Auto,*">
                 <TextBlock Grid.Row="0"
                            Text="Projects to Merge"
@@ -35,7 +36,7 @@
                     <Button Content="Add Projects"
                             Command="{Binding AddProjectsCommand}"
                             Classes="primary" />
-                    <Button Content="Remove Selected"
+                    <Button Content="Clear All"
                             Command="{Binding RemoveSelectedProjectsCommand}"
                             IsEnabled="{Binding SelectedProjects.Count, Converter={StaticResource GreaterThanConverter}, ConverterParameter=0}" />
                 </StackPanel>

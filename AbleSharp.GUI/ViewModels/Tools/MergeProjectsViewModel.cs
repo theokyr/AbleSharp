@@ -146,13 +146,13 @@ public class MergeProjectsViewModel : ReactiveObject
         if (!SelectedProjects.Contains(projectPath))
         {
             SelectedProjects.Add(projectPath);
-            _logger.LogInformation($"Added project: {projectPath}");
+            _logger.LogInformation($"[MergeProjectsViewModel] Added project: {projectPath}");
         }
     }
 
     private async Task AddProjectsAsync()
     {
-        _logger.LogInformation("Adding projects to merge");
+        _logger.LogInformation("[MergeProjectsViewModel] Adding projects to merge");
 
         var filePaths = await FileDialogService.ShowOpenFilesDialogAsync();
 
@@ -175,20 +175,20 @@ public class MergeProjectsViewModel : ReactiveObject
         if (SelectedProjects.Contains(projectPath))
         {
             SelectedProjects.Remove(projectPath);
-            _logger.LogInformation($"Removed project: {projectPath}");
+            _logger.LogInformation($"[MergeProjectsViewModel] Removed project: {projectPath}");
         }
     }
 
     private async Task SelectOutputFileAsync()
     {
-        _logger.LogInformation("Selecting output file for merged project");
+        _logger.LogInformation("[MergeProjectsViewModel] Selecting output file for merged project");
 
         var filePath = await FileDialogService.ShowSaveFileDialogAsync("MergedProject.als");
 
         if (!string.IsNullOrEmpty(filePath))
         {
             OutputFilePath = filePath;
-            _logger.LogInformation($"Selected output file: {filePath}");
+            _logger.LogInformation($"[MergeProjectsViewModel] Selected output file: {filePath}");
         }
     }
 
@@ -251,7 +251,7 @@ public class MergeProjectsViewModel : ReactiveObject
                         projects.Add(project);
                         currentStep++;
                         MergeProgress = (double)currentStep / totalSteps * 100;
-                        _logger.LogInformation($"Successfully loaded: {path}");
+                        _logger.LogInformation($"[MergeProjectsViewModel] Successfully loaded: {path}");
                     }
                     else
                     {
