@@ -39,8 +39,19 @@ class Program
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error: {ex.Message}");
+            Console.WriteLine("An error occurred:");
+            PrintExceptionDetails(ex);
             Environment.Exit(1);
+        }
+    }
+
+    static void PrintExceptionDetails(Exception exception)
+    {
+        while (exception != null)
+        {
+            Console.WriteLine($"Exception: {exception.Message}");
+            Console.WriteLine($"Stack Trace: {exception.StackTrace}");
+            exception = exception.InnerException;
         }
     }
 
