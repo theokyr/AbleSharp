@@ -52,6 +52,7 @@ ablesharp open --dump project.als
 ### Using the SDK
 
 ```csharp
+using AbleSharp.Lib;
 using AbleSharp.SDK;
 
 // Load a project
@@ -70,5 +71,4 @@ AbletonProjectHandler.SaveToFile(merged, "output.als");
 ```
 
 ## License
-
-This project is licensed under the MIT License - see LICENSE.md
+This project is licensed under the MIT License - see [LICENSE.md](LICENSE.md)
