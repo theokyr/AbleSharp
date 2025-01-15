@@ -6,15 +6,15 @@ using Microsoft.Extensions.Logging;
 
 namespace AbleSharp.GUI.Commands;
 
-public class OpenProjectCommand : ICommand
+public class OpenProjectDialogCommand : ICommand
 {
     private readonly MainWindowViewModel _mainWindowViewModel;
-    private readonly ILogger<OpenProjectCommand> _logger;
+    private readonly ILogger<OpenProjectDialogCommand> _logger;
 
-    public OpenProjectCommand(MainWindowViewModel vm)
+    public OpenProjectDialogCommand(MainWindowViewModel vm)
     {
         _mainWindowViewModel = vm;
-        _logger = LoggerService.GetLogger<OpenProjectCommand>();
+        _logger = LoggerService.GetLogger<OpenProjectDialogCommand>();
     }
 
     public bool CanExecute(object? parameter)

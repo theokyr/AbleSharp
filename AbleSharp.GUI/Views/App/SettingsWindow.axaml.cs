@@ -1,17 +1,17 @@
-﻿using Avalonia.Controls;
+﻿using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
-using AbleSharp.GUI.ViewModels;
-using Avalonia;
+using AbleSharp.GUI.ViewModels.Tools;
 using Avalonia.Input;
 
-namespace AbleSharp.GUI.Views;
+namespace AbleSharp.GUI.Views.Tools;
 
-public partial class DebugLogWindow : Window
+public partial class SettingsWindow : Window
 {
-    public DebugLogWindow()
+    public SettingsWindow()
     {
         InitializeComponent();
-        DataContext = new DebugLogWindowViewModel();
+        DataContext = new SettingsViewModel();
 #if DEBUG
         this.AttachDevTools();
 #endif

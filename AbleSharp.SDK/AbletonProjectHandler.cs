@@ -7,12 +7,18 @@ using Lib;
 
 public static class AbletonProjectHandler
 {
-    public static AbletonProject LoadFromFile(string filePath) =>
-        AbletonProjectReader.LoadFromFile(filePath);
+    public static AbletonProject LoadFromFile(string filePath)
+    {
+        return AbletonProjectReader.LoadFromFile(filePath);
+    }
 
-    public static void SaveToFile(AbletonProject project, string filePath) =>
+    public static void SaveToFile(AbletonProject project, string filePath)
+    {
         AbletonProjectWriter.SaveToFile(project, filePath);
+    }
 
-    public static AbletonProject CreateBlankProject() =>
-        AbletonProjectFactory.CreateBlankProject();
+    public static AbletonProject CreateBlankProject()
+    {
+        return AbletonProjectFactory.CreateBlankProject();
+    }
 }

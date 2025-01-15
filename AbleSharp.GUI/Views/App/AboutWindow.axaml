@@ -1,0 +1,115 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        x:Class="AbleSharp.GUI.Views.Tools.AboutWindow"
+        Title="About AbleSharp"
+        Width="700"
+        Height="900"
+        MinWidth="100"
+        MinHeight="100"
+        WindowStartupLocation="CenterOwner"
+        CanResize="False">
+
+    <Grid Margin="4" RowDefinitions="Auto,*">
+        <!-- Header -->
+        <StackPanel Grid.Row="0" Spacing="8">
+            <TextBlock Text="AbleSharp"
+                       Classes="Heading1"
+                       HorizontalAlignment="Center" />
+
+            <TextBlock Text="{Binding VersionString}"
+                       Classes="Caption"
+                       HorizontalAlignment="Center" />
+        </StackPanel>
+
+        <!-- Content -->
+        <ScrollViewer Grid.Row="1" Margin="0,4">
+            <StackPanel Spacing="4">
+                <!-- Description -->
+                <Border Classes="card">
+                    <StackPanel>
+                        <TextBlock Text="About"
+                                   Classes="Heading2" />
+                        <TextBlock
+                            Text="AbleSharp is an open source tool for working with Ableton Live project files. It provides capabilities for analyzing, modifying, and merging Ableton Live Sets (.als files) outside of the Ableton Live environment."
+                            Classes="Body"
+                            TextWrapping="Wrap" />
+                    </StackPanel>
+                </Border>
+
+                <!-- System Info -->
+                <Border Classes="card">
+                    <StackPanel>
+                        <TextBlock Text="System Information"
+                                   Classes="Heading2" />
+
+                        <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto" Margin="0,8">
+                            <TextBlock Grid.Row="0" Grid.Column="0"
+                                       Text="OS Version:"
+                                       Classes="Body"
+                                       Margin="0,0,4,8" />
+                            <TextBlock Grid.Row="0" Grid.Column="1"
+                                       Text="{Binding OsVersion}"
+                                       Classes="Body" />
+
+                            <TextBlock Grid.Row="1" Grid.Column="0"
+                                       Text="Runtime:"
+                                       Classes="Body"
+                                       Margin="0,0,4,8" />
+                            <TextBlock Grid.Row="1" Grid.Column="1"
+                                       Text="{Binding RuntimeVersion}"
+                                       Classes="Body" />
+
+                            <TextBlock Grid.Row="2" Grid.Column="0"
+                                       Text="Memory:"
+                                       Classes="Body"
+                                       Margin="0,0,4,8" />
+                            <TextBlock Grid.Row="2" Grid.Column="1"
+                                       Text="{Binding MemoryUsage}"
+                                       Classes="Body" />
+
+                            <TextBlock Grid.Row="3" Grid.Column="0"
+                                       Text="Process ID:"
+                                       Classes="Body"
+                                       Margin="0,0,4,8" />
+                            <TextBlock Grid.Row="3" Grid.Column="1"
+                                       Text="{Binding ProcessId}"
+                                       Classes="Body" />
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- Credits -->
+                <Border Classes="card">
+                    <StackPanel>
+                        <TextBlock Text="Credits"
+                                   Classes="Heading2" />
+                        <TextBlock Classes="Body"
+                                   TextWrapping="Wrap">
+                            AbleSharp is built using:
+                            <LineBreak />
+                            • Avalonia UI Framework
+                            <LineBreak />
+                            • .NET Core
+                            <LineBreak />
+                            • ReactiveUI
+                        </TextBlock>
+                    </StackPanel>
+                </Border>
+
+                <!-- License -->
+                <Border Classes="card">
+                    <StackPanel>
+                        <TextBlock Text="License"
+                                   Classes="Heading2" />
+                        <TextBlock Text="AbleSharp is licensed under the MIT License. See the LICENSE file in the project repository for full details."
+                                   Classes="Body"
+                                   TextWrapping="Wrap" />
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Window>

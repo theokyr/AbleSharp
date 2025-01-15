@@ -5,10 +5,9 @@
 
     <Canvas Name="RootCanvas">
         <Border Name="ClipBorder"
+                Classes="timeline-clip"
                 Height="{Binding ZoomY, Converter={StaticResource HeightMultiConverter}, ConverterParameter=40}"
-                Margin="0,5,0,5"
-                CornerRadius="3"
-                BoxShadow="0 1 3 0 #40000000"
+                Margin="0,4,0,4"
                 ToolTip.Tip="{Binding ClipName}">
 
             <Border.Background>
@@ -28,37 +27,31 @@
                 <Border Grid.Row="0"
                         Background="{Binding DarkColor}"
                         Height="{Binding ZoomY, Converter={StaticResource HeightMultiConverter}, ConverterParameter=16}">
-                    <Grid ColumnDefinitions="*,Auto">
+                    <Grid ColumnDefinitions="*" Margin="4,2">
                         <!-- Clip Name -->
                         <TextBlock Grid.Column="0"
-                                 Text="{Binding ClipName}"
-                                 Margin="5,2"
-                                 FontSize="{Binding ZoomY, Converter={StaticResource FontSizeMultiConverter}, ConverterParameter=10}"
-                                 Foreground="White"
-                                 TextTrimming="CharacterEllipsis"
-                                 VerticalAlignment="Center" />
-
-                        <!-- Length Display -->
-                        <TextBlock Grid.Column="1"
-                                 Text="{Binding Length, StringFormat='{}{0:F1}'}"
-                                 Margin="5,2"
-                                 FontSize="{Binding ZoomY, Converter={StaticResource FontSizeMultiConverter}, ConverterParameter=9}"
-                                 Foreground="#AAFFFFFF"
-                                 VerticalAlignment="Center" />
+                                   Foreground="{StaticResource TextPrimaryBrush}"
+                                   Text="{Binding ClipName}"
+                                   Classes="Caption"
+                                   TextTrimming="CharacterEllipsis"
+                                   VerticalAlignment="Center" />
                     </Grid>
                 </Border>
 
                 <!-- Clip Content -->
                 <Border Grid.Row="1"
                         Background="{Binding DarkColor}"
+                        Opacity="0.6"
                         Margin="0,1,0,0">
-                    <!-- Place for waveform/midi data visualization -->
                     <Grid>
-                        <TextBlock Text="∿∿∿∿"
-                                 Foreground="#fff"
-                                 FontSize="{Binding ZoomY, Converter={StaticResource FontSizeMultiConverter}, ConverterParameter=14}"
-                                 HorizontalAlignment="Center"
-                                 VerticalAlignment="Center" />
+                        <TextBlock Grid.Column="0"
+                                   Foreground="{StaticResource TextPrimaryBrush}"
+                                   Text="{Binding Length, StringFormat='{}{0:F1}'}"
+                                   FontSize="{Binding ZoomY, Converter={StaticResource FontSizeMultiConverter}, ConverterParameter=14}"
+                                   Classes="Caption"
+                                   Opacity="0.3"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center" />
                     </Grid>
                 </Border>
             </Grid>

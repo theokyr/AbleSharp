@@ -7,7 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\AbleSharp.Lib\AbleSharp.Lib.csproj" />
+        <ProjectReference Include="..\AbleSharp.Lib\AbleSharp.Lib.csproj"/>
     </ItemGroup>
 
 </Project>

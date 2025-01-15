@@ -1,0 +1,148 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        x:Class="AbleSharp.GUI.Views.Tools.SettingsWindow"
+        Title="Settings"
+        Width="800"
+        Height="600"
+        WindowStartupLocation="CenterOwner">
+
+    <Grid Margin="4" RowDefinitions="Auto,*,Auto">
+        <!-- Header -->
+        <TextBlock Grid.Row="0"
+                   Text="Settings"
+                   Classes="Heading1"
+                   Margin="0,0,0,16" />
+
+        <!-- Settings Content -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Visible">
+            <StackPanel Spacing="4" Margin="0,0,32,0">
+                <!-- General Settings -->
+                <Border Classes="card">
+                    <StackPanel>
+                        <TextBlock Text="General" Classes="Heading2" />
+
+                        <!-- Theme Selection -->
+                        <Grid ColumnDefinitions="*,Auto" Margin="0,8">
+                            <TextBlock Text="Application Theme"
+                                       VerticalAlignment="Center" />
+                            <ComboBox Grid.Column="1"
+                                      SelectedItem="{Binding SelectedTheme}"
+                                      Width="120">
+                                <ComboBoxItem>Light</ComboBoxItem>
+                                <ComboBoxItem>Dark</ComboBoxItem>
+                                <ComboBoxItem>System</ComboBoxItem>
+                            </ComboBox>
+                        </Grid>
+
+                        <!-- Default Project Location -->
+                        <Grid ColumnDefinitions="*,Auto" Margin="0,8">
+                            <TextBlock Text="Default Project Location"
+                                       VerticalAlignment="Center" />
+                            <Button Grid.Column="1"
+                                    Content="Browse..."
+                                    Command="{Binding BrowseProjectLocationCommand}" />
+                        </Grid>
+                        <TextBox Text="{Binding DefaultProjectLocation}"
+                                 IsReadOnly="True"
+                                 Margin="0,4" />
+                    </StackPanel>
+                </Border>
+
+                <!-- Timeline Settings -->
+                <Border Classes="card">
+                    <StackPanel>
+                        <TextBlock Text="Timeline" Classes="Heading2" />
+
+                        <!-- Snap Settings -->
+                        <CheckBox IsChecked="{Binding EnableSnapping}"
+                                  Content="Enable Grid Snapping"
+                                  Margin="0,8" />
+
+                        <Grid ColumnDefinitions="*,Auto"
+                              Margin="0,8"
+                              IsEnabled="{Binding EnableSnapping}">
+                            <TextBlock Text="Snap Division"
+                                       VerticalAlignment="Center" />
+                            <ComboBox Grid.Column="1"
+                                      SelectedItem="{Binding SelectedSnapDivision}"
+                                      Width="120">
+                                <ComboBoxItem>1/4</ComboBoxItem>
+                                <ComboBoxItem>1/8</ComboBoxItem>
+                                <ComboBoxItem>1/16</ComboBoxItem>
+                                <ComboBoxItem>1/32</ComboBoxItem>
+                            </ComboBox>
+                        </Grid>
+
+                        <!-- Default Zoom Settings -->
+                        <Grid ColumnDefinitions="*,Auto" Margin="0,8">
+                            <TextBlock Text="Default Horizontal Zoom"
+                                       VerticalAlignment="Center" />
+                            <NumericUpDown Grid.Column="1"
+                                           Value="{Binding DefaultZoomX}"
+                                           Width="120"
+                                           Minimum="1"
+                                           Maximum="50" />
+                        </Grid>
+
+                        <Grid ColumnDefinitions="*,Auto" Margin="0,8">
+                            <TextBlock Text="Default Vertical Zoom"
+                                       VerticalAlignment="Center" />
+                            <NumericUpDown Grid.Column="1"
+                                           Value="{Binding DefaultZoomY}"
+                                           Width="120"
+                                           Minimum="0.4"
+                                           Maximum="2" />
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- Advanced Settings -->
+                <Border Classes="card">
+                    <StackPanel>
+                        <TextBlock Text="Advanced" Classes="Heading2" />
+
+                        <!-- Logging -->
+                        <Grid ColumnDefinitions="*,Auto" Margin="0,8">
+                            <TextBlock Text="Log Level"
+                                       VerticalAlignment="Center" />
+                            <ComboBox Grid.Column="1"
+                                      SelectedItem="{Binding SelectedLogLevel}"
+                                      Width="120">
+                                <ComboBoxItem>Error</ComboBoxItem>
+                                <ComboBoxItem>Warning</ComboBoxItem>
+                                <ComboBoxItem>Info</ComboBoxItem>
+                                <ComboBoxItem>Debug</ComboBoxItem>
+                                <ComboBoxItem>Trace</ComboBoxItem>
+                            </ComboBox>
+                        </Grid>
+
+                        <CheckBox IsChecked="{Binding EnableDetailedLogging}"
+                                  Content="Enable Detailed Logging"
+                                  Margin="0,8" />
+
+                        <!-- Performance -->
+                        <CheckBox IsChecked="{Binding EnableHardwareAcceleration}"
+                                  Content="Enable Hardware Acceleration"
+                                  Margin="0,8" />
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Bottom Buttons -->
+        <StackPanel Grid.Row="2"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    Spacing="4"
+                    Margin="0,16,0,0">
+            <Button Content="Reset to Default"
+                    Command="{Binding ResetToDefaultCommand}" />
+            <Button Content="Save"
+                    Command="{Binding SaveSettingsCommand}"
+                    Classes="primary" />
+        </StackPanel>
+    </Grid>
+</Window>

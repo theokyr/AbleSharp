@@ -6,6 +6,7 @@
 
     <Application.Styles>
         <FluentTheme />
+        <StyleInclude Source="avares://AbleSharp.GUI/Styles/GlobalStyles.axaml" />
         <Style Selector="ScrollBar">
             <Setter Property="AllowAutoHide" Value="False" />
         </Style>
@@ -16,5 +17,6 @@
         <converters:IndentConverter x:Key="IndentConverter" />
         <converters:HeightMultiConverter x:Key="HeightMultiConverter" />
         <converters:FontSizeMultiConverter x:Key="FontSizeMultiConverter" />
+        <converters:GreaterThanConverter x:Key="GreaterThanConverter" />
     </Application.Resources>
 </Application>

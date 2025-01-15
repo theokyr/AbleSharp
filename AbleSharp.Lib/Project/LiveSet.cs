@@ -34,7 +34,7 @@ public class LiveSet
     public Value<int> GlobalQuantisation { get; set; }
     public Value<int> AutoQuantisation { get; set; }
     public Grid Grid { get; set; }
-    public ViewData ViewData { get; set; }
+    public Value<string> ViewData { get; set; }
     public Value<bool> MidiFoldIn { get; set; }
     public Value<int> MidiFoldMode { get; set; }
     public Value<bool> MultiClipFocusMode { get; set; }

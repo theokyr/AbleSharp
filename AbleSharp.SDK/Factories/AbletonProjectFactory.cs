@@ -19,11 +19,8 @@ public class AbletonProjectFactory
             LiveSet = CreateBlankLiveSet()
         };
 
-        int highestIdUsed = IdGenerator.GetLastId();
-        if (project.LiveSet.NextPointeeId.Val <= highestIdUsed)
-        {
-            project.LiveSet.NextPointeeId.Val = new Value<int> { Val = highestIdUsed + 1 };
-        }
+        var highestIdUsed = IdGenerator.GetLastId();
+        if (project.LiveSet.NextPointeeId.Val <= highestIdUsed) project.LiveSet.NextPointeeId.Val = new Value<int> { Val = highestIdUsed + 1 };
 
         return project;
     }
@@ -39,7 +36,7 @@ public class AbletonProjectFactory
             Tracks = new List<Track>
             {
                 CreateBlankMidiTrack("12", "Generated Midi Track"),
-                CreateBlankAudioTrack("13", "Generated Audio Track"),
+                CreateBlankAudioTrack("13", "Generated Audio Track")
             },
             MainTrack = CreateMainTrack(),
             PreHearTrack = CreatePreHearTrack(),
@@ -131,7 +128,7 @@ public class AbletonProjectFactory
         {
             Envelopes = new List<AutomationEnvelope>
             {
-                new AutomationEnvelope
+                new()
                 {
                     Id = "0",
                     EnvelopeTarget = new EnvelopeTarget
@@ -152,7 +149,7 @@ public class AbletonProjectFactory
                         AutomationTransformViewState = CreateDefaultAutomationTransformViewState()
                     }
                 },
-                new AutomationEnvelope
+                new()
                 {
                     Id = "1",
                     EnvelopeTarget = new EnvelopeTarget
@@ -258,7 +255,7 @@ public class AbletonProjectFactory
             ViewData = new Value<string> { Val = "{}" },
             TakeLanes = CreateDefaultTakeLanes(),
             LinkedTrackGroupId = new Value<int> { Val = -1 },
-            DeviceChain = CreateDefaultDeviceChain(includeSequencers: true),
+            DeviceChain = CreateDefaultDeviceChain(true),
             ReWireDeviceMidiTargetId = new Value<int> { Val = 0 },
             PitchbendRange = new Value<int> { Val = 96 },
             IsTuned = new Value<bool> { Val = true },
@@ -293,7 +290,7 @@ public class AbletonProjectFactory
             ViewData = new Value<string> { Val = "{}" },
             TakeLanes = CreateDefaultTakeLanes(),
             LinkedTrackGroupId = new Value<int> { Val = -1 },
-            DeviceChain = CreateDefaultDeviceChain(includeSequencers: true),
+            DeviceChain = CreateDefaultDeviceChain(true),
             SavedPlayingSlot = new Value<int> { Val = -1 },
             SavedPlayingOffset = new Value<decimal> { Val = 0 },
             Freeze = new Value<bool> { Val = false },
@@ -377,7 +374,7 @@ public class AbletonProjectFactory
         {
             Lanes = new List<AutomationLane>
             {
-                new AutomationLane
+                new()
                 {
                     Id = "0",
                     SelectedDevice = new Value<int> { Val = 1 },
@@ -556,7 +553,7 @@ public class AbletonProjectFactory
     {
         return new List<Scene>
         {
-            new Scene
+            new()
             {
                 Id = "0",
                 FollowAction = new FollowAction
@@ -680,8 +677,7 @@ public class AbletonProjectFactory
     private static List<ClipSlot> CreateDefaultClipSlotList()
     {
         var clipSlots = new List<ClipSlot>();
-        for (int i = 0; i < 8; i++)
-        {
+        for (var i = 0; i < 8; i++)
             clipSlots.Add(new ClipSlot
             {
                 Id = i.ToString(),
@@ -690,7 +686,6 @@ public class AbletonProjectFactory
                 HasStop = new Value<bool> { Val = true },
                 NeedRefreeze = new Value<bool> { Val = true }
             });
-        }
 
         return clipSlots;
     }
