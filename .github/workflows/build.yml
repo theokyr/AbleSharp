@@ -1,16 +1,27 @@
-﻿name: Build AbleSharp.GUI
+﻿name: Build AbleSharp
 
 on:
   push:
     branches: [ "master" ]
     tags: [ "v*" ]
+    paths-ignore:
+      - 'README.md'
+      - 'docs/**'
+      - '.github/*.md'
+      - 'LICENSE'
   pull_request:
     branches: [ "master" ]
+    paths-ignore:
+      - 'README.md'
+      - 'docs/**'
+      - '.github/*.md'
+      - 'LICENSE'
 
 env:
   DOTNET_VERSION: '9.0.x'
   SOLUTION_FILE: 'AbleSharp.sln'
-  PROJECT_PATH: 'AbleSharp.GUI/AbleSharp.GUI.csproj'
+  GUI_PROJECT: 'AbleSharp.GUI/AbleSharp.GUI.csproj'
+  CLI_PROJECT: 'AbleSharp.CLI/AbleSharp.CLI.csproj'
 
 jobs:
   build:
@@ -21,16 +32,19 @@ jobs:
         include:
           - os: windows-latest
             runtime: 'win-x64'
-            output_name: 'AbleSharp.GUI-windows'
-            artifact_extension: '.exe'
+            gui_name: 'AbleSharp.GUI-windows'
+            cli_name: 'AbleSharp.CLI-windows'
+            exe_ext: '.exe'
           - os: ubuntu-latest
             runtime: 'linux-x64'
-            output_name: 'AbleSharp.GUI-linux'
-            artifact_extension: ''
+            gui_name: 'AbleSharp.GUI-linux'
+            cli_name: 'AbleSharp.CLI-linux'
+            exe_ext: ''
           - os: macos-latest
             runtime: 'osx-x64'
-            output_name: 'AbleSharp.GUI-macos'
-            artifact_extension: ''
+            gui_name: 'AbleSharp.GUI-macos'
+            cli_name: 'AbleSharp.CLI-macos'
+            exe_ext: ''
 
     runs-on: ${{ matrix.os }}
 
@@ -51,40 +65,62 @@ jobs:
       - name: Build
         run: dotnet build ${{ env.SOLUTION_FILE }} --configuration ${{ matrix.configuration }} --no-restore
 
-      - name: Publish
-        run: dotnet publish ${{ env.PROJECT_PATH }} --configuration ${{ matrix.configuration }} --runtime ${{ matrix.runtime }} --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true --output ./publish
+      # Build GUI App
+      - name: Publish GUI
+        run: dotnet publish ${{ env.GUI_PROJECT }} --configuration ${{ matrix.configuration }} --runtime ${{ matrix.runtime }} --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true --output ./publish/gui
+
+      # Build CLI App
+      - name: Publish CLI
+        run: dotnet publish ${{ env.CLI_PROJECT }} --configuration ${{ matrix.configuration }} --runtime ${{ matrix.runtime }} --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true --output ./publish/cli
       
-      # We'll compress the build output before uploading to save bandwidth
-      - name: Compress artifact
+      # Compress artifacts
+      - name: Compress artifacts
         shell: bash
         run: |
-          cd publish
-          # Get the executable name based on platform
-          if [ "${{ matrix.os }}" = "windows-latest" ]; then
-            executable="AbleSharp.GUI.exe"
-          else
-            executable="AbleSharp.GUI"
-          fi
-          # Check if file exists and is not empty
-          if [ ! -f "$executable" ] || [ ! -s "$executable" ]; then
-            echo "::error::Executable $executable not found or empty"
-            exit 1
-          fi
-          # Compress with maximum compression
-          if [ "${{ matrix.os }}" = "windows-latest" ]; then
-            7z a -tzip "../${{ matrix.output_name }}.zip" "$executable"
-          else
-            zip -9 "../${{ matrix.output_name }}.zip" "$executable"
-          fi
+          # Function to create zip file
+          create_zip() {
+            local source_dir=$1
+            local output_name=$2
+            local exe_name=$3
+          
+            cd "$source_dir"
+            if [ ! -f "$exe_name" ] || [ ! -s "$exe_name" ]; then
+              echo "::error::Executable $exe_name not found or empty in $source_dir"
+              exit 1
+            fi
+          
+            if [ "${{ matrix.os }}" = "windows-latest" ]; then
+              7z a -tzip "../../$output_name.zip" "$exe_name"
+            else
+              zip -9 "../../$output_name.zip" "$exe_name"
+            fi
+            cd ../..
+          }
+          
+          # Create zip for GUI
+          create_zip "publish/gui" "${{ matrix.gui_name }}" "AbleSharp.GUI${{ matrix.exe_ext }}"
+          
+          # Create zip for CLI
+          create_zip "publish/cli" "${{ matrix.cli_name }}" "AbleSharp.CLI${{ matrix.exe_ext }}"
 
-      - name: Upload build artifacts
-        id: upload-artifacts
+      # Upload GUI artifacts
+      - name: Upload GUI artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.output_name }}
-          path: ${{ matrix.output_name }}.zip
+          name: ${{ matrix.gui_name }}
+          path: ${{ matrix.gui_name }}.zip
           retention-days: 5
-          compression-level: 0  # Already compressed above
+          compression-level: 0  # Already compressed
+          if-no-files-found: error
+
+      # Upload CLI artifacts
+      - name: Upload CLI artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.cli_name }}
+          path: ${{ matrix.cli_name }}.zip
+          retention-days: 5
+          compression-level: 0  # Already compressed
           if-no-files-found: error
 
   create-release:
@@ -92,7 +128,7 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
     permissions:
-      contents: write  # Required for creating releases
+      contents: write
     
     steps:
       - name: Download all artifacts
@@ -100,8 +136,7 @@ jobs:
         with:
           path: artifacts
           merge-multiple: true
-      
-      # Calculate checksums for verification
+
       - name: Generate SHA-256 checksums
         run: |
           cd artifacts
