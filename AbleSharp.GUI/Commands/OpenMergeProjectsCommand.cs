@@ -6,6 +6,8 @@ using AbleSharp.GUI.ViewModels;
 using Microsoft.Extensions.Logging;
 using AbleSharp.GUI.ViewModels.Tools;
 using AbleSharp.GUI.Views.Tools;
+using Avalonia;
+using Avalonia.Controls.ApplicationLifetimes;
 
 namespace AbleSharp.GUI.Commands;
 
@@ -33,6 +35,13 @@ public class OpenMergeProjectsWindowCommand : ICommand
         {
             DataContext = new MergeProjectsViewModel()
         };
+
+        if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime { MainWindow: not null } desktopLifetime)
+        {
+            mergeWindow.ShowDialog(desktopLifetime.MainWindow);
+            return;
+        }
+
         mergeWindow.Show();
     }
 

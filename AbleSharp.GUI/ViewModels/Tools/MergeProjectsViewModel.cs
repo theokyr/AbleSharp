@@ -1,21 +1,18 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using AbleSharp.GUI.Commands;
 using AbleSharp.GUI.Services;
 using Microsoft.Extensions.Logging;
-using Avalonia.Controls;
-using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive;
 using AbleSharp.Lib;
 using AbleSharp.SDK;
-using Avalonia.Platform.Storage;
 using ReactiveUI;
-using Avalonia.ReactiveUI; // Ensure this is included
+using Avalonia.Media;
+using Avalonia.ReactiveUI;
 
 namespace AbleSharp.GUI.ViewModels.Tools;
 
@@ -23,7 +20,13 @@ public class MergeProjectsViewModel : ReactiveObject
 {
     private readonly ILogger<MergeProjectsViewModel> _logger;
     private string _outputFilePath = string.Empty;
-    private string _mergeSettingExample = "Default Setting";
+    private string _mergeSettingExample = "Keep All";
+    private bool _isMerging;
+    private double _mergeProgress;
+    private bool _isMergeProgressIndeterminate;
+    private string _statusMessage = string.Empty;
+    private IBrush _statusMessageColor;
+    private bool _isDragOver;
 
     public ObservableCollection<string> SelectedProjects { get; set; } = new();
 
@@ -33,11 +36,50 @@ public class MergeProjectsViewModel : ReactiveObject
         set => this.RaiseAndSetIfChanged(ref _outputFilePath, value);
     }
 
-    // Example Merge Settings
     public string MergeSettingExample
     {
         get => _mergeSettingExample;
         set => this.RaiseAndSetIfChanged(ref _mergeSettingExample, value);
+    }
+
+    public bool IsMerging
+    {
+        get => _isMerging;
+        private set => this.RaiseAndSetIfChanged(ref _isMerging, value);
+    }
+
+    public double MergeProgress
+    {
+        get => _mergeProgress;
+        private set => this.RaiseAndSetIfChanged(ref _mergeProgress, value);
+    }
+
+    public bool IsMergeProgressIndeterminate
+    {
+        get => _isMergeProgressIndeterminate;
+        private set => this.RaiseAndSetIfChanged(ref _isMergeProgressIndeterminate, value);
+    }
+
+    public string StatusMessage
+    {
+        get => _statusMessage;
+        private set => this.RaiseAndSetIfChanged(ref _statusMessage, value);
+    }
+
+    public IBrush StatusMessageColor
+    {
+        get => _statusMessageColor;
+        private set => this.RaiseAndSetIfChanged(ref _statusMessageColor, value);
+    }
+
+    /// <summary>
+    /// Indicates whether a drag operation is currently over the drop zone.
+    /// Used to provide visual feedback in the UI.
+    /// </summary>
+    public bool IsDragOver
+    {
+        get => _isDragOver;
+        set => this.RaiseAndSetIfChanged(ref _isDragOver, value);
     }
 
     public ReactiveCommand<Unit, Unit> AddProjectsCommand { get; }
@@ -48,6 +90,7 @@ public class MergeProjectsViewModel : ReactiveObject
     public MergeProjectsViewModel()
     {
         _logger = LoggerService.GetLogger<MergeProjectsViewModel>();
+        _statusMessageColor = new SolidColorBrush(Color.Parse("#FFFFFF"));
 
         // Initialize Commands with AvaloniaScheduler.Instance to ensure UI thread execution
         AddProjectsCommand = ReactiveCommand.CreateFromTask(AddProjectsAsync, outputScheduler: AvaloniaScheduler.Instance);
@@ -60,22 +103,29 @@ public class MergeProjectsViewModel : ReactiveObject
 
         SelectOutputFileCommand = ReactiveCommand.CreateFromTask(SelectOutputFileAsync, outputScheduler: AvaloniaScheduler.Instance);
 
-        MergeProjectsCommand = ReactiveCommand.CreateFromTask(
-            MergeProjectsAsync,
-            this.WhenAnyValue(
-                vm => vm.SelectedProjects.Count,
-                vm => vm.OutputFilePath,
-                (count, outputFilePath) => count >= 2 && !string.IsNullOrEmpty(outputFilePath)
-            ),
-            AvaloniaScheduler.Instance
+        var canMerge = this.WhenAnyValue(
+            vm => vm.SelectedProjects.Count,
+            vm => vm.OutputFilePath,
+            vm => vm.IsMerging,
+            (count, outputFilePath, isMerging) => count >= 2 && !string.IsNullOrEmpty(outputFilePath) && !isMerging
         );
 
-        // ReactiveCommands automatically handle CanExecute; no need for manual RaiseCanExecuteChanged
+        MergeProjectsCommand = ReactiveCommand.CreateFromTask(
+            MergeProjectsAsync,
+            canMerge,
+            AvaloniaScheduler.Instance
+        );
     }
 
-    /// <summary>
-    /// Adds selected project files to the merge list.
-    /// </summary>
+    public void AddProject(string projectPath)
+    {
+        if (!SelectedProjects.Contains(projectPath))
+        {
+            SelectedProjects.Add(projectPath);
+            _logger.LogInformation($"Added project: {projectPath}");
+        }
+    }
+
     private async Task AddProjectsAsync()
     {
         _logger.LogInformation("Adding projects to merge");
@@ -84,16 +134,9 @@ public class MergeProjectsViewModel : ReactiveObject
 
         if (filePaths != null)
             foreach (var path in filePaths)
-                if (!SelectedProjects.Contains(path))
-                {
-                    SelectedProjects.Add(path);
-                    _logger.LogInformation($"Added project: {path}");
-                }
+                AddProject(path);
     }
 
-    /// <summary>
-    /// Removes the last selected project from the merge list.
-    /// </summary>
     private void RemoveSelectedProjects()
     {
         if (SelectedProjects.Count > 0)
@@ -104,9 +147,6 @@ public class MergeProjectsViewModel : ReactiveObject
         }
     }
 
-    /// <summary>
-    /// Opens a save file dialog to select the output file for the merged project.
-    /// </summary>
     private async Task SelectOutputFileAsync()
     {
         _logger.LogInformation("Selecting output file for merged project");
@@ -120,71 +160,118 @@ public class MergeProjectsViewModel : ReactiveObject
         }
     }
 
-    /// <summary>
-    /// Merges the selected Ableton Live projects and saves the result to the output file.
-    /// </summary>
     private async Task MergeProjectsAsync()
     {
+        if (SelectedProjects.Count < 2)
+        {
+            ShowError("At least two projects are required to perform a merge.");
+            return;
+        }
+
+        if (string.IsNullOrEmpty(OutputFilePath))
+        {
+            ShowError("Output file path is not specified.");
+            return;
+        }
+
         try
         {
-            _logger.LogInformation("Starting merge of projects.");
+            IsMerging = true;
+            IsMergeProgressIndeterminate = true;
+            ShowStatus("Starting merge process...", "#FFFFFF");
 
-            if (SelectedProjects.Count < 2)
-            {
-                _logger.LogWarning("At least two projects are required to perform a merge.");
-                return;
-            }
-
-            if (string.IsNullOrEmpty(OutputFilePath))
-            {
-                _logger.LogWarning("Output file path is not specified.");
-                return;
-            }
-
-            // Load all projects asynchronously on background threads
-            _logger.LogInformation("Loading projects...");
             var projects = new List<AbletonProject>();
+            var totalSteps = SelectedProjects.Count + 2; // Loading + Merging + Saving
+            var currentStep = 0;
+
+            // Load all projects
             foreach (var path in SelectedProjects)
                 try
                 {
-                    _logger.LogInformation($"Loading: {path}");
+                    ShowStatus($"Loading: {Path.GetFileName(path)}", "#FFFFFF");
                     var project = await Task.Run(() => AbletonProjectHandler.LoadFromFile(path));
-                    projects.Add(project);
+
+                    if (project != null)
+                    {
+                        projects.Add(project);
+                        currentStep++;
+                        MergeProgress = (double)currentStep / totalSteps * 100;
+                        _logger.LogInformation($"Successfully loaded: {path}");
+                    }
+                    else
+                    {
+                        ShowError($"Failed to load project: {path}");
+                        return;
+                    }
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, $"Failed to load project: {path}");
-                    // Optionally, notify the user about the failed project load
+                    ShowError($"Error loading {Path.GetFileName(path)}: {ex.Message}");
+                    return;
                 }
 
             if (projects.Count < 2)
             {
-                _logger.LogError("Not enough projects loaded to perform a merge.");
+                ShowError("Not enough projects loaded successfully to perform merge.");
                 return;
             }
 
-            // Merge projects asynchronously on background threads
-            _logger.LogInformation("Merging projects...");
+            // Merge projects
+            ShowStatus("Merging projects...", "#FFFFFF");
+            IsMergeProgressIndeterminate = true;
             var mergedProject = await Task.Run(() => AbletonProjectMerger.MergeProjects(projects));
+            currentStep++;
+            MergeProgress = (double)currentStep / totalSteps * 100;
 
-            // Save result asynchronously on background threads
-            _logger.LogInformation($"Saving merged project to: {OutputFilePath}");
+            if (mergedProject == null)
+            {
+                ShowError("Failed to merge projects.");
+                return;
+            }
+
+            // Save merged project
+            ShowStatus("Saving merged project...", "#FFFFFF");
             await Task.Run(() => AbletonProjectHandler.SaveToFile(mergedProject, OutputFilePath));
+            currentStep++;
+            MergeProgress = 100;
 
-            _logger.LogInformation("Merge completed successfully.");
+            // Show success message
+            ShowSuccess("Projects merged successfully!");
 
-            // Optionally, clear the selected projects or notify the user
-            // Example: Clear selection after successful merge
+            // Clear selection after successful merge
             SelectedProjects.Clear();
-
-            // Optionally, notify the user about successful merge
-            // This can be implemented using a dialog service
+            OutputFilePath = string.Empty;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "An error occurred during project merge.");
-            // Optionally, notify the user about the error
-            // This can be implemented using a dialog service
+            _logger.LogError(ex, "An error occurred during project merge");
+            ShowError($"Error during merge: {ex.Message}");
         }
+        finally
+        {
+            IsMerging = false;
+            IsMergeProgressIndeterminate = false;
+        }
+    }
+
+    private void ShowStatus(string message, string colorHex)
+    {
+        StatusMessage = message;
+        StatusMessageColor = new SolidColorBrush(Color.Parse(colorHex));
+        _logger.LogInformation(message);
+    }
+
+    private void ShowError(string message)
+    {
+        StatusMessage = message;
+        StatusMessageColor = new SolidColorBrush(Color.Parse("#FF4444"));
+        _logger.LogError(message);
+    }
+
+    private void ShowSuccess(string message)
+    {
+        StatusMessage = message;
+        StatusMessageColor = new SolidColorBrush(Color.Parse("#44FF44"));
+        _logger.LogInformation(message);
     }
 }

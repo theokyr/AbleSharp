@@ -18,5 +18,11 @@
         <converters:HeightMultiConverter x:Key="HeightMultiConverter" />
         <converters:FontSizeMultiConverter x:Key="FontSizeMultiConverter" />
         <converters:GreaterThanConverter x:Key="GreaterThanConverter" />
+        <converters:IsNotEmptyConverter x:Key="IsNotEmptyConverter" />
+        <converters:InvertBoolConverter x:Key="InvertBoolConverter" />
+        <converters:AllTrueMultiConverter x:Key="AllTrueMultiConverter" />
+        <converters:BoolToOpacityConverter x:Key="BoolToOpacityConverter" />
+        <converters:IsDragOverToBackgroundConverter x:Key="IsDragOverToBackgroundConverter" />
+        <converters:IsDragOverToBorderBrushConverter x:Key="IsDragOverToBorderBrushConverter" />
     </Application.Resources>
 </Application>
