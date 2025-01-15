@@ -750,19 +750,32 @@ public static class AbletonProjectMerger
             FreezeStart = source.FreezeStart,
             FreezeEnd = source.FreezeEnd,
             IsWarped = source.IsWarped,
+            TakeId = source.TakeId, 
             NoteSpellingPreference = source.NoteSpellingPreference,
             BankSelectCoarse = source.BankSelectCoarse,
             BankSelectFine = source.BankSelectFine,
             ProgramChange = source.ProgramChange,
             ScaleInformation = source.ScaleInformation,
-            IsInKey = source.IsInKey
+            IsInKey = source.IsInKey,
+            ExpressionGrid = source.ExpressionGrid,
+            AccidentalSpellingPreference = source.AccidentalSpellingPreference,
+            PreferFlatRootNote = source.PreferFlatRootNote,
+            Notes = new Notes
+            {
+                KeyTracks = new List<KeyTrack>(),
+                PerNoteEventStore = new PerNoteEventStore { EventLists = new List<EventList>() },
+                NoteProbabilityGroups = new List<NoteProbabilityGroup>(),
+                ProbabilityGroupIdGenerator = new ProbabilityGroupIdGenerator { NextId = new Value<int> { Val = 1 } },
+                NoteIdGenerator = new NoteIdGenerator { NextId = new Value<int> { Val = 1 } }
+            }
         };
 
         // Deep clone KeyTracks if they exist
-        if (source.KeyTracks != null)
-            newClip.KeyTracks = source.KeyTracks.Select(kt => new KeyTrack
+        if (source.Notes?.KeyTracks != null)
+            newClip.Notes.KeyTracks = source.Notes.KeyTracks.Select(kt => new KeyTrack
             {
                 Id = IdGenerator.GetNextId(),
+                MidiKey = kt.MidiKey,
                 Notes = kt.Notes?.Select(n => new MidiNoteEvent
                 {
                     Time = n.Time,
@@ -773,8 +786,7 @@ public static class AbletonProjectMerger
                     Probability = n.Probability,
                     IsEnabled = n.IsEnabled,
                     NoteId = int.Parse(IdGenerator.GetNextId())
-                }).ToList(),
-                MidiKey = kt.MidiKey
+                }).ToList() ?? new List<MidiNoteEvent>()
             }).ToList();
 
         return newClip;
