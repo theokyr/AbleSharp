@@ -114,7 +114,7 @@
                                Margin="0,0,8,0" />
                     <ComboBox Grid.Row="0" Grid.Column="1"
                               ItemsSource="{Binding AvailableVersions}"
-                              SelectedItem="{Binding TargetMinorVersion}"
+                              SelectedItem="{Binding TargetVersion}"
                               MinWidth="120" />
 
                     <!-- Output File -->

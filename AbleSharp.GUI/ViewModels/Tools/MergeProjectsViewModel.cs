@@ -140,6 +140,7 @@ public class MergeProjectsViewModel : ReactiveObject
                 AvailableVersions.Add(version);
 
             _targetVersion = AbleSharpSdk.Instance?.LatestVersion;
+            _logger.LogInformation($"Setting target version to latest SDK Minor Version {_targetVersion?.MinorVersion}.");
         }
         else
         {
