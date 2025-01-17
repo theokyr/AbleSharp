@@ -30,8 +30,38 @@ public class MergeProjectsViewModel : ReactiveObject
     private IBrush _statusMessageColor;
     private bool _isDragOver;
     private bool _showStatusMessage;
+    private bool _preserveColors = true;
+    private bool _preserveScenes = true;
+    private AbletonVersion _targetVersion;
+    private ConflictResolution _namingConflictResolution = ConflictResolution.Rename;
 
     public ObservableCollection<string> SelectedProjects { get; } = new();
+
+    public ObservableCollection<AbletonVersion> AvailableVersions { get; } = new();
+
+    public AbletonVersion TargetVersion
+    {
+        get => _targetVersion;
+        set => this.RaiseAndSetIfChanged(ref _targetVersion, value);
+    }
+
+    public ConflictResolution NamingConflictResolution
+    {
+        get => _namingConflictResolution;
+        set => this.RaiseAndSetIfChanged(ref _namingConflictResolution, value);
+    }
+
+    public bool PreserveColors
+    {
+        get => _preserveColors;
+        set => this.RaiseAndSetIfChanged(ref _preserveColors, value);
+    }
+
+    public bool PreserveScenes
+    {
+        get => _preserveScenes;
+        set => this.RaiseAndSetIfChanged(ref _preserveScenes, value);
+    }
 
     public string OutputFilePath
     {
@@ -101,6 +131,12 @@ public class MergeProjectsViewModel : ReactiveObject
         _logger = LoggerService.GetLogger<MergeProjectsViewModel>();
         _statusMessageColor = new SolidColorBrush(Color.Parse("#FFFFFF"));
 
+        var availableVersions = AbleSharpSdk.Instance.AvailableVersions;
+        foreach (var version in availableVersions)
+            AvailableVersions.Add(version);
+
+        _targetVersion = AbleSharpSdk.Instance.LatestVersion;
+
         // Initialize Commands
         AddProjectsCommand = ReactiveCommand.CreateFromTask(AddProjectsAsync, outputScheduler: AvaloniaScheduler.Instance);
 
@@ -121,7 +157,9 @@ public class MergeProjectsViewModel : ReactiveObject
             vm => vm.SelectedProjects.Count,
             vm => vm.OutputFilePath,
             vm => vm.IsMerging,
-            (count, outputFilePath, isMerging) => count >= 2 && !string.IsNullOrEmpty(outputFilePath) && !isMerging
+            vm => vm.TargetVersion,
+            (count, outputFilePath, isMerging, version) =>
+                count >= 2 && !string.IsNullOrEmpty(outputFilePath) && !isMerging && version != null
         );
 
         MergeProjectsCommand = ReactiveCommand.CreateFromTask(
@@ -237,6 +275,12 @@ public class MergeProjectsViewModel : ReactiveObject
             return;
         }
 
+        if (TargetVersion == null)
+        {
+            ShowError("Target version must be selected.");
+            return;
+        }
+
         try
         {
             IsMerging = true;
@@ -249,11 +293,12 @@ public class MergeProjectsViewModel : ReactiveObject
 
             // Load all projects
             foreach (var path in SelectedProjects)
+            {
                 try
                 {
                     UpdateProgress($"Loading: {Path.GetFileName(path)}");
 
-                    var project = _sdk.OpenProject(path, new ProjectOpenOptions()
+                    var project = _sdk.OpenProject(path, new ProjectOpenOptions
                     {
                         Logger = msg => _logger.LogInformation(msg)
                     });
@@ -276,6 +321,7 @@ public class MergeProjectsViewModel : ReactiveObject
                     ShowError($"Error loading {Path.GetFileName(path)}: {ex.Message}");
                     return;
                 }
+            }
 
             if (projects.Count < 2)
             {
@@ -287,14 +333,16 @@ public class MergeProjectsViewModel : ReactiveObject
             UpdateProgress("Merging projects...");
             IsMergeProgressIndeterminate = true;
 
-            var mergedProject = _sdk.MergeProjects(projects, new ProjectMergeOptions
+            var mergeOptions = new ProjectMergeOptions
             {
                 Logger = msg => _logger.LogInformation(msg),
-                NamingConflicts = ConflictResolution.Rename,
-                PreserveColors = true,
-                MergeScenes = true
-            });
+                NamingConflicts = NamingConflictResolution,
+                PreserveColors = PreserveColors,
+                MergeScenes = PreserveScenes,
+                ErrorHandling = ErrorHandling.ThrowException
+            };
 
+            var mergedProject = _sdk.MergeProjects(projects, mergeOptions);
             currentStep++;
             MergeProgress = (double)currentStep / totalSteps * 100;
 
@@ -304,15 +352,20 @@ public class MergeProjectsViewModel : ReactiveObject
                 return;
             }
 
+            // Force the target version
+            mergedProject.MinorVersion = TargetVersion.NamespaceVersion;
+
             // Save merged project
             UpdateProgress("Saving merged project...");
 
-            _sdk.SaveProject(mergedProject, OutputFilePath, new ProjectSaveOptions
+            var saveOptions = new ProjectSaveOptions
             {
                 Logger = msg => _logger.LogInformation(msg),
                 Compress = true,
                 CreateBackup = true
-            });
+            };
+
+            _sdk.SaveProject(mergedProject, OutputFilePath, saveOptions);
 
             currentStep++;
             MergeProgress = 100;

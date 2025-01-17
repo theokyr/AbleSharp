@@ -107,22 +107,34 @@
 
         <!-- Output File Selection -->
         <Border Grid.Row="2" Classes="card" Margin="0,16">
-            <StackPanel>
-                <TextBlock Text="Output File"
+            <Grid RowDefinitions="Auto,Auto">
+                <TextBlock Text="Output"
                            Classes="Heading3"
                            Margin="0,0,0,8" />
 
-                <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto">
-                    <TextBox Text="{Binding OutputFilePath}"
-                             IsReadOnly="True"
-                             Grid.Column="0"
-                             Margin="0,0,8,0" />
+                <Grid Grid.Row="1" RowDefinitions="Auto,Auto" ColumnDefinitions="*,Auto" Margin="0,8">
+                    <!-- Target Version -->
+                    <TextBlock Grid.Row="0" Grid.Column="0"
+                               Text="Target Version:"
+                               VerticalAlignment="Center"
+                               Margin="0,0,8,0" />
+                    <ComboBox Grid.Row="0" Grid.Column="1"
+                              ItemsSource="{Binding AvailableVersions}"
+                              SelectedItem="{Binding TargetMinorVersion}"
+                              MinWidth="120" />
 
-                    <Button Content="Browse..."
+                    <!-- Output File -->
+                    <TextBox Grid.Row="1" Grid.Column="0"
+                             Text="{Binding OutputFilePath}"
+                             IsReadOnly="True"
+                             Margin="0,8,8,0" />
+
+                    <Button Grid.Row="1" Grid.Column="1"
+                            Content="Browse..."
                             Command="{Binding SelectOutputFileCommand}"
-                            Grid.Column="1" />
+                            Margin="0,8,0,0" />
                 </Grid>
-            </StackPanel>
+            </Grid>
         </Border>
 
         <!-- Merge Settings & Status -->
@@ -134,21 +146,34 @@
                                Classes="Heading3"
                                Margin="0,0,0,8" />
 
-                    <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto">
+                    <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto">
+                        <!-- Conflict Resolution -->
                         <TextBlock Text="Resolve Conflicts:"
                                    Classes="Body"
                                    VerticalAlignment="Center"
-                                   Grid.Column="0"
+                                   Grid.Row="0" Grid.Column="0"
                                    Margin="0,0,16,0" />
 
-                        <ComboBox SelectedItem="{Binding MergeSettingExample}"
-                                  Grid.Column="1"
+                        <ComboBox SelectedItem="{Binding NamingConflictResolution}"
+                                  Grid.Row="0" Grid.Column="1"
                                   Width="200"
                                   HorizontalAlignment="Left">
-                            <ComboBoxItem Content="Keep All" />
-                            <ComboBoxItem Content="Overwrite Existing" />
-                            <ComboBoxItem Content="Skip Duplicates" />
+                            <ComboBoxItem Content="Rename" />
+                            <ComboBoxItem Content="Skip" />
+                            <ComboBoxItem Content="Cancel" />
                         </ComboBox>
+
+                        <!-- Preserve Colors -->
+                        <CheckBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+                                  IsChecked="{Binding PreserveColors}"
+                                  Content="Preserve Track Colors"
+                                  Margin="0,8" />
+
+                        <!-- Preserve Scenes -->
+                        <CheckBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"
+                                  IsChecked="{Binding PreserveScenes}"
+                                  Content="Merge Scenes from All Projects"
+                                  Margin="0,8" />
                     </Grid>
                 </StackPanel>
 
@@ -162,7 +187,7 @@
                                      Height="4"
                                      Margin="0,0,8,4"
                                      IsVisible="{Binding IsMerging}" />
-                        <TextBlock Text="{Binding MergeProgressText}"
+                        <TextBlock Text="{Binding MergeProgress, StringFormat='{}{0:0}%'}"
                                    Grid.Column="1"
                                    Classes="Caption"
                                    IsVisible="{Binding IsMerging}" />
