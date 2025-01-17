@@ -1,8 +1,7 @@
 # AbleSharp
+![AbleSharp Builds](https://github.com/theokyr/AbleSharp/actions/workflows/build.yml/badge.svg)
 
-A cross-platform .NET toolkit for creating and manipulating Ableton Live project files (.als).
-
-**Currently only tested on Ableton Live Suite v12+ projects.**
+A cross-platform .NET toolkit for creating and manipulating Ableton Live v11 to v12.1 project files (.als).
 
 ![Screenshot of AbleSharp.GUI](docs/ablesharp-gui.png)
 
