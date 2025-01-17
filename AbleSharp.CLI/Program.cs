@@ -119,7 +119,7 @@ class Program
         }
 
         // Create options with logging
-        var options = new ProjectSaveOptions
+        var options = new ProjectOpenOptions
         {
             ErrorHandling = ErrorHandling.ThrowException,
             Logger = msg => Console.WriteLine($"SDK: {msg}")
@@ -234,7 +234,7 @@ class Program
             }
         }
 
-        var openOptions = new ProjectSaveOptions
+        var openOptions = new ProjectOpenOptions
         {
             Logger = msg => Console.WriteLine($"SDK: {msg}")
         };

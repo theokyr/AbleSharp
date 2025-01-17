@@ -57,9 +57,9 @@ public class AbleSharpSdk
     /// <param name="path">Path to the .als file</param>
     /// <param name="options">Optional settings for loading the project</param>
     /// <returns>The loaded project</returns>
-    public AbletonProject OpenProject(string path, ProjectSaveOptions? options = null)
+    public AbletonProject OpenProject(string path, ProjectOpenOptions? options = null)
     {
-        options ??= new ProjectSaveOptions();
+        options ??= new ProjectOpenOptions();
 
         if (string.IsNullOrEmpty(path))
             throw new ArgumentNullException(nameof(path));

@@ -38,6 +38,13 @@ public class ProjectSaveOptions : SdkOptions
 }
 
 /// <summary>
+/// Options for loading a project
+/// </summary>
+public class ProjectOpenOptions : SdkOptions
+{
+}
+
+/// <summary>
 /// Options for exporting a project
 /// </summary>
 public class ProjectExportOptions : ProjectSaveOptions
