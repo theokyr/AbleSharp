@@ -4,18 +4,25 @@ namespace AbleSharp.Lib;
 
 public class LiveSet
 {
+    [XmlElement("NextPointeeId")]
     public Value<int> NextPointeeId { get; set; }
+
+    [XmlElement("OverwriteProtectionNumber")]
     public Value<int> OverwriteProtectionNumber { get; set; }
+
+    [XmlElement("LomId")]
     public Value<int> LomId { get; set; }
+
+    [XmlElement("LomIdView")]
     public Value<int> LomIdView { get; set; }
 
     [XmlArray("Tracks")]
     [XmlArrayItem("MidiTrack", typeof(MidiTrack))]
     [XmlArrayItem("AudioTrack", typeof(AudioTrack))]
     [XmlArrayItem("GroupTrack", typeof(GroupTrack))]
-    public List<Track> Tracks { get; set; }
+    public List<FreezableTrack> Tracks { get; set; }
 
-    [XmlElement("MasterTrack")]
+    [XmlElement("MainTrack")]
     public MainTrack MainTrack { get; set; }
 
     [XmlElement("PreHearTrack")]
@@ -25,37 +32,80 @@ public class LiveSet
     [XmlArrayItem("Scene")]
     public List<Scene> Scenes { get; set; }
 
+    [XmlElement("Transport")]
     public Transport Transport { get; set; }
+
+    [XmlElement("SendsPre")]
     public List<SendsPre> SendsPre { get; set; }
+
+    [XmlArray("Locators")]
+    [XmlArrayItem("Locator")]
     public List<Locator> Locators { get; set; }
+
+    [XmlElement("AutomationMode")]
     public Value<bool> AutomationMode { get; set; }
+
+    [XmlElement("SnapAutomationToGrid")]
     public Value<bool> SnapAutomationToGrid { get; set; }
+
+    [XmlElement("ArrangementOverdub")]
     public Value<bool> ArrangementOverdub { get; set; }
 
-    [XmlElement("GlobalQuantisation")]
+    [XmlElement("GlobalQuantisation")] 
     public Value<int> GlobalQuantisation { get; set; } = new() { Val = 4 };
 
     [XmlElement("AutoQuantisation")]
     public Value<int> AutoQuantisation { get; set; } = new() { Val = 0 };
 
-    [XmlElement("Grid")]
+    [XmlElement("Grid")] 
     public Grid Grid { get; set; } = new();
 
+    [XmlElement("ViewData")]
     public Value<string> ViewData { get; set; }
+
+    [XmlElement("MidiFoldIn")]
     public Value<bool> MidiFoldIn { get; set; }
+
+    [XmlElement("MidiFoldMode")]
     public Value<int> MidiFoldMode { get; set; }
+
+    [XmlElement("MultiClipFocusMode")]
     public Value<bool> MultiClipFocusMode { get; set; }
+
+    [XmlElement("MultiClipLoopBarHeight")]
     public Value<decimal> MultiClipLoopBarHeight { get; set; }
+
+    [XmlElement("MidiPrelisten")]
     public Value<bool> MidiPrelisten { get; set; }
+
+    [XmlElement("ScaleInformation")]
     public ScaleInformation ScaleInformation { get; set; }
+
+    [XmlElement("InKey")]
     public Value<bool> InKey { get; set; }
+
+    [XmlElement("SmpteFormat")]
     public Value<int> SmpteFormat { get; set; }
+
+    [XmlElement("TimeSelection")]
     public TimeSelection TimeSelection { get; set; }
+
+    [XmlElement("SequencerNavigator")]
     public SequencerNavigator SequencerNavigator { get; set; }
+
+    [XmlElement("IsContentSplitterOpen")]
     public Value<bool> IsContentSplitterOpen { get; set; }
+
+    [XmlElement("IsExpressionSplitterOpen")]
     public Value<bool> IsExpressionSplitterOpen { get; set; }
+
+    [XmlElement("ExpressionLanes")]
     public List<ExpressionLane> ExpressionLanes { get; set; }
+
+    [XmlElement("ContentLanes")] 
     public List<ContentLane> ContentLanes { get; set; }
+
+    [XmlElement("ViewStates")]
     public ViewStates ViewStates { get; set; }
 
     [XmlElement("ChooserBar")]
@@ -109,8 +159,9 @@ public class LiveSet
     [XmlElement("GroovePool")]
     public GroovePool GroovePool { get; set; } = new();
 
-    [XmlElement("NoteAlgorithms")]
-    public NoteAlgorithms NoteAlgorithms { get; set; } = new();
+    // TODO: temporarily disabled :)
+    // [XmlElement("NoteAlgorithms")]
+    // public NoteAlgorithms NoteAlgorithms { get; set; } = new();
 
     [XmlElement("WaveformVerticalZoomFactor")]
     public Value<int> WaveformVerticalZoomFactor { get; set; } = new() { Val = 1 };

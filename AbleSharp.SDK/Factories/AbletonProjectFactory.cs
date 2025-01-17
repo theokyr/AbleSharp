@@ -33,7 +33,7 @@ public class AbletonProjectFactory
             OverwriteProtectionNumber = new Value<int> { Val = 2819 },
             LomId = new Value<int> { Val = 0 },
             LomIdView = new Value<int> { Val = 0 },
-            Tracks = new List<Track>
+            Tracks = new List<FreezableTrack>
             {
                 CreateBlankMidiTrack(12, "Generated Midi Track"),
                 CreateBlankAudioTrack(13, "Generated Audio Track")
@@ -49,6 +49,23 @@ public class AbletonProjectFactory
             ArrangementOverdub = new Value<bool> { Val = false },
             GlobalQuantisation = new Value<int> { Val = 4 },
             AutoQuantisation = new Value<int> { Val = 0 },
+            Grid = new Grid
+            {
+                FixedNumerator = new Value<int> { Val = 1 },
+                FixedDenominator = new Value<int> { Val = 16 },
+                GridIntervalPixel = new Value<decimal> { Val = 20 },
+                Ntoles = new Value<int> { Val = 2 },
+                SnapToGrid = new Value<bool> { Val = true },
+                Fixed = new Value<bool> { Val = false }
+            },
+            ViewData = new Value<string> { Val = "{}" },
+            MidiFoldIn = new Value<bool> { Val = false },
+            MidiFoldMode = new Value<int> { Val = 0 },
+            MultiClipFocusMode = new Value<bool> { Val = false },
+            MultiClipLoopBarHeight = new Value<decimal> { Val = 0 },
+            MidiPrelisten = new Value<bool> { Val = false },
+            InKey = new Value<bool> { Val = false },
+            SmpteFormat = new Value<int> { Val = 0 },
             ChooserBar = new Value<int> { Val = 0 },
             Annotation = new Value<string> { Val = "" },
             SoloOrPflSavedValue = new Value<bool> { Val = true },
@@ -57,16 +74,9 @@ public class AbletonProjectFactory
             LatencyCompensation = new Value<int> { Val = 2 },
             HighlightedTrackIndex = new Value<int> { Val = 0 },
             ColorSequenceIndex = new Value<int> { Val = 0 },
-            MidiFoldIn = new Value<bool> { Val = false },
-            MidiFoldMode = new Value<int> { Val = 0 },
-            MultiClipFocusMode = new Value<bool> { Val = false },
-            MultiClipLoopBarHeight = new Value<decimal> { Val = 0 },
-            MidiPrelisten = new Value<bool> { Val = false },
             AccidentalSpellingPreference = new Value<int> { Val = 3 },
             PreferFlatRootNote = new Value<bool> { Val = false },
-            UseWarperLegacyHiQMode = new Value<bool> { Val = false },
-            SmpteFormat = new Value<int> { Val = 0 },
-            InKey = new Value<bool> { Val = false },
+            SignalModulationsTop = new object(),
             TracksListWrapper = new TracksListWrapper { LomId = 0 },
             VisibleTracksListWrapper = new TracksListWrapper { LomId = 0 },
             ReturnTracksListWrapper = new TracksListWrapper { LomId = 0 },
@@ -77,7 +87,34 @@ public class AbletonProjectFactory
                 LomId = 0,
                 Grooves = new List<Groove>()
             },
-            SignalModulationsTop = new object(),
+            WaveformVerticalZoomFactor = new Value<int> { Val = 1 },
+            IsWaveformVerticalZoomActive = new Value<bool> { Val = true },
+            ViewStateMainWindowClipDetailOpen = new Value<bool> { Val = true },
+            ViewStateMainWindowDeviceDetailOpen = new Value<bool> { Val = false },
+            ViewStateSecondWindowClipDetailOpen = new Value<bool> { Val = false },
+            ViewStateSecondWindowDeviceDetailOpen = new Value<bool> { Val = true },
+            ViewStateMainWindowHiddenOtherDocViewTypeClipDetailOpen = new Value<bool> { Val = false },
+            ViewStateMainWindowHiddenOtherDocViewTypeDeviceDetailOpen = new Value<bool> { Val = true },
+            ShowVideoWindow = new Value<bool> { Val = true },
+            TrackHeaderWidth = new Value<int> { Val = 93 },
+            ViewStateFxSlotCount = new Value<int> { Val = 4 },
+            ViewStateSessionMixerHeight = new Value<int> { Val = 120 },
+            ViewStateArrangerMixerVolumeSectionHeight = new Value<int> { Val = 120 },
+            ShouldSceneTempoAndTimeSignatureBeVisible = new Value<bool> { Val = false },
+            AutoColorPickerForPlayerAndGroupTracks = new AutoColorPicker
+            {
+                NextColorIndex = new Value<int> { Val = 9 }
+            },
+            AutoColorPickerForReturnAndMainTracks = new AutoColorPicker
+            {
+                NextColorIndex = new Value<int> { Val = 9 }
+            },
+            VideoWindowRect = new VideoWindowRect(),
+            SessionScrollPos = new ScrollPosition(),
+            LinkedTrackGroups = new LinkedTrackGroups(),
+            DetailClipKeyMidis = new DetailClipKeyMidis(),
+            UseWarperLegacyHiQMode = new Value<bool> { Val = false },
+            TuningSystems = new TuningSystems(),
             SequencerNavigator = new SequencerNavigator
             {
                 BeatTimeHelper = new BeatTimeHelper
@@ -94,8 +131,7 @@ public class AbletonProjectFactory
                     X = new Value<int> { Val = 528 },
                     Y = new Value<int> { Val = 437 }
                 }
-            },
-            Locators = new List<Locator>()
+            }
         };
     }
 
@@ -207,7 +243,7 @@ public class AbletonProjectFactory
     {
         return new TakeLanes
         {
-            LaneCollection = new List<TakeLane>(),
+            LaneCollection = [],
             AreTakeLanesFolded = new Value<bool> { Val = true }
         };
     }
@@ -240,8 +276,8 @@ public class AbletonProjectFactory
         return new MidiTrack
         {
             Id = id,
-            LomId = new Value<int> { Val = 0 },
-            LomIdView = new Value<int> { Val = 0 },
+            LomId = new Value<int> { Val = IdGenerator.GetNextId() },
+            LomIdView = new Value<int> { Val = IdGenerator.GetNextId() },
             IsContentSelectedInDocument = new Value<bool> { Val = false },
             PreferredContentViewMode = new Value<int> { Val = 0 },
             TrackDelay = CreateDefaultTrackDelay(),

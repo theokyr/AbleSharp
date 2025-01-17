@@ -67,7 +67,7 @@ public class TimelineViewModel : INotifyPropertyChanged
                          $"tempo={_tempo}, timeSig={_timeSigNumerator}/{_timeSigDenominator}");
     }
 
-    private void BuildTrackHierarchy(List<Track> tracks)
+    private void BuildTrackHierarchy(List<FreezableTrack> tracks)
     {
         var trackDict = new Dictionary<int, TimelineTrackViewModel>();
         var processedTracks = new HashSet<int>();
@@ -81,7 +81,7 @@ public class TimelineViewModel : INotifyPropertyChanged
                 _lastClipEndTime = Math.Max(_lastClipEndTime, clipVM.Time + clipVM.Length);
         }
 
-        void ProcessTrack(Track t, decimal indent = 0)
+        void ProcessTrack(FreezableTrack t, decimal indent = 0)
         {
             if (processedTracks.Contains(t.Id)) return;
             processedTracks.Add(t.Id);

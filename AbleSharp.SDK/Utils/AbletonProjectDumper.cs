@@ -189,7 +189,9 @@ public static class AbletonProjectDumper
         var indexPrefix = trackIndex >= 0 ? $"[{trackIndex}]" : "";
         var trackTypeName = track.GetType().Name;
         AppendLine(sb, indent, $"-- Track{indexPrefix}: {trackTypeName} --");
-        AppendLine(sb, indent + 1, $"Id: {track.Id}");
+        if (track is FreezableTrack freezableTrack) {
+            AppendLine(sb, indent + 1, $"Id: {freezableTrack.Id}");
+        }
         AppendLine(sb, indent + 1, $"LomId: {track.LomId?.Val}");
         AppendLine(sb, indent + 1, $"Name: {track.Name?.EffectiveName?.Val}");
         AppendLine(sb, indent + 1, $"Color: {track.Color?.Val}");

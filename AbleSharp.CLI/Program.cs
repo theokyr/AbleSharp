@@ -31,6 +31,10 @@ class Program
                     HandleMergeCommand(args.Skip(1).ToArray());
                     break;
 
+                case "schema":
+                    HandleSchemaCommand(args.Skip(1).ToArray());
+                    break;
+
                 default:
                     Console.WriteLine($"Unknown command: {command}");
                     PrintUsage();
@@ -64,12 +68,15 @@ class Program
         Console.WriteLine("  open -d/--dump [project file]        Opens and dumps project info to a file");
         Console.WriteLine("  create [file path]                   Creates a new empty project");
         Console.WriteLine("  merge -o [output] [file1] [file2]... Merges multiple project files");
+        Console.WriteLine("  schema [input schema] [output dir]    Generates C# classes from schema file");
         Console.WriteLine();
         Console.WriteLine("Examples:");
         Console.WriteLine("  ablesharp open project.als");
         Console.WriteLine("  ablesharp open --dump project.als");
         Console.WriteLine("  ablesharp create new_project.als");
         Console.WriteLine("  ablesharp merge -o merged.als project1.als project2.als");
+        Console.WriteLine("  ablesharp schema 12.0_12049.txt GeneratedSchema/");
+        Console.WriteLine();
     }
 
     static void HandleOpenCommand(string[] args)
@@ -222,5 +229,92 @@ class Program
         Console.WriteLine($"Saving merged project to: {outputPath}");
         AbletonProjectHandler.SaveToFile(mergedProject, outputPath);
         Console.WriteLine("Merge completed successfully.");
+    }
+
+    static void HandleSchemaCommand(string[] args)
+    {
+        if (args.Length < 2)
+        {
+            Console.WriteLine("Error: Schema command requires input schema file or directory and output directory");
+            Console.WriteLine("Usage: ablesharp schema [input schema or directory] [output dir]");
+            return;
+        }
+
+        string schemaPath = args[0];
+        string outputDir = args[1];
+
+        // Ensure output directory exists
+        Directory.CreateDirectory(outputDir);
+
+        if (File.Exists(schemaPath))
+        {
+            // Single file processing
+            ProcessSingleSchemaFile(schemaPath, outputDir);
+        }
+        else if (Directory.Exists(schemaPath))
+        {
+            // Directory processing
+            string[] schemaFiles = Directory.GetFiles(schemaPath, "*.txt");
+
+            if (schemaFiles.Length == 0)
+            {
+                Console.WriteLine($"No .txt files found in directory: {schemaPath}");
+                return;
+            }
+
+            Console.WriteLine($"Processing {schemaFiles.Length} schema files from directory: {schemaPath}");
+            foreach (string file in schemaFiles)
+            {
+                try
+                {
+                    ProcessSingleSchemaFile(file, outputDir);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Failed to process schema file: {file}");
+                    Console.WriteLine($"Error: {ex.Message}");
+                }
+            }
+        }
+        else
+        {
+            Console.WriteLine($"Error: Schema file or directory not found: {schemaPath}");
+        }
+    }
+
+    static void ProcessSingleSchemaFile(string schemaPath, string outputDir)
+    {
+        // Extract the minor version string by taking the file name without extension
+        string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(schemaPath);
+        var sanitizedVersion = "v" + fileNameWithoutExtension.Replace('.', '_');
+
+        // Generate output path
+        string outputFile = Path.Combine(outputDir, $"{sanitizedVersion}.cs");
+
+        // Skip processing if the output file already exists
+        if (File.Exists(outputFile))
+        {
+            Console.WriteLine($"Skipping file as output already exists: {outputFile}");
+            return;
+        }
+
+        try
+        {
+            Console.WriteLine($"Reading schema from: {schemaPath}");
+            string schemaContent = File.ReadAllText(schemaPath);
+
+            Console.WriteLine("Generating C# classes...");
+            var generator = new SchemaGenerator();
+
+            generator.GenerateForMinorVersion(fileNameWithoutExtension, schemaContent, outputFile);
+
+            Console.WriteLine($"Classes generated successfully at: {outputFile}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error generating classes from schema file: {schemaPath}");
+            PrintExceptionDetails(ex);
+            throw; // Rethrow to allow the caller to handle it
+        }
     }
 }

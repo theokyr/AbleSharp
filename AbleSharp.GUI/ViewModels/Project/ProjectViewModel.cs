@@ -24,7 +24,7 @@ public class ProjectViewModel
         TimelineVM = new TimelineViewModel(project);
     }
 
-    private void BuildTrackHierarchy(List<Track> tracks)
+    private void BuildTrackHierarchy(List<FreezableTrack> tracks)
     {
         var all = new Dictionary<int, TrackViewModel>();
         foreach (var t in tracks)

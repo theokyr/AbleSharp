@@ -44,9 +44,9 @@ public static class AbletonProjectMerger
                     // Deep clone the track to avoid reference issues
                     var clonedTrack = CloneTrack(track);
 
-                    if (clonedTrack != null)
+                    if (clonedTrack is FreezableTrack freezableTrack)
                         // Add to our merged project
-                        mergedProject.LiveSet.Tracks.Add(clonedTrack);
+                        mergedProject.LiveSet.Tracks.Add(freezableTrack);
                 }
                 catch (Exception ex)
                 {
@@ -74,7 +74,7 @@ public static class AbletonProjectMerger
     private static Track CloneTrack(Track sourceTrack)
     {
         // Create new instance of the same track type
-        Track newTrack;
+        FreezableTrack newTrack;
 
         try
         {
