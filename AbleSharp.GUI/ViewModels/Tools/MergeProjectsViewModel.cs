@@ -32,14 +32,14 @@ public class MergeProjectsViewModel : ReactiveObject
     private bool _showStatusMessage;
     private bool _preserveColors = true;
     private bool _preserveScenes = true;
-    private AbletonVersion _targetVersion;
+    private AbletonVersion? _targetVersion;
     private ConflictResolution _namingConflictResolution = ConflictResolution.Rename;
 
     public ObservableCollection<string> SelectedProjects { get; } = new();
 
     public ObservableCollection<AbletonVersion> AvailableVersions { get; } = new();
 
-    public AbletonVersion TargetVersion
+    public AbletonVersion? TargetVersion
     {
         get => _targetVersion;
         set => this.RaiseAndSetIfChanged(ref _targetVersion, value);
@@ -124,6 +124,8 @@ public class MergeProjectsViewModel : ReactiveObject
     public ReactiveCommand<string, Unit> RemoveProjectCommand { get; }
     public ReactiveCommand<Unit, Unit> SelectOutputFileCommand { get; }
     public ReactiveCommand<Unit, Unit> MergeProjectsCommand { get; }
+
+    public ReactiveCommand<Unit, Unit> ClearInputsCommand { get; }
     public ReactiveCommand<Unit, Unit> ClearStatusCommand { get; }
 
     public MergeProjectsViewModel()
@@ -131,11 +133,18 @@ public class MergeProjectsViewModel : ReactiveObject
         _logger = LoggerService.GetLogger<MergeProjectsViewModel>();
         _statusMessageColor = new SolidColorBrush(Color.Parse("#FFFFFF"));
 
-        var availableVersions = AbleSharpSdk.Instance.AvailableVersions;
-        foreach (var version in availableVersions)
-            AvailableVersions.Add(version);
+        var availableVersions = AbleSharpSdk.Instance?.AvailableVersions;
+        if (availableVersions != null)
+        {
+            foreach (var version in availableVersions)
+                AvailableVersions.Add(version);
 
-        _targetVersion = AbleSharpSdk.Instance.LatestVersion;
+            _targetVersion = AbleSharpSdk.Instance?.LatestVersion;
+        }
+        else
+        {
+            _logger.LogWarning("No available versions found.");
+        }
 
         // Initialize Commands
         AddProjectsCommand = ReactiveCommand.CreateFromTask(AddProjectsAsync, outputScheduler: AvaloniaScheduler.Instance);
@@ -172,6 +181,18 @@ public class MergeProjectsViewModel : ReactiveObject
             () =>
             {
                 ShowStatusMessage = false;
+                return Unit.Default;
+            },
+            outputScheduler: AvaloniaScheduler.Instance
+        );
+
+
+        ClearInputsCommand = ReactiveCommand.Create(
+            () =>
+            {
+                SelectedProjects.Clear();
+                OutputFilePath = string.Empty;
+                ClearStatusCommand.Execute().Subscribe();
                 return Unit.Default;
             },
             outputScheduler: AvaloniaScheduler.Instance
@@ -352,8 +373,7 @@ public class MergeProjectsViewModel : ReactiveObject
                 return;
             }
 
-            // Force the target version
-            mergedProject.MinorVersion = TargetVersion.NamespaceVersion;
+            mergedProject.MinorVersion = TargetVersion.MinorVersion;
 
             // Save merged project
             UpdateProgress("Saving merged project...");
@@ -372,10 +392,6 @@ public class MergeProjectsViewModel : ReactiveObject
 
             // Show success message
             ShowSuccess($"Projects merged successfully!\nOutput saved to: {Path.GetFileName(OutputFilePath)}");
-
-            // Clear selection after successful merge
-            SelectedProjects.Clear();
-            OutputFilePath = string.Empty;
         }
         catch (Exception ex)
         {

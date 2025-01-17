@@ -6,19 +6,13 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     Title="Merge Projects"
-    Width="600" Height="800"
+    MinWidth="300" MinHeight="400"
+    Width="700" Height="900"
     WindowStartupLocation="CenterOwner">
 
-    <Grid RowDefinitions="Auto,*,Auto,Auto" Margin="16">
-        <!-- Title -->
-        <TextBlock Grid.Row="0"
-                   Text="Merge Projects"
-                   Classes="Heading1"
-                   HorizontalAlignment="Center"
-                   Margin="0,0,0,24" />
-
+    <Grid RowDefinitions="*,Auto,Auto,Auto" Margin="8">
         <!-- Project Selection Area -->
-        <Border Grid.Row="1"
+        <Border Grid.Row="0"
                 Classes="card"
                 ClipToBounds="True">
 
@@ -82,14 +76,14 @@
                               RowDefinitions="Auto,Auto"
                               HorizontalAlignment="Center"
                               VerticalAlignment="Center"
-                              Margin="32">
+                              Margin="16">
                             <TextBlock Grid.Row="0"
                                        Text="⬇"
                                        FontSize="48"
                                        HorizontalAlignment="Center"
                                        Foreground="{DynamicResource TextTertiaryBrush}"
-                                       Margin="0,0,0,16" />
-                            <StackPanel Grid.Row="1" Spacing="8">
+                                       Margin="0,0,0,0" />
+                            <StackPanel Grid.Row="1" Spacing="4">
                                 <TextBlock Text="Drag and drop .als files here"
                                            Classes="Body"
                                            Foreground="{DynamicResource TextSecondaryBrush}"
@@ -106,7 +100,7 @@
         </Border>
 
         <!-- Output File Selection -->
-        <Border Grid.Row="2" Classes="card" Margin="0,16">
+        <Border Grid.Row="1" Classes="card" Margin="0,16">
             <Grid RowDefinitions="Auto,Auto">
                 <TextBlock Text="Output"
                            Classes="Heading3"
@@ -138,8 +132,8 @@
         </Border>
 
         <!-- Merge Settings & Status -->
-        <Border Grid.Row="3" Classes="card">
-            <Grid RowDefinitions="Auto,Auto,Auto">
+        <Border Grid.Row="2" Classes="card">
+            <Grid RowDefinitions="Auto,Auto">
                 <!-- Settings -->
                 <StackPanel Grid.Row="0">
                     <TextBlock Text="Merge Settings"
@@ -206,9 +200,25 @@
                         </Button>
                     </Grid>
                 </StackPanel>
+            </Grid>
+        </Border>
+        
+        <Border Grid.Row="3">
+            <Grid ColumnDefinitions="Auto, *, Auto">
+                <Button Grid.Column="0"
+                        Content="Reset"
+                        Command="{Binding ClearInputsCommand}"
+                        HorizontalAlignment="Right"
+                        Width="120">
+                    <Button.IsEnabled>
+                        <MultiBinding Converter="{StaticResource AllTrueMultiConverter}">
+                            <Binding Path="IsMerging"
+                                     Converter="{StaticResource InvertBoolConverter}" />
+                        </MultiBinding>
+                    </Button.IsEnabled>
+                </Button>
 
-                <!-- Merge Button -->
-                <Button Grid.Row="2"
+                <Button Grid.Column="2"
                         Content="Merge Projects"
                         Command="{Binding MergeProjectsCommand}"
                         Classes="primary"

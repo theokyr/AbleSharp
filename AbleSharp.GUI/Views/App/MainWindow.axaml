@@ -21,7 +21,7 @@
 
             <MenuItem Header="_Tools">
                 <MenuItem Header="Open Debug Log" Command="{Binding OpenDebugLogWindowCommand}" />
-                <MenuItem Header="Merge Projects" Command="{Binding OpenMergeProjectsWindowCommand}" />
+                <MenuItem Header="Merge Projects..." Command="{Binding OpenMergeProjectsWindowCommand}" />
             </MenuItem>
 
             <MenuItem Header="_Help">
