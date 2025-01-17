@@ -25,9 +25,9 @@ public class TimeWarpBreakpoints
     [XmlElement("Breakpoint")]
     public List<TimeWarpBreakpoint> Points { get; set; } = new()
     {
-        new() { Id = "0", Time = new() { Val = 0 }, Value = new() { Val = 0.5M }, IsActive = new() { Val = true } },
-        new() { Id = "1", Time = new() { Val = 0.5M }, Value = new() { Val = 0.5M }, IsActive = new() { Val = false } },
-        new() { Id = "2", Time = new() { Val = 1 }, Value = new() { Val = 0.5M }, IsActive = new() { Val = true } }
+        new TimeWarpBreakpoint { Id = "0", Time = new Value<decimal> { Val = 0 }, Value = new Value<decimal> { Val = 0.5M }, IsActive = new Value<bool> { Val = true } },
+        new TimeWarpBreakpoint { Id = "1", Time = new Value<decimal> { Val = 0.5M }, Value = new Value<decimal> { Val = 0.5M }, IsActive = new Value<bool> { Val = false } },
+        new TimeWarpBreakpoint { Id = "2", Time = new Value<decimal> { Val = 1 }, Value = new Value<decimal> { Val = 0.5M }, IsActive = new Value<bool> { Val = true } }
     };
 }
 

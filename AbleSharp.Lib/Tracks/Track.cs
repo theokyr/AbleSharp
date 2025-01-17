@@ -3,7 +3,7 @@ using System.Xml.Serialization;
 namespace AbleSharp.Lib;
 
 [XmlInclude(typeof(MidiTrack))]
-[XmlInclude(typeof(AudioTrack))] 
+[XmlInclude(typeof(AudioTrack))]
 [XmlInclude(typeof(ReturnTrack))]
 [XmlInclude(typeof(MainTrack))]
 [XmlInclude(typeof(PreHearTrack))]
@@ -49,7 +49,7 @@ public abstract class Track
     [XmlElement("ViewData")]
     public Value<string> ViewData { get; set; }
 
-    [XmlElement("TakeLanes")] 
+    [XmlElement("TakeLanes")]
     public TakeLanes TakeLanes { get; set; } = new()
     {
         LaneCollection = new List<TakeLane>(),
@@ -73,7 +73,7 @@ public abstract class Track
 
     [XmlElement("VelocityDetail")]
     public Value<int> VelocityDetail { get; set; }
-    
+
     public Track()
     {
         // Initialize default values

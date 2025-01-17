@@ -21,10 +21,10 @@ public class SchemaGenerator
     }
 
     private readonly Dictionary<string, ClassInfo> classProperties = new();
-    private readonly HashSet<string> generatedClasses = new HashSet<string>();
-    private readonly HashSet<string> reservedNames = new HashSet<string>();
-    private readonly HashSet<string> processedTypes = new HashSet<string>();
-    private readonly StringBuilder output = new StringBuilder();
+    private readonly HashSet<string> generatedClasses = new();
+    private readonly HashSet<string> reservedNames = new();
+    private readonly HashSet<string> processedTypes = new();
+    private readonly StringBuilder output = new();
     private int indentLevel = 0;
 
     public SchemaGenerator()
@@ -43,10 +43,7 @@ public class SchemaGenerator
             "typeof", "sizeof", "void", "volatile", "enum", "struct"
         };
 
-        foreach (var keyword in keywords)
-        {
-            reservedNames.Add(keyword);
-        }
+        foreach (var keyword in keywords) reservedNames.Add(keyword);
     }
 
     public void GenerateForMinorVersion(string minorVersionString, string schemaXml, string outputPath)
@@ -55,7 +52,7 @@ public class SchemaGenerator
 
         // 2. Build a namespace: e.g. "Ableton.Lib.Schema.v12_0_12049"
         var targetNamespace = $"Ableton.Lib.Schema.{sanitizedVersion}";
-        
+
         var doc = XDocument.Parse(schemaXml);
         var schema = doc.Descendants("AbletonSchema").First();
 
@@ -103,10 +100,7 @@ public class SchemaGenerator
     private string MapType(string classType, string typeValue, List<XElement> allTypes)
     {
         // Handle array types first
-        if (classType.Contains("Array"))
-        {
-            return MapArrayType(classType);
-        }
+        if (classType.Contains("Array")) return MapArrayType(classType);
 
         // Handle generic types
         if (classType.Contains("<"))
@@ -222,10 +216,7 @@ public class SchemaGenerator
         indentLevel++;
 
         // Generate properties
-        foreach (var propertyElement in classElement.Elements())
-        {
-            GenerateProperty(propertyElement, allTypes, className);
-        }
+        foreach (var propertyElement in classElement.Elements()) GenerateProperty(propertyElement, allTypes, className);
 
         indentLevel--;
         WriteLine("}");
@@ -239,14 +230,11 @@ public class SchemaGenerator
             ClassName = className
         });
 
-        string propertyName = NormalizePropertyName(baseName, className);
-        string uniqueName = propertyName;
-        int counter = 1;
+        var propertyName = NormalizePropertyName(baseName, className);
+        var uniqueName = propertyName;
+        var counter = 1;
 
-        while (classInfo.PropertyNames.Contains(uniqueName))
-        {
-            uniqueName = $"{propertyName}{counter++}";
-        }
+        while (classInfo.PropertyNames.Contains(uniqueName)) uniqueName = $"{propertyName}{counter++}";
 
         classInfo.PropertyNames.Add(uniqueName);
         return uniqueName;
@@ -487,7 +475,7 @@ public static class DictionaryExtensions
         TKey key,
         Func<TKey, TValue> valueFactory)
     {
-        if (!dict.TryGetValue(key, out TValue value))
+        if (!dict.TryGetValue(key, out var value))
         {
             value = valueFactory(key);
             dict.Add(key, value);

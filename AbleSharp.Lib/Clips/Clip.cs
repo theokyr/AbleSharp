@@ -21,7 +21,7 @@ public abstract class Clip
     [XmlElement("CurrentStart")]
     public Value<decimal> CurrentStart { get; set; } = new() { Val = 0 };
 
-    [XmlElement("CurrentEnd")] 
+    [XmlElement("CurrentEnd")]
     public Value<decimal> CurrentEnd { get; set; } = new() { Val = 16 };
 
     [XmlElement("Loop")]
@@ -39,7 +39,7 @@ public abstract class Clip
     [XmlElement("LaunchMode")]
     public Value<int> LaunchMode { get; set; } = new() { Val = 0 };
 
-    [XmlElement("LaunchQuantisation")] 
+    [XmlElement("LaunchQuantisation")]
     public Value<int> LaunchQuantisation { get; set; } = new() { Val = 0 };
 
     [XmlElement("TimeSignature")]
@@ -66,7 +66,7 @@ public abstract class Clip
     [XmlElement("Disabled")]
     public Value<bool> Disabled { get; set; } = new() { Val = false };
 
-    [XmlElement("VelocityAmount")] 
+    [XmlElement("VelocityAmount")]
     public Value<decimal> VelocityAmount { get; set; } = new() { Val = 0 };
 
     [XmlElement("FollowAction")]

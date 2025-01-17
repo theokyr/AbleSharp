@@ -51,13 +51,13 @@ public class LiveSet
     [XmlElement("ArrangementOverdub")]
     public Value<bool> ArrangementOverdub { get; set; }
 
-    [XmlElement("GlobalQuantisation")] 
+    [XmlElement("GlobalQuantisation")]
     public Value<int> GlobalQuantisation { get; set; } = new() { Val = 4 };
 
     [XmlElement("AutoQuantisation")]
     public Value<int> AutoQuantisation { get; set; } = new() { Val = 0 };
 
-    [XmlElement("Grid")] 
+    [XmlElement("Grid")]
     public Grid Grid { get; set; } = new();
 
     [XmlElement("ViewData")]
@@ -102,7 +102,7 @@ public class LiveSet
     [XmlElement("ExpressionLanes")]
     public List<ExpressionLane> ExpressionLanes { get; set; }
 
-    [XmlElement("ContentLanes")] 
+    [XmlElement("ContentLanes")]
     public List<ContentLane> ContentLanes { get; set; }
 
     [XmlElement("ViewStates")]

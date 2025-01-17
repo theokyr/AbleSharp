@@ -24,13 +24,12 @@ public static class SchemaAwareMerger
 
         // Create instance of target AbleSharp class
         var target = Activator.CreateInstance<T>();
-        
+
         // Get or create property mappings
         var mappings = GetPropertyMappings(typeof(T), schemaObject.GetType(), schemaVersion);
 
         // Copy matching properties
         foreach (var mapping in mappings)
-        {
             try
             {
                 var sourceValue = mapping.Value.Item1.GetValue(schemaObject);
@@ -41,19 +40,19 @@ public static class SchemaAwareMerger
                     {
                         var targetList = (IList)Activator.CreateInstance(mapping.Value.Item2.PropertyType);
                         var sourceList = (IList)sourceValue;
-                        
+
                         foreach (var item in sourceList)
                         {
                             var targetItemType = mapping.Value.Item2.PropertyType.GetGenericArguments()[0];
                             var convertedItem = ConvertValue(item, targetItemType, schemaVersion);
                             targetList.Add(convertedItem);
                         }
-                        
+
                         mapping.Value.Item2.SetValue(target, targetList);
                     }
                     else
                     {
-                        var convertedValue = ConvertValue(sourceValue, mapping.Value.Item2.PropertyType, schemaVersion); 
+                        var convertedValue = ConvertValue(sourceValue, mapping.Value.Item2.PropertyType, schemaVersion);
                         mapping.Value.Item2.SetValue(target, convertedValue);
                     }
                 }
@@ -63,7 +62,6 @@ public static class SchemaAwareMerger
                 // Log error but continue with other properties
                 Console.WriteLine($"Error merging property {mapping.Key}: {ex.Message}");
             }
-        }
 
         return target;
     }
@@ -80,7 +78,6 @@ public static class SchemaAwareMerger
         var mappings = GetPropertyMappings(ableSharpObject.GetType(), typeof(T), schemaVersion);
 
         foreach (var mapping in mappings)
-        {
             try
             {
                 var sourceValue = mapping.Value.Item1.GetValue(ableSharpObject);
@@ -90,14 +87,14 @@ public static class SchemaAwareMerger
                     {
                         var targetList = (IList)Activator.CreateInstance(mapping.Value.Item2.PropertyType);
                         var sourceList = (IList)sourceValue;
-                        
+
                         foreach (var item in sourceList)
                         {
                             var targetItemType = mapping.Value.Item2.PropertyType.GetGenericArguments()[0];
                             var convertedItem = ConvertValue(item, targetItemType, schemaVersion);
                             targetList.Add(convertedItem);
                         }
-                        
+
                         mapping.Value.Item2.SetValue(target, targetList);
                     }
                     else
@@ -111,7 +108,6 @@ public static class SchemaAwareMerger
             {
                 Console.WriteLine($"Error merging property {mapping.Key}: {ex.Message}");
             }
-        }
 
         return target;
     }
@@ -119,18 +115,16 @@ public static class SchemaAwareMerger
     private static Dictionary<string, (PropertyInfo, PropertyInfo)> GetPropertyMappings(Type sourceType, Type targetType, string schemaVersion)
     {
         var cacheKey = $"{sourceType.FullName}_{targetType.FullName}_{schemaVersion}";
-        
+
         if (PropertyMappingCache.TryGetValue(cacheKey, out var cachedMappings))
         {
             var result = new Dictionary<string, (PropertyInfo, PropertyInfo)>();
             foreach (var mapping in cachedMappings[sourceType])
             {
                 var targetProp = targetType.GetProperty(mapping.Key);
-                if (targetProp != null)
-                {
-                    result[mapping.Key] = (mapping.Value, targetProp);
-                }
+                if (targetProp != null) result[mapping.Key] = (mapping.Value, targetProp);
             }
+
             return result;
         }
 
@@ -151,17 +145,11 @@ public static class SchemaAwareMerger
                 return string.Equals(sourceName, targetName, StringComparison.OrdinalIgnoreCase);
             });
 
-            if (targetProp != null)
-            {
-                mappings[sourceName] = (sourceProp, targetProp);
-            }
+            if (targetProp != null) mappings[sourceName] = (sourceProp, targetProp);
         }
 
         // Cache the mappings
-        if (!PropertyMappingCache.ContainsKey(cacheKey))
-        {
-            PropertyMappingCache[cacheKey] = new Dictionary<Type, Dictionary<string, PropertyInfo>>();
-        }
+        if (!PropertyMappingCache.ContainsKey(cacheKey)) PropertyMappingCache[cacheKey] = new Dictionary<Type, Dictionary<string, PropertyInfo>>();
         PropertyMappingCache[cacheKey][sourceType] = mappings.ToDictionary(
             kvp => kvp.Key,
             kvp => kvp.Value.Item1
@@ -176,10 +164,7 @@ public static class SchemaAwareMerger
             return null;
 
         // Handle enums
-        if (targetType.IsEnum && value is string enumStr)
-        {
-            return Enum.Parse(targetType, enumStr);
-        }
+        if (targetType.IsEnum && value is string enumStr) return Enum.Parse(targetType, enumStr);
 
         // Handle Value<T> wrapper types 
         if (targetType.IsGenericType && targetType.GetGenericTypeDefinition() == typeof(Value<>))
@@ -196,18 +181,12 @@ public static class SchemaAwareMerger
         {
             var targetList = (IList)Activator.CreateInstance(targetType);
             var elementType = targetType.GetGenericArguments()[0];
-            foreach (var item in sourceList)
-            {
-                targetList.Add(ConvertValue(item, elementType, schemaVersion));
-            }
+            foreach (var item in sourceList) targetList.Add(ConvertValue(item, elementType, schemaVersion));
             return targetList;
         }
 
         // Handle complex types
-        if (!targetType.IsPrimitive && targetType != typeof(string))
-        {
-            return MergeFromSchema<object>(value, schemaVersion); 
-        }
+        if (!targetType.IsPrimitive && targetType != typeof(string)) return MergeFromSchema<object>(value, schemaVersion);
 
         // Basic type conversion
         return Convert.ChangeType(value, targetType);

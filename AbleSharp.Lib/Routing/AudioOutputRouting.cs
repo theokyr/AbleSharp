@@ -6,9 +6,9 @@ public class AudioOutputRouting : Routing
 {
     public AudioOutputRouting()
     {
-        Target = new() { Val = "AudioOut/Main" };
-        UpperDisplayString = new() { Val = "Master" };
-        LowerDisplayString = new() { Val = "" };
+        Target = new Value<string> { Val = "AudioOut/Main" };
+        UpperDisplayString = new Value<string> { Val = "Master" };
+        LowerDisplayString = new Value<string> { Val = "" };
         MpeSettings = new MpeSettings();
     }
 }

@@ -16,16 +16,16 @@ public class ChordSequence
     [XmlElement("Chord")]
     public List<Chord> Chords { get; set; } = new()
     {
-        new Chord 
-        { 
+        new Chord
+        {
             Id = "0",
-            RootDegree = new() { Val = 0 },
-            Octave = new() { Val = 3 },
-            RootPitch = new() { Val = 60 },
-            Inversion = new() { Val = 0 },
-            RuleNumber = new() { Val = 0 },
-            Duration = new() { Val = 1 },
-            Offset = new() { Val = 0 }
+            RootDegree = new Value<int> { Val = 0 },
+            Octave = new Value<int> { Val = 3 },
+            RootPitch = new Value<int> { Val = 60 },
+            Inversion = new Value<int> { Val = 0 },
+            RuleNumber = new Value<int> { Val = 0 },
+            Duration = new Value<int> { Val = 1 },
+            Offset = new Value<int> { Val = 0 }
         }
     };
 }

@@ -6,7 +6,7 @@ public static class IdGenerator
 
     public static int GetNextId()
     {
-        return (_nextId++);
+        return _nextId++;
     }
 
     public static int GetLastId()

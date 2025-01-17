@@ -20,4 +20,3 @@ public class SdkOptions
     /// </summary>
     public Action<string>? Logger { get; set; }
 }
-

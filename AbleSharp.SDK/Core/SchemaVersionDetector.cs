@@ -17,7 +17,7 @@ public static class SchemaVersionDetector
         try
         {
             string xmlContent;
-            
+
             // Try to decompress as gzip
             using (var gzipStream = new GZipStream(memStream, CompressionMode.Decompress))
             using (var decompressedStream = new MemoryStream())
@@ -34,10 +34,7 @@ public static class SchemaVersionDetector
             if (root?.Name.LocalName == "Ableton")
             {
                 var minorVersion = root.Attribute("MinorVersion")?.Value;
-                if (!string.IsNullOrEmpty(minorVersion))
-                {
-                    return minorVersion;
-                }
+                if (!string.IsNullOrEmpty(minorVersion)) return minorVersion;
             }
 
             throw new Exception("Could not find MinorVersion attribute in Ableton project file");
@@ -48,16 +45,13 @@ public static class SchemaVersionDetector
             memStream.Position = 0;
             using var reader = new StreamReader(memStream);
             var xmlContent = reader.ReadToEnd();
-            
+
             var doc = XDocument.Parse(xmlContent);
             var root = doc.Root;
             if (root?.Name.LocalName == "Ableton")
             {
                 var minorVersion = root.Attribute("MinorVersion")?.Value;
-                if (!string.IsNullOrEmpty(minorVersion))
-                {
-                    return minorVersion;
-                }
+                if (!string.IsNullOrEmpty(minorVersion)) return minorVersion;
             }
 
             throw new Exception("Could not find MinorVersion attribute in Ableton project file");

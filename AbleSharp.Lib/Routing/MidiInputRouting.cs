@@ -6,9 +6,9 @@ public class MidiInputRouting : Routing
 {
     public MidiInputRouting()
     {
-        Target = new() { Val = "MidiIn/External.All/-1" };
-        UpperDisplayString = new() { Val = "Ext: All Ins" };
-        LowerDisplayString = new() { Val = "" };
+        Target = new Value<string> { Val = "MidiIn/External.All/-1" };
+        UpperDisplayString = new Value<string> { Val = "Ext: All Ins" };
+        LowerDisplayString = new Value<string> { Val = "" };
         MpeSettings = new MpeSettings();
     }
 }

@@ -39,7 +39,7 @@ public class MidiControllers
                 _controllerTargets[element.Name] = new ControllerTarget
                 {
                     Id = id,
-                    LockEnvelope = new() { Val = lockEnvValue }
+                    LockEnvelope = new Value<int> { Val = lockEnvValue }
                 };
             }
         }

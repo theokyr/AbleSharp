@@ -10,7 +10,7 @@ public class IsDragOverToBorderBrushConverter : IValueConverter
     {
         return value is bool isDragOver && isDragOver
             ? Brushes.LightGray
-            : Brushes.Gray; 
+            : Brushes.Gray;
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

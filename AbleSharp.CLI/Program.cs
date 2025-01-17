@@ -4,11 +4,11 @@ using AbleSharp.SDK.Options;
 
 namespace AbleSharp.CLI;
 
-class Program
+internal class Program
 {
-    static readonly AbleSharpSdk _sdk = AbleSharpSdk.Instance;
+    private static readonly AbleSharpSdk _sdk = AbleSharpSdk.Instance;
 
-    static void Main(string[] args)
+    private static void Main(string[] args)
     {
         if (args.Length == 0)
         {
@@ -16,7 +16,7 @@ class Program
             return;
         }
 
-        string command = args[0].ToLower();
+        var command = args[0].ToLower();
 
         try
         {
@@ -52,7 +52,7 @@ class Program
         }
     }
 
-    static void PrintExceptionDetails(Exception exception)
+    private static void PrintExceptionDetails(Exception exception)
     {
         while (exception != null)
         {
@@ -62,7 +62,7 @@ class Program
         }
     }
 
-    static void PrintUsage()
+    private static void PrintUsage()
     {
         Console.WriteLine("AbleSharp CLI Usage:");
         Console.WriteLine();
@@ -82,7 +82,7 @@ class Program
         Console.WriteLine();
     }
 
-    static void HandleOpenCommand(string[] args)
+    private static void HandleOpenCommand(string[] args)
     {
         if (args.Length == 0)
         {
@@ -90,21 +90,15 @@ class Program
             return;
         }
 
-        bool shouldDump = false;
-        string projectPath = "";
+        var shouldDump = false;
+        var projectPath = "";
 
         // Parse arguments
-        for (int i = 0; i < args.Length; i++)
-        {
+        for (var i = 0; i < args.Length; i++)
             if (args[i] == "-d" || args[i] == "--dump")
-            {
                 shouldDump = true;
-            }
             else
-            {
                 projectPath = args[i];
-            }
-        }
 
         if (string.IsNullOrEmpty(projectPath))
         {
@@ -133,17 +127,17 @@ class Program
         // Handle dump if requested
         if (shouldDump)
         {
-            string dumpFileName = Path.GetFileName(projectPath) + ".dump.txt";
-            string dumpDir = Path.GetDirectoryName(projectPath) ?? AppDomain.CurrentDomain.BaseDirectory;
-            string dumpPath = Path.Combine(dumpDir, dumpFileName);
+            var dumpFileName = Path.GetFileName(projectPath) + ".dump.txt";
+            var dumpDir = Path.GetDirectoryName(projectPath) ?? AppDomain.CurrentDomain.BaseDirectory;
+            var dumpPath = Path.Combine(dumpDir, dumpFileName);
 
-            string? dumpText = _sdk.GetProjectDump(project);
+            var dumpText = _sdk.GetProjectDump(project);
             File.WriteAllText(dumpPath, dumpText);
             Console.WriteLine($"Project dump written to: {dumpPath}");
         }
     }
 
-    static void HandleCreateCommand(string[] args)
+    private static void HandleCreateCommand(string[] args)
     {
         if (args.Length == 0)
         {
@@ -151,7 +145,7 @@ class Program
             return;
         }
 
-        string outputPath = args[0];
+        var outputPath = args[0];
 
         var options = new ProjectCreationOptions
         {
@@ -176,7 +170,7 @@ class Program
         Console.WriteLine("Project created successfully.");
     }
 
-    static void HandleMergeCommand(string[] args)
+    private static void HandleMergeCommand(string[] args)
     {
         if (args.Length < 3) // Need at least: -o output.als input1.als
         {
@@ -186,12 +180,11 @@ class Program
         }
 
         // Parse arguments
-        int index = 0;
-        string outputPath = "";
+        var index = 0;
+        var outputPath = "";
         var inputPaths = new List<string>();
 
         while (index < args.Length)
-        {
             if (args[index] == "-o")
             {
                 if (index + 1 < args.Length)
@@ -210,7 +203,6 @@ class Program
                 inputPaths.Add(args[index]);
                 index++;
             }
-        }
 
         if (string.IsNullOrEmpty(outputPath))
         {
@@ -226,13 +218,11 @@ class Program
 
         // Validate input files exist
         foreach (var path in inputPaths)
-        {
             if (!File.Exists(path))
             {
                 Console.WriteLine($"Error: Input file not found: {path}");
                 return;
             }
-        }
 
         var openOptions = new ProjectOpenOptions
         {
@@ -274,7 +264,7 @@ class Program
         Console.WriteLine("Merge completed successfully.");
     }
 
-    static void HandleSchemaCommand(string[] args)
+    private static void HandleSchemaCommand(string[] args)
     {
         if (args.Length < 2)
         {
@@ -283,8 +273,8 @@ class Program
             return;
         }
 
-        string schemaPath = args[0];
-        string outputDir = args[1];
+        var schemaPath = args[0];
+        var outputDir = args[1];
 
         // Ensure output directory exists
         Directory.CreateDirectory(outputDir);
@@ -306,8 +296,7 @@ class Program
             }
 
             Console.WriteLine($"Processing {schemaFiles.Length} schema files from directory: {schemaPath}");
-            foreach (string file in schemaFiles)
-            {
+            foreach (var file in schemaFiles)
                 try
                 {
                     ProcessSingleSchemaFile(file, outputDir);
@@ -317,7 +306,6 @@ class Program
                     Console.WriteLine($"Failed to process schema file: {file}");
                     Console.WriteLine($"Error: {ex.Message}");
                 }
-            }
         }
         else
         {
@@ -325,14 +313,14 @@ class Program
         }
     }
 
-    static void ProcessSingleSchemaFile(string schemaPath, string outputDir)
+    private static void ProcessSingleSchemaFile(string schemaPath, string outputDir)
     {
         // Extract the minor version string by taking the file name without extension
-        string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(schemaPath);
+        var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(schemaPath);
         var sanitizedVersion = "v" + fileNameWithoutExtension.Replace('.', '_');
 
         // Generate output path
-        string outputFile = Path.Combine(outputDir, $"{sanitizedVersion}.cs");
+        var outputFile = Path.Combine(outputDir, $"{sanitizedVersion}.cs");
 
         // Skip processing if the output file already exists
         if (File.Exists(outputFile))
@@ -344,7 +332,7 @@ class Program
         try
         {
             Console.WriteLine($"Reading schema from: {schemaPath}");
-            string schemaContent = File.ReadAllText(schemaPath);
+            var schemaContent = File.ReadAllText(schemaPath);
 
             Console.WriteLine("Generating C# classes...");
             var generator = new SchemaGenerator();

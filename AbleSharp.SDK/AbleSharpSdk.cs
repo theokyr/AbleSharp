@@ -10,13 +10,15 @@ namespace AbleSharp.SDK;
 public class AbleSharpSdk
 {
     private static readonly Lazy<AbleSharpSdk> _instance = new(() => new AbleSharpSdk());
-    
+
     /// <summary>
     /// Gets the singleton instance of AbleSharpSdk
     /// </summary>
     public static AbleSharpSdk Instance => _instance.Value;
 
-    private AbleSharpSdk() { }
+    private AbleSharpSdk()
+    {
+    }
 
     /// <summary>
     /// Creates a new empty Ableton Live project
@@ -90,7 +92,7 @@ public class AbleSharpSdk
 
         if (project == null)
             throw new ArgumentNullException(nameof(project));
-        
+
         if (string.IsNullOrEmpty(path))
             throw new ArgumentNullException(nameof(path));
 
@@ -181,13 +183,17 @@ public class AbleSharpSdk
     /// <summary>
     /// Gets a debug dump of the project structure
     /// </summary>
-    public string GetProjectDump(AbletonProject project) =>
-        AbletonProjectDumper.DebugDumpProject(project);
+    public string GetProjectDump(AbletonProject project)
+    {
+        return AbletonProjectDumper.DebugDumpProject(project);
+    }
 
     /// <summary>
     /// Gets whether a specific Ableton Live version is supported
     /// </summary>
     /// <param name="version">The version string (e.g. "12.0_12049")</param>
-    public bool IsVersionSupported(string version) => 
-        SchemaTypeResolver.IsVersionSupported(version);
+    public bool IsVersionSupported(string version)
+    {
+        return SchemaTypeResolver.IsVersionSupported(version);
+    }
 }

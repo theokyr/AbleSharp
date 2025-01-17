@@ -10,11 +10,8 @@ public static class AbletonProjectHandler
     {
         // Detect schema version
         var schemaVersion = SchemaVersionDetector.DetectFromFile(filePath);
-        
-        if (!SchemaTypeResolver.IsVersionSupported(schemaVersion))
-        {
-            throw new Exception($"Unsupported Ableton version: {schemaVersion}");
-        }
+
+        if (!SchemaTypeResolver.IsVersionSupported(schemaVersion)) throw new Exception($"Unsupported Ableton version: {schemaVersion}");
 
         // Load directly into AbletonProject
         return AbletonSchemaLoader.LoadFromFile(filePath, schemaVersion);
@@ -25,10 +22,7 @@ public static class AbletonProjectHandler
         // If no target version specified, use same as source
         targetSchemaVersion ??= project.MinorVersion;
 
-        if (!SchemaTypeResolver.IsVersionSupported(targetSchemaVersion))
-        {
-            throw new Exception($"Unsupported Ableton version: {targetSchemaVersion}");
-        }
+        if (!SchemaTypeResolver.IsVersionSupported(targetSchemaVersion)) throw new Exception($"Unsupported Ableton version: {targetSchemaVersion}");
 
         // Save directly from AbletonProject
         AbletonSchemaWriter.SaveToFile(project, filePath);

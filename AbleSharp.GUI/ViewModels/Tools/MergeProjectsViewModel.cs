@@ -249,7 +249,6 @@ public class MergeProjectsViewModel : ReactiveObject
 
             // Load all projects
             foreach (var path in SelectedProjects)
-            {
                 try
                 {
                     UpdateProgress($"Loading: {Path.GetFileName(path)}");
@@ -277,7 +276,6 @@ public class MergeProjectsViewModel : ReactiveObject
                     ShowError($"Error loading {Path.GetFileName(path)}: {ex.Message}");
                     return;
                 }
-            }
 
             if (projects.Count < 2)
             {
@@ -292,7 +290,7 @@ public class MergeProjectsViewModel : ReactiveObject
             var mergedProject = _sdk.MergeProjects(projects, new ProjectMergeOptions
             {
                 Logger = msg => _logger.LogInformation(msg),
-                NamingConflicts = SDK.ConflictResolution.Rename,
+                NamingConflicts = ConflictResolution.Rename,
                 PreserveColors = true,
                 MergeScenes = true
             });

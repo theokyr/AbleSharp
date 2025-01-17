@@ -4,14 +4,14 @@ using AbleSharp.Lib;
 
 namespace AbleSharp.SDK;
 
-public static class SchemaTypeResolver 
+public static class SchemaTypeResolver
 {
     private static readonly Dictionary<string, Type> SchemaTypes = new();
 
-    static SchemaTypeResolver() 
+    static SchemaTypeResolver()
     {
         SchemaTypes["AbletonProject"] = typeof(AbletonProject);
-        
+
         RegisterSchemaMapping("11.0_11202", "AbleSharp.Lib.Schema.v11_0_11202");
         RegisterSchemaMapping("12.0_12120", "AbleSharp.Lib.Schema.v12_0_12120");
         RegisterSchemaMapping("12.0_12049", "AbleSharp.Lib.Schema.v12_0_12049");
@@ -22,7 +22,7 @@ public static class SchemaTypeResolver
         // Always return our core AbletonProject type
         return typeof(AbletonProject);
     }
-    
+
     public static string GetSchemaNamespace(string version)
     {
         var sanitizedVersion = "v" + version.Replace('.', '_');

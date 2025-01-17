@@ -22,7 +22,7 @@ public class DeviceChain
     [XmlElement("MidiOutputRouting")]
     public MidiOutputRouting MidiOutputRouting { get; set; }
 
-    [XmlElement("Mixer")]  
+    [XmlElement("Mixer")]
     public Mixer Mixer { get; set; }
 
     [XmlElement("MainSequencer")]
