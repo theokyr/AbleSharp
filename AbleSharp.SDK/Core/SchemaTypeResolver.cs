@@ -11,7 +11,7 @@ public static class SchemaTypeResolver
     // Single source of truth for supported versions
     private static readonly AbletonVersion[] SupportedVersions =
     [
-        new("11.0", "11.0_11202", "v11_0_11202"),
+        new("11.0", "11.0_11202", "v11_0_11202"), 
         new("12.0", "12.0_12049", "v12_0_12049"),
         new("12.1", "12.0_12120", "v12_0_12120")
     ];
@@ -20,10 +20,10 @@ public static class SchemaTypeResolver
     {
         SchemaTypes["AbletonProject"] = typeof(AbletonProject);
 
-        foreach (var version in SupportedVersions)
-        {
-            RegisterSchemaMapping(version.MinorVersion);
-        }
+        // Register base mapping
+        RegisterSchemaMapping("11.0_11202", "AbleSharp.Lib.Schema.v11_0_11202");
+        RegisterSchemaMapping("12.0_12049", "AbleSharp.Lib.Schema.v12_0_12049");
+        RegisterSchemaMapping("12.0_12120", "AbleSharp.Lib.Schema.v12_0_12120");
     }
 
     public static Type GetRootType()
@@ -38,9 +38,19 @@ public static class SchemaTypeResolver
         return $"AbleSharp.Lib.Schema.{sanitizedVersion}";
     }
 
-    private static void RegisterSchemaMapping(string version)
+    private static void RegisterSchemaMapping(string minorVersion, string schemaNamespace)
     {
-        SchemaTypes[version] = null;
+        try
+        {
+            // Attempt to load the schema assembly type
+            var assembly = typeof(AbletonProject).Assembly;
+            var schemaType = assembly.GetType(schemaNamespace);
+            SchemaTypes[minorVersion] = schemaType;
+        }
+        catch 
+        {
+            SchemaTypes[minorVersion] = null;
+        }
     }
 
     public static bool IsVersionSupported(string minorVersion)
@@ -50,6 +60,7 @@ public static class SchemaTypeResolver
 
     public static IReadOnlyList<AbletonVersion> GetSupportedVersions()
     {
-        return SupportedVersions;
+        // Only return versions that actually have schema types
+        return SupportedVersions.Where(v => IsVersionSupported(v.MinorVersion)).ToArray();
     }
 }

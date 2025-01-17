@@ -28,7 +28,7 @@ public class AbleSharpSdk
 
     private AbleSharpSdk()
     {
-        SchemaTypeResolver.GetSupportedVersions()
+        AvailableVersions = SchemaTypeResolver.GetSupportedVersions()
             .Select(v => new AbletonVersion(v.DisplayName, v.MinorVersion, v.NamespaceVersion))
             .ToList();
     }
