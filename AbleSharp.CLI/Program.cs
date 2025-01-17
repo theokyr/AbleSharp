@@ -44,7 +44,7 @@ internal class Program
                     break;
             }
         }
-        catch (Exception ex)
+        catch (Exception? ex)
         {
             Console.WriteLine("An error occurred:");
             PrintExceptionDetails(ex);
@@ -52,7 +52,7 @@ internal class Program
         }
     }
 
-    private static void PrintExceptionDetails(Exception exception)
+    private static void PrintExceptionDetails(Exception? exception)
     {
         while (exception != null)
         {
@@ -341,7 +341,7 @@ internal class Program
 
             Console.WriteLine($"Classes generated successfully at: {outputFile}");
         }
-        catch (Exception ex)
+        catch (Exception? ex)
         {
             Console.WriteLine($"Error generating classes from schema file: {schemaPath}");
             PrintExceptionDetails(ex);

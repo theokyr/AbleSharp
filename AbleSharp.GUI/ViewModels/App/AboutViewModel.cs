@@ -13,7 +13,6 @@ namespace AbleSharp.GUI.ViewModels.Tools;
 public class AboutViewModel : ReactiveObject
 {
     private readonly ILogger<AboutViewModel> _logger;
-    private readonly Window _parentWindow;
     private string _versionString;
     private string _osVersion;
     private string _runtimeVersion;
@@ -34,11 +33,6 @@ public class AboutViewModel : ReactiveObject
         // Initialize commands
         OpenGitHubCommand = ReactiveCommand.Create(
             OpenGitHub,
-            outputScheduler: AvaloniaScheduler.Instance
-        );
-
-        CloseWindowCommand = ReactiveCommand.Create(
-            CloseWindow,
             outputScheduler: AvaloniaScheduler.Instance
         );
     }
@@ -117,15 +111,6 @@ public class AboutViewModel : ReactiveObject
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to open GitHub repository");
-        }
-    }
-
-    private void CloseWindow()
-    {
-        if (_parentWindow != null)
-        {
-            _logger.LogDebug("Closing About window");
-            _parentWindow.Close();
         }
     }
 

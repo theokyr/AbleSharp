@@ -6,7 +6,7 @@ namespace AbleSharp.GUI.Converters;
 
 public class FontSizeMultiConverter : IValueConverter
 {
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         if (value is double zoom && parameter is string baseSizeStr)
             if (double.TryParse(baseSizeStr, out var baseSize))
@@ -15,7 +15,7 @@ public class FontSizeMultiConverter : IValueConverter
         return 10.0; // Default font size
     }
 
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         throw new NotImplementedException();
     }
