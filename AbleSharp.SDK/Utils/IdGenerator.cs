@@ -4,9 +4,9 @@ public static class IdGenerator
 {
     private static int _nextId = 1;
 
-    public static string GetNextId()
+    public static int GetNextId()
     {
-        return (_nextId++).ToString();
+        return _nextId++;
     }
 
     public static int GetLastId()

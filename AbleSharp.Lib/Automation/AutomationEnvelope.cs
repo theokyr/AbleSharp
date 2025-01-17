@@ -5,7 +5,7 @@ namespace AbleSharp.Lib;
 public class AutomationEnvelope
 {
     [XmlAttribute("Id")]
-    public string Id { get; set; }
+    public int Id { get; set; }
 
     [XmlElement("EnvelopeTarget")]
     public EnvelopeTarget EnvelopeTarget { get; set; }

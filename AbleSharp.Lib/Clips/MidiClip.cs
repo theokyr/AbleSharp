@@ -31,22 +31,22 @@ public class MidiClip : Clip
     public Value<int> ProgramChange { get; set; }
 
     [XmlElement("NoteEditorFoldInZoom")]
-    public Value<int> NoteEditorFoldInZoom { get; set; }
+    public Value<int> NoteEditorFoldInZoom { get; set; } = new() { Val = -1 };
 
     [XmlElement("NoteEditorFoldInScroll")]
-    public Value<int> NoteEditorFoldInScroll { get; set; }
+    public Value<int> NoteEditorFoldInScroll { get; set; } = new() { Val = 0 };
 
     [XmlElement("NoteEditorFoldOutZoom")]
-    public Value<int> NoteEditorFoldOutZoom { get; set; }
+    public Value<int> NoteEditorFoldOutZoom { get; set; } = new() { Val = -1 };
 
     [XmlElement("NoteEditorFoldOutScroll")]
-    public Value<int> NoteEditorFoldOutScroll { get; set; }
+    public Value<int> NoteEditorFoldOutScroll { get; set; } = new() { Val = 0 };
 
     [XmlElement("NoteEditorFoldScaleZoom")]
-    public Value<int> NoteEditorFoldScaleZoom { get; set; }
+    public Value<int> NoteEditorFoldScaleZoom { get; set; } = new() { Val = -1 };
 
     [XmlElement("NoteEditorFoldScaleScroll")]
-    public Value<int> NoteEditorFoldScaleScroll { get; set; }
+    public Value<int> NoteEditorFoldScaleScroll { get; set; } = new() { Val = 0 };
 
     [XmlElement("ScaleInformation")]
     public ScaleInformation ScaleInformation { get; set; }

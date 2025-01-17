@@ -6,4 +6,12 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+        <Compile Remove="Mixer\Pan.cs"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Schema\Generated\" />
+    </ItemGroup>
+
 </Project>

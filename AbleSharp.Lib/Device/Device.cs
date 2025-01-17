@@ -4,7 +4,7 @@ namespace AbleSharp.Lib;
 
 public class Device
 {
-    public Value<string> Id { get; set; }
+    public Value<int> Id { get; set; }
     public Value<int> LomId { get; set; }
     public Value<bool> IsExpanded { get; set; }
     public On On { get; set; }

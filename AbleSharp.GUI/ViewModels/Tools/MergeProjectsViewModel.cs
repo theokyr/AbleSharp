@@ -10,6 +10,7 @@ using System.Linq;
 using System.Reactive;
 using AbleSharp.Lib;
 using AbleSharp.SDK;
+using AbleSharp.SDK.Options;
 using ReactiveUI;
 using Avalonia.Media;
 using Avalonia.ReactiveUI;
@@ -19,6 +20,7 @@ namespace AbleSharp.GUI.ViewModels.Tools;
 public class MergeProjectsViewModel : ReactiveObject
 {
     private readonly ILogger<MergeProjectsViewModel> _logger;
+    private readonly AbleSharpSdk _sdk = AbleSharpSdk.Instance;
     private string _outputFilePath = string.Empty;
     private string _mergeSettingExample = "Keep All";
     private bool _isMerging;
@@ -158,7 +160,6 @@ public class MergeProjectsViewModel : ReactiveObject
         }
     }
 
-
     private async Task AddProjectsAsync()
     {
         _logger.LogDebug($"[MergeProjectsWindow] AddProjectsAsync ViewModel instance: {GetHashCode()}");
@@ -251,7 +252,11 @@ public class MergeProjectsViewModel : ReactiveObject
                 try
                 {
                     UpdateProgress($"Loading: {Path.GetFileName(path)}");
-                    var project = await Task.Run(() => AbletonProjectHandler.LoadFromFile(path));
+
+                    var project = _sdk.OpenProject(path, new ProjectOpenOptions()
+                    {
+                        Logger = msg => _logger.LogInformation(msg)
+                    });
 
                     if (project != null)
                     {
@@ -281,7 +286,15 @@ public class MergeProjectsViewModel : ReactiveObject
             // Merge projects
             UpdateProgress("Merging projects...");
             IsMergeProgressIndeterminate = true;
-            var mergedProject = await Task.Run(() => AbletonProjectMerger.MergeProjects(projects));
+
+            var mergedProject = _sdk.MergeProjects(projects, new ProjectMergeOptions
+            {
+                Logger = msg => _logger.LogInformation(msg),
+                NamingConflicts = ConflictResolution.Rename,
+                PreserveColors = true,
+                MergeScenes = true
+            });
+
             currentStep++;
             MergeProgress = (double)currentStep / totalSteps * 100;
 
@@ -293,7 +306,14 @@ public class MergeProjectsViewModel : ReactiveObject
 
             // Save merged project
             UpdateProgress("Saving merged project...");
-            await Task.Run(() => AbletonProjectHandler.SaveToFile(mergedProject, OutputFilePath));
+
+            _sdk.SaveProject(mergedProject, OutputFilePath, new ProjectSaveOptions
+            {
+                Logger = msg => _logger.LogInformation(msg),
+                Compress = true,
+                CreateBackup = true
+            });
+
             currentStep++;
             MergeProgress = 100;
 

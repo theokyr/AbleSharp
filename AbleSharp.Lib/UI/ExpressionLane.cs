@@ -5,7 +5,7 @@ namespace AbleSharp.Lib;
 public class ExpressionLane
 {
     [XmlAttribute("Id")]
-    public string Id { get; set; }
+    public int Id { get; set; }
 
     [XmlElement("Type")]
     public Value<int> Type { get; set; }

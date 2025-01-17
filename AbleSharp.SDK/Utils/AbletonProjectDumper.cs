@@ -189,7 +189,7 @@ public static class AbletonProjectDumper
         var indexPrefix = trackIndex >= 0 ? $"[{trackIndex}]" : "";
         var trackTypeName = track.GetType().Name;
         AppendLine(sb, indent, $"-- Track{indexPrefix}: {trackTypeName} --");
-        AppendLine(sb, indent + 1, $"Id: {track.Id}");
+        if (track is FreezableTrack freezableTrack) AppendLine(sb, indent + 1, $"Id: {freezableTrack.Id}");
         AppendLine(sb, indent + 1, $"LomId: {track.LomId?.Val}");
         AppendLine(sb, indent + 1, $"Name: {track.Name?.EffectiveName?.Val}");
         AppendLine(sb, indent + 1, $"Color: {track.Color?.Val}");
@@ -483,7 +483,7 @@ public static class AbletonProjectDumper
             for (var i = 0; i < audioClip.WarpMarkers.Count; i++)
             {
                 var wm = audioClip.WarpMarkers[i];
-                AppendLine(sb, indent + 2, $"WarpMarker[{i}] Id={wm.Id}, SecTime={wm.SecTime?.Val}, BeatTime={wm.BeatTime?.Val}");
+                AppendLine(sb, indent + 2, $"WarpMarker[{i}] Id={wm.Id}, SecTime={wm.SecTime}, BeatTime={wm.BeatTime}");
             }
         }
 

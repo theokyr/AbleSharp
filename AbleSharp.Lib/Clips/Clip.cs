@@ -2,110 +2,88 @@ using System.Xml.Serialization;
 
 namespace AbleSharp.Lib;
 
-/// <summary>
-/// Represents a single Clip in Ableton. 
-/// 
-/// `Time` typically is the arrangement offset: how far into the arrangement this clip starts.
-/// `CurrentStart` is the local start time within the clip data.
-/// `CurrentEnd` is the local end time within the clip data.
-/// </summary>
 [XmlInclude(typeof(MidiClip))]
 [XmlInclude(typeof(AudioClip))]
 public abstract class Clip
 {
-    /// <summary>
-    /// Unique ID for this clip
-    /// </summary>
     [XmlAttribute("Id")]
-    public string Id { get; set; }
+    public int Id { get; set; }
 
-    /// <summary>
-    /// Arrangement offset (in beats, or seconds, etc.) 
-    /// where this clip is placed on the timeline.
-    /// </summary>
     [XmlAttribute("Time")]
     public decimal Time { get; set; }
 
     [XmlElement("LomId")]
-    public Value<int> LomId { get; set; }
+    public Value<int> LomId { get; set; } = new() { Val = 0 };
 
     [XmlElement("LomIdView")]
-    public Value<int> LomIdView { get; set; }
+    public Value<int> LomIdView { get; set; } = new() { Val = 0 };
 
-    /// <summary>
-    /// Local in-point within the clip’s own data.
-    /// If the clip is untrimmed, CurrentStart often equals 0.
-    /// Some older sets may store the entire offset here as well.
-    /// </summary>
     [XmlElement("CurrentStart")]
-    public Value<decimal> CurrentStart { get; set; }
+    public Value<decimal> CurrentStart { get; set; } = new() { Val = 0 };
 
-    /// <summary>
-    /// Local out-point within the clip’s data.
-    /// </summary>
     [XmlElement("CurrentEnd")]
-    public Value<decimal> CurrentEnd { get; set; }
+    public Value<decimal> CurrentEnd { get; set; } = new() { Val = 16 };
 
     [XmlElement("Loop")]
-    public Loop Loop { get; set; }
+    public Loop Loop { get; set; } = new();
 
     [XmlElement("Name")]
-    public Value<string> Name { get; set; }
+    public Value<string> Name { get; set; } = new() { Val = "" };
 
     [XmlElement("Annotation")]
-    public Value<string> Annotation { get; set; }
+    public Value<string> Annotation { get; set; } = new() { Val = "" };
 
     [XmlElement("Color")]
-    public Value<int> Color { get; set; }
+    public Value<int> Color { get; set; } = new() { Val = 12 };
 
     [XmlElement("LaunchMode")]
-    public Value<int> LaunchMode { get; set; }
+    public Value<int> LaunchMode { get; set; } = new() { Val = 0 };
 
     [XmlElement("LaunchQuantisation")]
-    public Value<int> LaunchQuantisation { get; set; }
+    public Value<int> LaunchQuantisation { get; set; } = new() { Val = 0 };
 
     [XmlElement("TimeSignature")]
-    public TimeSignature TimeSignature { get; set; }
+    public TimeSignature TimeSignature { get; set; } = new();
 
     [XmlElement("Envelopes")]
-    public Envelopes Envelopes { get; set; }
+    public Envelopes Envelopes { get; set; } = new();
 
     [XmlElement("ScrollerTimePreserver")]
-    public ScrollerTimePreserver ScrollerTimePreserver { get; set; }
+    public ScrollerTimePreserver ScrollerTimePreserver { get; set; } = new();
 
     [XmlElement("TimeSelection")]
-    public TimeSelection TimeSelection { get; set; }
+    public TimeSelection TimeSelection { get; set; } = new();
 
     [XmlElement("Legato")]
-    public Value<bool> Legato { get; set; }
+    public Value<bool> Legato { get; set; } = new() { Val = false };
 
     [XmlElement("Ram")]
-    public Value<bool> Ram { get; set; }
+    public Value<bool> Ram { get; set; } = new() { Val = false };
 
     [XmlElement("GrooveSettings")]
-    public GrooveSettings GrooveSettings { get; set; }
+    public GrooveSettings GrooveSettings { get; set; } = new();
 
     [XmlElement("Disabled")]
-    public Value<bool> Disabled { get; set; }
+    public Value<bool> Disabled { get; set; } = new() { Val = false };
 
     [XmlElement("VelocityAmount")]
-    public Value<decimal> VelocityAmount { get; set; }
+    public Value<decimal> VelocityAmount { get; set; } = new() { Val = 0 };
 
     [XmlElement("FollowAction")]
-    public FollowAction FollowAction { get; set; }
+    public FollowAction FollowAction { get; set; } = new();
 
     [XmlElement("Grid")]
-    public Grid Grid { get; set; }
+    public Grid Grid { get; set; } = new();
 
     [XmlElement("FreezeStart")]
-    public Value<decimal> FreezeStart { get; set; }
+    public Value<decimal> FreezeStart { get; set; } = new() { Val = 0 };
 
     [XmlElement("FreezeEnd")]
-    public Value<decimal> FreezeEnd { get; set; }
+    public Value<decimal> FreezeEnd { get; set; } = new() { Val = 0 };
 
     [XmlElement("IsWarped")]
-    public Value<bool> IsWarped { get; set; }
+    public Value<bool> IsWarped { get; set; } = new() { Val = true };
 
     [XmlElement("TakeId")]
-    public Value<int> TakeId { get; set; }
+    public Value<int> TakeId { get; set; } = new() { Val = 1 };
 }

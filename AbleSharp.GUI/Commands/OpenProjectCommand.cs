@@ -10,6 +10,7 @@ public class OpenProjectDialogCommand : ICommand
 {
     private readonly MainWindowViewModel _mainWindowViewModel;
     private readonly ILogger<OpenProjectDialogCommand> _logger;
+    private readonly AbleSharpSdk _sdk = AbleSharpSdk.Instance;
 
     public OpenProjectDialogCommand(MainWindowViewModel vm)
     {
@@ -32,11 +33,14 @@ public class OpenProjectDialogCommand : ICommand
 
             try
             {
-                var project = AbletonProjectHandler.LoadFromFile(filePath);
+                var project = _sdk.OpenProject(filePath, new SDK.Options.ProjectOpenOptions
+                {
+                    Logger = msg => _logger.LogInformation(msg)
+                });
+
                 _logger.LogInformation("Successfully loaded project.");
 
                 var projectViewModel = new ProjectViewModel(project);
-
                 _mainWindowViewModel.ShowProjectView(projectViewModel);
             }
             catch (Exception ex)

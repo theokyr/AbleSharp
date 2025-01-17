@@ -24,9 +24,9 @@ public class ProjectViewModel
         TimelineVM = new TimelineViewModel(project);
     }
 
-    private void BuildTrackHierarchy(List<Track> tracks)
+    private void BuildTrackHierarchy(List<FreezableTrack> tracks)
     {
-        var all = new Dictionary<string, TrackViewModel>();
+        var all = new Dictionary<int, TrackViewModel>();
         foreach (var t in tracks)
         {
             var tvm = new TrackViewModel(t);
@@ -36,16 +36,15 @@ public class ProjectViewModel
         foreach (var t in tracks)
         {
             var tvm = all[t.Id];
-            var parentIdVal = t.TrackGroupId?.Val ?? -1;
-            if (parentIdVal == -1)
+            var parentId = t.TrackGroupId?.Val ?? -1;
+            if (parentId == -1)
             {
                 RootTracks.Add(tvm);
             }
             else
             {
-                var parentKey = parentIdVal.ToString();
-                if (all.ContainsKey(parentKey))
-                    all[parentKey].Children.Add(tvm);
+                if (all.ContainsKey(parentId))
+                    all[parentId].Children.Add(tvm);
                 else
                     RootTracks.Add(tvm);
             }

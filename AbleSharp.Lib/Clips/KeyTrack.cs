@@ -5,7 +5,7 @@ namespace AbleSharp.Lib;
 public class KeyTrack
 {
     [XmlAttribute("Id")]
-    public string Id { get; set; }
+    public int Id { get; set; }
 
     [XmlArray("Notes")]
     [XmlArrayItem("MidiNoteEvent")]

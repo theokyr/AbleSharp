@@ -5,7 +5,7 @@ namespace AbleSharp.Lib;
 public class ClipSlot
 {
     [XmlAttribute("Id")]
-    public string Id { get; set; }
+    public int Id { get; set; }
 
     [XmlElement("LomId")]
     public Value<int> LomId { get; set; }

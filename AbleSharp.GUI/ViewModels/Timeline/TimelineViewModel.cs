@@ -67,10 +67,10 @@ public class TimelineViewModel : INotifyPropertyChanged
                          $"tempo={_tempo}, timeSig={_timeSigNumerator}/{_timeSigDenominator}");
     }
 
-    private void BuildTrackHierarchy(List<Track> tracks)
+    private void BuildTrackHierarchy(List<FreezableTrack> tracks)
     {
-        var trackDict = new Dictionary<string, TimelineTrackViewModel>();
-        var processedTracks = new HashSet<string>();
+        var trackDict = new Dictionary<int, TimelineTrackViewModel>();
+        var processedTracks = new HashSet<int>();
 
         foreach (var track in tracks)
         {
@@ -81,7 +81,7 @@ public class TimelineViewModel : INotifyPropertyChanged
                 _lastClipEndTime = Math.Max(_lastClipEndTime, clipVM.Time + clipVM.Length);
         }
 
-        void ProcessTrack(Track t, decimal indent = 0)
+        void ProcessTrack(FreezableTrack t, decimal indent = 0)
         {
             if (processedTracks.Contains(t.Id)) return;
             processedTracks.Add(t.Id);
@@ -93,7 +93,7 @@ public class TimelineViewModel : INotifyPropertyChanged
 
             var childTracks = tracks.Where(ct =>
                 ct.TrackGroupId?.Val != null &&
-                ct.TrackGroupId.Val.ToString() == t.Id
+                ct.TrackGroupId.Val == t.Id
             ).ToList();
 
             foreach (var child in childTracks) ProcessTrack(child, indent + 1);
@@ -102,7 +102,7 @@ public class TimelineViewModel : INotifyPropertyChanged
         foreach (var t in tracks)
         {
             var groupId = t.TrackGroupId?.Val ?? -1;
-            if (groupId == -1 || !trackDict.ContainsKey(groupId.ToString())) ProcessTrack(t);
+            if (groupId == -1 || !trackDict.ContainsKey(groupId)) ProcessTrack(t);
         }
 
         _logger.LogDebug("Built track hierarchy with {Count} total tracks in timeline", Tracks.Count);

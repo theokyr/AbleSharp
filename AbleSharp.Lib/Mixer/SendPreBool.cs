@@ -5,7 +5,7 @@ namespace AbleSharp.Lib;
 public class SendPreBool
 {
     [XmlAttribute("Id")]
-    public string Id { get; set; }
+    public int Id { get; set; }
 
     [XmlAttribute("Value")]
     public bool Value { get; set; }
