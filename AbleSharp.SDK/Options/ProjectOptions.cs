@@ -8,7 +8,7 @@ public class ProjectCreationOptions : SdkOptions
     /// <summary>
     /// Target Ableton Live version for the new project
     /// </summary>
-    public string? TargetVersion { get; set; }
+    public string? TargetMinorVersion { get; set; }
 
     /// <summary>
     /// Initial project tempo

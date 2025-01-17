@@ -16,8 +16,21 @@ public class AbleSharpSdk
     /// </summary>
     public static AbleSharpSdk Instance => _instance.Value;
 
+    /// <summary>
+    /// List of all supported Ableton Live versions
+    /// </summary>
+    public readonly List<AbletonVersion> AvailableVersions;
+
+    /// <summary>
+    /// Gets the most recent supported version
+    /// </summary>
+    public AbletonVersion LatestVersion => AvailableVersions[^1];
+
     private AbleSharpSdk()
     {
+        SchemaTypeResolver.GetSupportedVersions()
+            .Select(v => new AbletonVersion(v.DisplayName, v.MinorVersion, v.NamespaceVersion))
+            .ToList();
     }
 
     /// <summary>
@@ -34,8 +47,8 @@ public class AbleSharpSdk
             var project = AbletonProjectFactory.CreateBlankProject();
 
             // Apply options
-            if (!string.IsNullOrEmpty(options.TargetVersion))
-                project.MinorVersion = options.TargetVersion;
+            if (!string.IsNullOrEmpty(options.TargetMinorVersion))
+                project.MinorVersion = options.TargetMinorVersion;
 
             if (project.LiveSet?.MainTrack?.DeviceChain?.Mixer?.Tempo != null)
                 project.LiveSet.MainTrack.DeviceChain.Mixer.Tempo.Manual.Val = options.Tempo;
@@ -121,27 +134,28 @@ public class AbleSharpSdk
     /// </summary>
     /// <param name="project">The project to export</param>
     /// <param name="path">Where to save the exported project</param>
-    /// <param name="targetVersion">Version to export to (e.g. "12.0_12049")</param>
+    /// <param name="targetVersion">AbletonVersion to export to</param>
     /// <param name="options">Optional export settings</param>
-    public void ExportProject(AbletonProject project, string path, string targetVersion, ProjectExportOptions? options = null)
+    public void ExportProject(AbletonProject project, string path, AbletonVersion targetVersion, ProjectExportOptions? options = null)
     {
         options ??= new ProjectExportOptions();
 
         if (project == null)
             throw new ArgumentNullException(nameof(project));
 
-        if (string.IsNullOrEmpty(targetVersion))
+        if (targetVersion == null)
             throw new ArgumentNullException(nameof(targetVersion));
 
         try
         {
-            // Verify version is supported
-            if (!SchemaTypeResolver.IsVersionSupported(targetVersion))
-                throw new NotSupportedException($"Target version {targetVersion} is not supported");
+            // Verify AbletonVersion is supported
+            if (!SchemaTypeResolver.IsVersionSupported(targetVersion.MinorVersion))
+                throw new NotSupportedException($"Target AbletonVersion {targetVersion.DisplayName} is not supported");
 
-            // TODO: Handle UnsupportedFeatures based on options.UnsupportedFeatures
-            // TODO: Implement CollectSamples if options.CollectSamples is true
+            // Set target version
+            project.MinorVersion = targetVersion.NamespaceVersion;
 
+            // Save using standard save options
             SaveProject(project, path, options);
         }
         catch (Exception ex) when (options.ErrorHandling == ErrorHandling.ReturnEmpty)
@@ -170,7 +184,6 @@ public class AbleSharpSdk
 
         try
         {
-            // TODO: Pass merge options to AbletonProjectMerger
             return AbletonProjectMerger.MergeProjects(projectList);
         }
         catch (Exception ex) when (options.ErrorHandling == ErrorHandling.ReturnEmpty)
@@ -189,11 +202,23 @@ public class AbleSharpSdk
     }
 
     /// <summary>
-    /// Gets whether a specific Ableton Live version is supported
+    /// Gets whether a specific Ableton Live AbletonVersion is supported
     /// </summary>
-    /// <param name="version">The version string (e.g. "12.0_12049")</param>
-    public bool IsVersionSupported(string version)
+    /// <param name="version">The AbletonVersion to check support for</param>
+    public bool IsVersionSupported(AbletonVersion version)
     {
-        return SchemaTypeResolver.IsVersionSupported(version);
+        return SchemaTypeResolver.IsVersionSupported(version.NamespaceVersion);
     }
+}
+
+/// <summary>
+/// Available Ableton versions that can be used for projects
+/// </summary>
+public class AbletonVersion(string displayName, string minorVersion, string namespaceVersion)
+{
+    public string DisplayName { get; } = displayName;
+    public string MinorVersion { get; } = minorVersion;
+    public string NamespaceVersion { get; } = namespaceVersion;
+
+    public override string ToString() => DisplayName;
 }
