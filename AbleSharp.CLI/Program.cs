@@ -1,10 +1,13 @@
 ﻿using AbleSharp.Lib;
 using AbleSharp.SDK;
+using AbleSharp.SDK.Options;
 
 namespace AbleSharp.CLI;
 
 class Program
 {
+    static readonly AbleSharpSdk _sdk = AbleSharpSdk.Instance;
+
     static void Main(string[] args)
     {
         if (args.Length == 0)
@@ -115,9 +118,16 @@ class Program
             return;
         }
 
+        // Create options with logging
+        var options = new ProjectSaveOptions
+        {
+            ErrorHandling = ErrorHandling.ThrowException,
+            Logger = msg => Console.WriteLine($"SDK: {msg}")
+        };
+
         // Load the project
         Console.WriteLine($"Opening project: {projectPath}");
-        var project = AbletonProjectHandler.LoadFromFile(projectPath);
+        var project = _sdk.OpenProject(projectPath, options);
         Console.WriteLine("Project loaded successfully.");
 
         // Handle dump if requested
@@ -127,7 +137,7 @@ class Program
             string dumpDir = Path.GetDirectoryName(projectPath) ?? AppDomain.CurrentDomain.BaseDirectory;
             string dumpPath = Path.Combine(dumpDir, dumpFileName);
 
-            var dumpText = AbletonProjectDumper.DebugDumpProject(project);
+            string? dumpText = _sdk.GetProjectDump(project);
             File.WriteAllText(dumpPath, dumpText);
             Console.WriteLine($"Project dump written to: {dumpPath}");
         }
@@ -143,13 +153,26 @@ class Program
 
         string outputPath = args[0];
 
+        var options = new ProjectCreationOptions
+        {
+            CreateDefaultTracks = true,
+            Logger = msg => Console.WriteLine($"SDK: {msg}")
+        };
+
         // Create empty project
         Console.WriteLine("Creating new project...");
-        var project = AbletonProjectHandler.CreateBlankProject();
+        var project = _sdk.CreateProject(options);
 
         // Save it
+        var saveOptions = new ProjectSaveOptions
+        {
+            Compress = true,
+            CreateBackup = true,
+            Logger = options.Logger
+        };
+
         Console.WriteLine($"Saving project to: {outputPath}");
-        AbletonProjectHandler.SaveToFile(project, outputPath);
+        _sdk.SaveProject(project, outputPath, saveOptions);
         Console.WriteLine("Project created successfully.");
     }
 
@@ -211,23 +234,43 @@ class Program
             }
         }
 
+        var openOptions = new ProjectSaveOptions
+        {
+            Logger = msg => Console.WriteLine($"SDK: {msg}")
+        };
+
         // Load all projects
         Console.WriteLine("Loading projects...");
         var projects = new List<AbletonProject>();
         foreach (var path in inputPaths)
         {
             Console.WriteLine($"Loading: {path}");
-            var project = AbletonProjectHandler.LoadFromFile(path);
+            var project = _sdk.OpenProject(path, openOptions);
             projects.Add(project);
         }
 
-        // Merge projects
-        Console.WriteLine("Merging projects...");
-        var mergedProject = AbletonProjectMerger.MergeProjects(projects);
+        // Merge projects with options
+        var mergeOptions = new ProjectMergeOptions
+        {
+            PreserveColors = true,
+            MergeScenes = true,
+            NamingConflicts = ConflictResolution.Rename,
+            Logger = msg => Console.WriteLine($"SDK: {msg}")
+        };
 
-        // Save result
+        Console.WriteLine("Merging projects...");
+        var mergedProject = _sdk.MergeProjects(projects, mergeOptions);
+
+        // Save with options
+        var saveOptions = new ProjectSaveOptions
+        {
+            CreateBackup = true,
+            Compress = true,
+            Logger = msg => Console.WriteLine($"SDK: {msg}")
+        };
+
         Console.WriteLine($"Saving merged project to: {outputPath}");
-        AbletonProjectHandler.SaveToFile(mergedProject, outputPath);
+        _sdk.SaveProject(mergedProject, outputPath, saveOptions);
         Console.WriteLine("Merge completed successfully.");
     }
 
