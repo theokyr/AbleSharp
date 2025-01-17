@@ -10,4 +10,8 @@
         <Compile Remove="Mixer\Pan.cs"/>
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Schema\Generated\" />
+    </ItemGroup>
+
 </Project>

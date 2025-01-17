@@ -85,6 +85,7 @@ public class SchemaGenerator
     {
         WriteLine("// This file was automatically generated from Ableton Live schema");
         WriteLine("// Do not modify this file manually");
+        WriteLine("#pragma warning disable CS8618");
         WriteLine("");
         WriteLine("using System;");
         WriteLine("using System.Collections.Generic;");
@@ -95,6 +96,12 @@ public class SchemaGenerator
         WriteLine($"namespace {targetNamespace}");
         WriteLine("{");
         indentLevel++;
+    }
+
+    private void WriteFileFooter(string targetNamespace)
+    {
+        WriteLine("#pragma warning restore CS8618");
+        WriteLine("");
     }
 
     private string MapType(string classType, string typeValue, List<XElement> allTypes)
@@ -405,8 +412,7 @@ public class SchemaGenerator
         WriteLine("public class Vst3Uid { }");
         WriteLine("public class PluginParameterSettings { }");
         WriteLine("");
-
-        // Mark all base types as generated
+        
         generatedClasses.Add("Slot");
         generatedClasses.Add("Array8");
         generatedClasses.Add("ArrayU8");
