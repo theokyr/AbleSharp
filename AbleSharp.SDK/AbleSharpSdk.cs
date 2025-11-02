@@ -1,4 +1,5 @@
 ﻿using AbleSharp.Lib;
+using AbleSharp.Lib.Schema;
 using AbleSharp.SDK.Factories;
 using AbleSharp.SDK.Options;
 
@@ -16,21 +17,52 @@ public class AbleSharpSdk
     /// </summary>
     public static AbleSharpSdk Instance => _instance.Value;
 
-    /// <summary>
-    /// List of all supported Ableton Live versions
-    /// </summary>
-    public readonly List<AbletonVersion> AvailableVersions;
+    private readonly SchemaRepositoryManager _schemaManager;
 
     /// <summary>
     /// Gets the most recent supported version
     /// </summary>
     public AbletonVersion LatestVersion => AvailableVersions[^1];
 
+    /// <summary>
+    /// Gets the schema repository used by the SDK.
+    /// </summary>
+    public SchemaRepository SchemaRepository => _schemaManager.Current;
+
+    /// <summary>
+    /// Gets the available Ableton Live versions supported by the SDK.
+    /// </summary>
+    public IReadOnlyList<AbletonVersion> AvailableVersions => SchemaTypeResolver.GetSupportedVersions();
+
     private AbleSharpSdk()
     {
-        AvailableVersions = SchemaTypeResolver.GetSupportedVersions()
-            .Select(v => new AbletonVersion(v.DisplayName, v.MinorVersion, v.NamespaceVersion))
-            .ToList();
+        _schemaManager = new SchemaRepositoryManager();
+        _schemaManager.RepositoryChanged += (_, __) => SchemaTypeResolver.Refresh();
+    }
+
+    /// <summary>
+    /// Registers an additional schema root directory with the SDK repository.
+    /// </summary>
+    public void RegisterSchemaRoot(string schemaRoot)
+    {
+        _schemaManager.RegisterSchemaRoot(schemaRoot);
+    }
+
+    /// <summary>
+    /// Registers an additional schema manifest with the SDK repository.
+    /// </summary>
+    public void RegisterSchemaManifest(string manifestPath)
+    {
+        _schemaManager.RegisterManifest(manifestPath);
+    }
+
+    /// <summary>
+    /// Reloads the schema repository to incorporate any pending changes.
+    /// </summary>
+    public void RefreshSchemas()
+    {
+        _schemaManager.Refresh();
+        SchemaTypeResolver.Refresh();
     }
 
     /// <summary>

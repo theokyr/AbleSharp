@@ -64,6 +64,9 @@ jobs:
       - name: Build
         run: dotnet build ${{ env.SOLUTION_FILE }} --configuration ${{ matrix.configuration }} --no-restore
 
+      - name: Test
+        run: dotnet test ${{ env.SOLUTION_FILE }} --configuration ${{ matrix.configuration }} --no-build --verbosity normal
+
       # Build GUI App
       - name: Publish GUI
         run: dotnet publish ${{ env.GUI_PROJECT }} --configuration ${{ matrix.configuration }} --runtime ${{ matrix.runtime }} --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true --output ./publish/gui

@@ -1,0 +1,183 @@
+---
+description: Coding standards for AbleSharp.Lib - the core library implementing Ableton Live Set format
+globs: ["AbleSharp.Lib/**/*.cs"]
+alwaysApply: false
+---
+
+# AbleSharp.Lib - Core Library Rules
+
+## Purpose
+AbleSharp.Lib is the core library that implements the Ableton Live Set format. It provides low-level data structures and serialization/deserialization for .als files.
+
+## Architecture
+
+### Project Structure
+```
+AbleSharp.Lib/
+├── Automation/       # Automation envelopes, events, lanes
+├── Clips/           # Audio/MIDI clips, notes, slots
+├── Common/          # Shared classes and utilities
+├── Device/          # Devices, parameters, modulation
+├── FilesAndSamples/ # File references, samples, warp markers
+├── Mixer/           # Mixer, sends, volumes, tempo
+├── Project/         # AbletonProject, LiveSet, Scene
+├── Routing/         # Audio/MIDI routing
+├── Schema/          # Schema generation and conversion
+├── Sequencer/       # Sequencer, recording, freeze
+├── Tracks/          # Track types (Audio, MIDI, Group, etc.)
+├── Transport/       # Transport, tempo automation
+└── UI/              # UI state and view-related classes
+```
+
+## Coding Guidelines
+
+### Class Design
+- **Data Classes**: Most classes in this library are data containers matching the Ableton XML schema
+- Use **auto-properties** for simple properties
+- Use **init** accessors for immutable properties where appropriate
+- Implement **INotifyPropertyChanged** only when needed for UI binding (GUI project)
+- Keep business logic minimal - this is primarily a data layer
+
+### Property Patterns
+```csharp
+// Simple property with backing field
+public string? Name { get; set; }
+
+// Property with validation
+private int _tempo;
+public int Tempo
+{
+    get => _tempo;
+    set
+    {
+        if (value < 20 || value > 999)
+            throw new ArgumentOutOfRangeException(nameof(value));
+        _tempo = value;
+    }
+}
+
+// Collection property - initialize to prevent nulls
+public List<Track> Tracks { get; set; } = new();
+```
+
+### Schema and Serialization
+- Classes should map to Ableton Live XML structure
+- Use attributes for XML serialization when needed
+- Property names should match XML element names (case-sensitive)
+- Handle optional elements with nullable types
+- Support multiple schema versions using `SchemaTypeResolver`
+
+### Schema Generation
+- `SchemaGenerator` class generates C# classes from schema files
+- Generated classes go in `Schema/Generated/` directory
+- Don't manually edit generated files
+- Use partial classes to extend generated types if needed
+
+### Value Objects
+- Use `Value` class for wrapped primitive values (e.g., `Manual.Val`)
+- Implement proper equality for value types
+- Consider using records for immutable value objects
+
+### Collections and Wrappers
+- Use List wrapper classes (e.g., `TracksListWrapper`, `ClipSlotsListWrapper`)
+- Wrappers provide type safety and encapsulation
+- Implement proper collection initialization
+
+```csharp
+public class TracksListWrapper
+{
+    public List<Track> Tracks { get; set; } = new();
+    
+    public void Add(Track track) => Tracks.Add(track);
+    public void Clear() => Tracks.Clear();
+    public int Count => Tracks.Count;
+}
+```
+
+### Enumerations
+- Use enums for fixed sets of values (e.g., `MonitoringEnum`)
+- Provide XML serialization support for enums
+- Consider using `EnumEvent` for automation of enum parameters
+
+### Event Classes
+- `FloatEvent`: Floating-point automation events
+- `BoolEvent`: Boolean automation events  
+- `EnumEvent`: Enumeration automation events
+- All events have `Time` and value properties
+- Implement `IComparable` for time-based sorting
+
+### Automation System
+- `AutomationLane`: Container for automation data
+- `AutomationEnvelope`: Defines automation target and events
+- `ClipAutomation`: Automation within clips
+- Support both arranger and clip automation
+
+### Track System
+- Base class: `Track`
+- Derived types: `AudioTrack`, `MidiTrack`, `GroupTrack`, `ReturnTrack`, `MainTrack`
+- Each track has `DeviceChain`, `Mixer`, routing
+- Implement proper inheritance hierarchy
+
+### Device Chain
+- `DeviceChain` contains audio effects and instruments
+- `Device` base class for all devices
+- `Parameter` class for device parameters
+- Support modulation targets and automation
+
+### Project Structure
+- `AbletonProject`: Root container
+- `LiveSet`: Main content container
+- `Scene`: Arranger scene/marker
+- Maintain proper parent-child relationships
+
+### File I/O
+- Use `AbletonProjectHandler` for load/save operations
+- Support gzip compression for .als files
+- Validate XML structure on load
+- Handle version migrations gracefully
+
+### Testing Approach
+- Unit tests go in same project (NUnit)
+- Test serialization/deserialization round-trips
+- Test version compatibility
+- Mock I/O operations
+- Test edge cases and error conditions
+
+## Best Practices
+
+### Nullability
+- Use nullable reference types appropriately
+- Mark optional properties as nullable
+- Validate non-null requirements in constructors
+- Use null-forgiving operator (`!`) only when certain
+
+### Performance
+- Lazy-load large data structures when possible
+- Use efficient collection types (List<T> over ArrayList)
+- Avoid unnecessary allocations
+- Consider memory usage for large projects
+
+### Versioning
+- Support multiple Ableton versions (11.0 - 12.1)
+- Use `MinorVersion` property to track project version
+- Handle version-specific features gracefully
+- Don't break backward compatibility
+
+### Error Messages
+- Provide context in exceptions
+- Include file paths, line numbers when relevant
+- Suggest remediation steps
+- Use specific exception types
+
+### Documentation
+- Document XML element mappings
+- Explain complex algorithms (e.g., note generation)
+- Provide examples for non-obvious usage
+- Document version-specific behavior
+
+## Anti-Patterns to Avoid
+- Don't add UI logic in the core library
+- Don't add direct dependencies on third-party audio libraries
+- Avoid tight coupling between subsystems
+- Don't duplicate schema classes - use generated types
+- Avoid mutable shared state

@@ -1,0 +1,349 @@
+---
+description: Coding standards for AbleSharp.CLI - command-line interface
+globs: ["AbleSharp.CLI/**/*.cs"]
+alwaysApply: false
+---
+
+# AbleSharp.CLI - Command-Line Interface Rules
+
+## Purpose
+AbleSharp.CLI provides a command-line interface for basic file operations with Ableton Live projects. It's a thin wrapper around the SDK, designed for scripting and automation.
+
+## Architecture
+
+### Project Structure
+```
+AbleSharp.CLI/
+├── Program.cs           # Main entry point with command routing
+└── AbleSharp.CLI.csproj # Project file
+```
+
+## Design Philosophy
+
+### CLI Design Principles
+1. **UNIX Philosophy**: Do one thing well
+2. **Composability**: Output should be pipeable
+3. **Simplicity**: Clear, concise commands
+4. **Consistency**: Predictable behavior
+5. **Feedback**: Inform user of progress and errors
+
+### Command Structure
+```
+ablesharp <command> [options] [arguments]
+```
+
+## Supported Commands
+
+### 1. Open Command
+```bash
+ablesharp open [project file]
+ablesharp open -d/--dump [project file]
+```
+- Opens and validates a project
+- Optional dump flag creates debug output file
+- Output: Success message or error details
+
+### 2. Create Command
+```bash
+ablesharp create [file path]
+```
+- Creates new empty project
+- Uses default settings (120 BPM, latest version)
+- Creates backup automatically
+
+### 3. Merge Command
+```bash
+ablesharp merge -o [output] [file1] [file2] ...
+```
+- Merges multiple projects into one
+- Requires `-o` flag for output path
+- Accepts 1+ input files
+
+### 4. Schema Command
+```bash
+ablesharp schema [input schema] [output dir]
+```
+- Generates C# classes from schema file or directory
+- Supports batch processing of multiple schema files
+- Skips existing output files
+
+## Coding Guidelines
+
+### Main Program Structure
+```csharp
+internal class Program
+{
+    private static readonly AbleSharpSdk _sdk = AbleSharpSdk.Instance;
+    
+    private static void Main(string[] args)
+    {
+        if (args.Length == 0)
+        {
+            PrintUsage();
+            return;
+        }
+        
+        var command = args[0].ToLower();
+        
+        try
+        {
+            switch (command)
+            {
+                case "open":
+                    HandleOpenCommand(args.Skip(1).ToArray());
+                    break;
+                // Other commands...
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("An error occurred:");
+            PrintExceptionDetails(ex);
+            Environment.Exit(1);
+        }
+    }
+}
+```
+
+### Command Handler Pattern
+Each command should have its own handler method:
+```csharp
+private static void HandleOpenCommand(string[] args)
+{
+    // 1. Parse arguments
+    var shouldDump = false;
+    var projectPath = "";
+    
+    for (var i = 0; i < args.Length; i++)
+    {
+        if (args[i] == "-d" || args[i] == "--dump")
+            shouldDump = true;
+        else
+            projectPath = args[i];
+    }
+    
+    // 2. Validate inputs
+    if (string.IsNullOrEmpty(projectPath))
+    {
+        Console.WriteLine("Error: No project file specified");
+        return;
+    }
+    
+    if (!File.Exists(projectPath))
+    {
+        Console.WriteLine($"Error: File not found: {projectPath}");
+        return;
+    }
+    
+    // 3. Create options
+    var options = new ProjectOpenOptions
+    {
+        ErrorHandling = ErrorHandling.ThrowException,
+        Logger = msg => Console.WriteLine($"SDK: {msg}")
+    };
+    
+    // 4. Execute operation
+    Console.WriteLine($"Opening project: {projectPath}");
+    var project = _sdk.OpenProject(projectPath, options);
+    Console.WriteLine("Project loaded successfully.");
+    
+    // 5. Handle additional operations (dump, etc.)
+    if (shouldDump)
+    {
+        var dumpPath = projectPath + ".dump.txt";
+        File.WriteAllText(dumpPath, _sdk.GetProjectDump(project));
+        Console.WriteLine($"Project dump written to: {dumpPath}");
+    }
+}
+```
+
+### Argument Parsing
+- Use simple loop-based parsing for flags
+- Support both short (`-d`) and long (`--dump`) forms
+- Validate all required arguments
+- Provide clear error messages for invalid input
+
+```csharp
+// Good: Clear validation and error messages
+if (args.Length < 3)
+{
+    Console.WriteLine("Error: Insufficient arguments for merge command");
+    Console.WriteLine("Usage: ablesharp merge -o [output] [file1] [file2]...");
+    return;
+}
+
+// Bad: Silent failure or unclear error
+if (args.Length < 3) return;
+```
+
+### Output Guidelines
+
+#### Success Messages
+```csharp
+Console.WriteLine("Opening project: {path}");
+Console.WriteLine("Project loaded successfully.");
+Console.WriteLine($"Project dump written to: {dumpPath}");
+Console.WriteLine("Merge completed successfully.");
+```
+
+#### Error Messages
+```csharp
+Console.WriteLine($"Error: File not found: {path}");
+Console.WriteLine("Error: No project file specified");
+Console.WriteLine($"Error: Input file not found: {path}");
+Console.WriteLine("An error occurred:");
+```
+
+#### Progress Messages
+```csharp
+Console.WriteLine("Loading projects...");
+Console.WriteLine($"Loading: {path}");
+Console.WriteLine("Merging projects...");
+Console.WriteLine("Creating new project...");
+```
+
+#### SDK Messages (with prefix)
+```csharp
+Logger = msg => Console.WriteLine($"SDK: {msg}")
+```
+
+### Error Handling
+```csharp
+try
+{
+    // Command execution
+}
+catch (Exception ex)
+{
+    Console.WriteLine("An error occurred:");
+    PrintExceptionDetails(ex);
+    Environment.Exit(1);
+}
+
+private static void PrintExceptionDetails(Exception? exception)
+{
+    while (exception != null)
+    {
+        Console.WriteLine($"Exception: {exception.Message}");
+        Console.WriteLine($"Stack Trace: {exception.StackTrace}");
+        exception = exception.InnerException;
+    }
+}
+```
+
+### Usage/Help Text
+```csharp
+private static void PrintUsage()
+{
+    Console.WriteLine("AbleSharp CLI Usage:");
+    Console.WriteLine();
+    Console.WriteLine("Commands:");
+    Console.WriteLine("  open [project file]                   Opens and validates a project file");
+    Console.WriteLine("  open -d/--dump [project file]        Opens and dumps project info to a file");
+    Console.WriteLine("  create [file path]                   Creates a new empty project");
+    Console.WriteLine("  merge -o [output] [file1] [file2]... Merges multiple project files");
+    Console.WriteLine();
+    Console.WriteLine("Examples:");
+    Console.WriteLine("  ablesharp open project.als");
+    Console.WriteLine("  ablesharp create new_project.als");
+    Console.WriteLine("  ablesharp merge -o merged.als project1.als project2.als");
+    Console.WriteLine();
+}
+```
+
+## Best Practices
+
+### 1. Early Validation
+- Check argument count first
+- Validate file existence before operations
+- Validate all required options are provided
+- Exit early with clear error messages
+
+### 2. Consistent Output
+- Always inform user of current operation
+- Show progress for multi-step operations
+- Confirm success explicitly
+- Print file paths for generated files
+
+### 3. Exit Codes
+```csharp
+// Success
+return; // Exit code 0 (implicit)
+
+// Error
+Environment.Exit(1); // Non-zero for errors
+```
+
+### 4. SDK Integration
+- Use SDK singleton instance
+- Always provide Logger to SDK options
+- Let SDK handle complex operations
+- Don't duplicate SDK logic
+
+### 5. File Paths
+- Use absolute paths when possible
+- Validate paths before use
+- Handle path edge cases (spaces, special chars)
+- Create parent directories if needed
+
+```csharp
+var outputDir = Path.GetDirectoryName(outputPath);
+if (!string.IsNullOrEmpty(outputDir))
+    Directory.CreateDirectory(outputDir);
+```
+
+### 6. Options Configuration
+```csharp
+// Consistent options setup across commands
+var openOptions = new ProjectOpenOptions
+{
+    ErrorHandling = ErrorHandling.ThrowException,
+    Logger = msg => Console.WriteLine($"SDK: {msg}")
+};
+
+var saveOptions = new ProjectSaveOptions
+{
+    CreateBackup = true,
+    Compress = true,
+    Logger = msg => Console.WriteLine($"SDK: {msg}")
+};
+```
+
+### 7. Batch Operations
+- Support processing multiple files when logical
+- Show progress for each file
+- Handle errors gracefully (continue or abort)
+- Summary at the end
+
+```csharp
+Console.WriteLine($"Processing {schemaFiles.Length} schema files...");
+foreach (var file in schemaFiles)
+{
+    try
+    {
+        ProcessSingleSchemaFile(file, outputDir);
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Failed to process: {file}");
+        Console.WriteLine($"Error: {ex.Message}");
+        // Optionally continue or break
+    }
+}
+```
+
+## Testing Strategy
+- Test each command with valid inputs
+- Test error conditions (missing files, invalid args)
+- Test edge cases (empty projects, corrupt files)
+- Test batch operations
+- Integration tests with real .als files
+
+## Anti-Patterns to Avoid
+- Don't implement complex argument parsing (keep it simple)
+- Avoid silent failures
+- Don't duplicate SDK functionality
+- Avoid complex business logic in CLI
+- Don't suppress exceptions without logging
+- Avoid inconsistent output formatting
+- Don't add GUI dependencies

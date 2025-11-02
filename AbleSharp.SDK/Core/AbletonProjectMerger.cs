@@ -307,7 +307,7 @@ public static class AbletonProjectMerger
             ClipTimeable = CloneClipTimeable(source.ClipTimeable),
             Sample = CloneSample(source.Sample),
             Recorder = CloneRecorder(source.Recorder),
-            MidiControllers = source.MidiControllers
+            // MidiControllers = source.MidiControllers
         };
 
         return newSequencer;

@@ -1,0 +1,144 @@
+# AbleSharp Project - Cursor Rules
+
+## Project Overview
+
+AbleSharp is a cross-platform .NET toolkit for creating and manipulating Ableton Live v11 to v12.1 project files (.als).
+
+**Version**: 0.0.6  
+**Framework**: .NET 9.0  
+**License**: MIT
+
+## Architecture
+
+The project consists of four main components:
+
+1. **AbleSharp.Lib** - Core library implementing the Ableton Live Set format
+   - Low-level data structures and serialization
+   - Schema generation and type resolution
+   - Supports Ableton Live versions 11.0 through 12.1
+
+2. **AbleSharp.SDK** - High-level API for integration
+   - Singleton-based facade over core library
+   - Options pattern for configuration
+   - Factory, handler, and merger classes
+
+3. **AbleSharp.CLI** - Command-line interface
+   - Simple wrapper around SDK
+   - Supports open, create, merge, schema commands
+   - Designed for scripting and automation
+
+4. **AbleSharp.GUI** - Desktop application
+   - Built with Avalonia UI (cross-platform)
+   - MVVM pattern with ReactiveUI
+   - Visual project manipulation and inspection
+
+## Component-Specific Rules
+
+Detailed rules for each component are located in `.cursor/rules/`:
+- `global.mdc` - Global standards (always applied)
+- `lib.mdc` - Core library rules
+- `sdk.mdc` - SDK API rules
+- `cli.mdc` - CLI interface rules
+- `gui.mdc` - GUI application rules
+
+## Key Technologies
+
+- **.NET 9.0** - Target framework
+- **C# 12** - Language features
+- **Avalonia 11.2.3** - Cross-platform UI (GUI only)
+- **ReactiveUI 20.1.63** - MVVM framework (GUI only)
+- **NUnit 4.3.2** - Testing framework (Lib only)
+- **Microsoft.Extensions.Logging** - Logging infrastructure
+
+## Coding Standards (Quick Reference)
+
+### Naming Conventions
+- Classes/Methods/Properties: `PascalCase`
+- Private fields: `_camelCase` (underscore prefix)
+- Parameters/locals: `camelCase`
+
+### Project Settings
+- Nullable reference types: Enabled
+- Implicit usings: Enabled
+- Output type varies by project (Exe for CLI/GUI, Library for Lib/SDK)
+
+### Design Patterns Used
+- **Singleton**: SDK entry point
+- **Factory**: Project creation
+- **Options**: Configuration for SDK methods
+- **MVVM**: GUI architecture
+- **Facade**: SDK over Lib
+
+### File Operations
+- Always validate paths before operations
+- Create backups for modifications (default: enabled)
+- Handle .als compression/decompression automatically
+- Support gzip-compressed XML format
+
+### Error Handling
+- Use specific exception types
+- Provide meaningful error messages
+- Options pattern includes ErrorHandling enum
+- Log errors appropriately
+
+## Development Workflow
+
+1. Core functionality goes in **Lib**
+2. High-level API exposed through **SDK**
+3. CLI provides command-line access to SDK
+4. GUI provides visual access to SDK
+
+## Testing
+
+- Unit tests in `AbleSharp.Lib` (NUnit)
+- Integration tests with real .als files
+- Test version compatibility (11.0 - 12.1)
+- Test serialization round-trips
+
+## Documentation
+
+- XML documentation for all public APIs
+- Use `<summary>`, `<param>`, `<returns>`, `<exception>`
+- Include usage examples for complex operations
+- Reference Ableton Live version requirements
+
+## Dependencies
+
+### Lib Dependencies
+- NUnit (testing only)
+
+### SDK Dependencies
+- AbleSharp.Lib
+
+### CLI Dependencies
+- AbleSharp.Lib
+- AbleSharp.SDK
+
+### GUI Dependencies
+- AbleSharp.Lib
+- AbleSharp.SDK
+- Avalonia packages
+- ReactiveUI
+- Microsoft.Extensions.Logging
+
+## Build and Version
+
+Current version across all projects: **0.0.6**
+
+Update version in all `.csproj` files simultaneously:
+- AbleSharp.Lib/AbleSharp.Lib.csproj
+- AbleSharp.SDK/AbleSharp.SDK.csproj
+- AbleSharp.CLI/AbleSharp.CLI.csproj
+- AbleSharp.GUI/AbleSharp.GUI.csproj
+
+## For AI Assistants
+
+When working with this codebase:
+1. Refer to component-specific rules in `.cursor/rules/`
+2. Maintain consistency across all projects
+3. Follow .NET 9.0 and C# 12 best practices
+4. Keep backward compatibility with supported Ableton versions
+5. Test changes across Windows, macOS, and Linux where applicable
+6. Update XML documentation for API changes
+7. Maintain version synchronization across all projects
+

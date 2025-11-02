@@ -1,0 +1,111 @@
+---
+description: Global coding standards and conventions for the AbleSharp project
+globs: ["**/*.cs", "**/*.csproj"]
+alwaysApply: true
+---
+
+# AbleSharp Global Coding Standards
+
+## Project Overview
+AbleSharp is a cross-platform .NET toolkit for creating and manipulating Ableton Live v11 to v12.1 project files (.als). The project consists of four main components:
+- **AbleSharp.Lib**: Core library implementing the Ableton Live Set format
+- **AbleSharp.SDK**: High-level API for integrating AbleSharp into applications
+- **AbleSharp.CLI**: Command-line interface for basic file operations
+- **AbleSharp.GUI**: Desktop application for visual project manipulation, built with Avalonia
+
+## General C# Standards
+
+### Framework and Language
+- Target Framework: .NET 9.0
+- Use C# 12 features appropriately
+- Enable nullable reference types (`<Nullable>enable</Nullable>`)
+- Enable implicit usings (`<ImplicitUsings>enable</ImplicitUsings>`)
+- Current version: 0.0.6
+
+### Naming Conventions
+- **Classes/Interfaces**: PascalCase (e.g., `AbletonProject`, `ILoggerService`)
+- **Methods**: PascalCase (e.g., `LoadFromFile`, `MergeProjects`)
+- **Properties**: PascalCase (e.g., `MinorVersion`, `DisplayName`)
+- **Fields (private)**: _camelCase with underscore prefix (e.g., `_logger`, `_instance`)
+- **Parameters/Local Variables**: camelCase (e.g., `projectPath`, `options`)
+- **Constants**: PascalCase (e.g., `MaxValue`, `DefaultTempo`)
+- **Enums**: PascalCase for both type and values
+
+### Code Organization
+- One class per file (with exceptions for small nested classes)
+- File name must match the primary class name
+- Use file-scoped namespaces (C# 10+)
+- Organize using statements: System namespaces first, then third-party, then project namespaces
+- Group class members: fields, constructors, properties, methods, nested classes
+
+### XML Documentation
+- Document all public APIs with XML comments
+- Use `<summary>`, `<param>`, `<returns>`, and `<exception>` tags
+- Example:
+```csharp
+/// <summary>
+/// Opens an existing Ableton Live project file
+/// </summary>
+/// <param name="path">Path to the .als file</param>
+/// <param name="options">Optional settings for loading the project</param>
+/// <returns>The loaded project</returns>
+/// <exception cref="FileNotFoundException">Thrown when project file is not found</exception>
+```
+
+### Error Handling
+- Use specific exception types
+- Validate inputs early (guard clauses)
+- Use null-conditional operators (`?.`) and null-coalescing (`??`) appropriately
+- Provide meaningful error messages
+- Consider using Options pattern for configurable error handling
+
+### Design Patterns
+- **Singleton**: Use lazy initialization with `Lazy<T>` (e.g., SDK)
+- **Factory**: Use for complex object creation (e.g., `AbletonProjectFactory`)
+- **Options Pattern**: Use for configuration (e.g., `ProjectOpenOptions`, `ProjectSaveOptions`)
+- **Repository Pattern**: Consider for data access abstractions
+
+### Performance
+- Use `Span<T>` and `Memory<T>` for performance-critical operations
+- Prefer `List<T>` over `IEnumerable<T>` when materialization is needed
+- Use `async`/`await` for I/O operations when appropriate
+- Consider `ValueTask<T>` for high-frequency async operations
+
+### Code Quality
+- Follow SOLID principles
+- Keep methods small and focused (single responsibility)
+- Prefer composition over inheritance
+- Use readonly fields where possible
+- Avoid magic numbers/strings - use constants or enums
+- Write self-documenting code with clear variable names
+
+### Testing
+- Use NUnit for unit tests
+- Name tests clearly: `MethodName_Scenario_ExpectedResult`
+- Arrange-Act-Assert pattern
+- Mock external dependencies
+
+### Version Control
+- Commit messages should be clear and descriptive
+- Use present tense ("Add feature" not "Added feature")
+- Reference issue numbers where applicable
+
+## Project-Specific Conventions
+
+### Ableton Live Format
+- Respect the .als file format specifications
+- Maintain backward compatibility with supported versions (11.0 - 12.1)
+- Handle version differences gracefully
+- Use SchemaTypeResolver for version-specific types
+
+### File Handling
+- Always create backups before modifying existing projects
+- Validate file paths and existence before operations
+- Use proper disposal of streams and file handles
+- Handle compression/decompression properly
+
+### Logging
+- Use Microsoft.Extensions.Logging abstractions
+- Log levels: Debug for development, Information for operations, Warning for recoverable issues, Error for failures
+- Don't log sensitive information
+- Use structured logging where appropriate

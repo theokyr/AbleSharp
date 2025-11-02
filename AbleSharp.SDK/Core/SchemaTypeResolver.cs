@@ -1,29 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using AbleSharp.Lib;
+using AbleSharp.Lib.Schema;
 
 namespace AbleSharp.SDK;
 
 public static class SchemaTypeResolver
 {
-    private static readonly Dictionary<string, Type?> SchemaTypes = new();
-
-    // Single source of truth for supported versions
-    private static readonly AbletonVersion[] SupportedVersions =
-    [
-        new("11.0", "11.0_11202", "v11_0_11202"), 
-        new("12.0", "12.0_12049", "v12_0_12049"),
-        new("12.1", "12.0_12120", "v12_0_12120")
-    ];
+    private static readonly Dictionary<string, Type?> SchemaTypes = new(StringComparer.OrdinalIgnoreCase);
+    private static readonly object Sync = new();
 
     static SchemaTypeResolver()
     {
-        SchemaTypes["AbletonProject"] = typeof(AbletonProject);
+        RebuildSchemaMappings();
+    }
 
-        // Register base mapping
-        RegisterSchemaMapping("11.0_11202", "AbleSharp.Lib.Schema.v11_0_11202");
-        RegisterSchemaMapping("12.0_12049", "AbleSharp.Lib.Schema.v12_0_12049");
-        RegisterSchemaMapping("12.0_12120", "AbleSharp.Lib.Schema.v12_0_12120");
+    /// <summary>
+    /// Rebuilds cached schema mappings based on the current catalog.
+    /// </summary>
+    public static void Refresh()
+    {
+        lock (Sync)
+        {
+            SchemaTypes.Clear();
+            RebuildSchemaMappings();
+        }
     }
 
     public static Type GetRootType()
@@ -35,32 +37,43 @@ public static class SchemaTypeResolver
     public static string GetSchemaNamespace(string version)
     {
         var sanitizedVersion = "v" + version.Replace('.', '_');
-        return $"AbleSharp.Lib.Schema.{sanitizedVersion}";
+        return $"{SchemaCatalog.SchemaNamespaceRoot}.{sanitizedVersion}";
     }
 
     private static void RegisterSchemaMapping(string minorVersion, string schemaNamespace)
     {
-        try
-        {
-            // Attempt to load the schema assembly type
-            var assembly = typeof(AbletonProject).Assembly;
-            var schemaType = assembly.GetType(schemaNamespace);
-            SchemaTypes[minorVersion] = schemaType;
-        }
-        catch 
-        {
-            SchemaTypes[minorVersion] = null;
-        }
+        var assembly = typeof(AbletonProject).Assembly;
+        var probeTypeName = $"{schemaNamespace}.AbletonDevicePreset";
+        var schemaType = assembly.GetType(probeTypeName, throwOnError: false, ignoreCase: false);
+        SchemaTypes[minorVersion] = schemaType;
     }
 
     public static bool IsVersionSupported(string minorVersion)
     {
-        return SupportedVersions.Any(v => v.MinorVersion == minorVersion);
+        lock (Sync)
+        {
+            return SchemaCatalog.SupportedVersions.Any(v => string.Equals(v.VersionId, minorVersion, StringComparison.OrdinalIgnoreCase) && SchemaTypes.TryGetValue(v.VersionId, out var type) && type is not null);
+        }
     }
 
     public static IReadOnlyList<AbletonVersion> GetSupportedVersions()
     {
-        // Only return versions that actually have schema types
-        return SupportedVersions.Where(v => IsVersionSupported(v.MinorVersion)).ToArray();
+        lock (Sync)
+        {
+            return SchemaCatalog.SupportedVersions
+                .Where(v => SchemaTypes.ContainsKey(v.VersionId) && SchemaTypes[v.VersionId] is not null)
+                .Select(v => new AbletonVersion(v.DisplayName, v.VersionId, v.NamespaceSuffix))
+                .ToArray();
+        }
+    }
+
+    private static void RebuildSchemaMappings()
+    {
+        SchemaTypes["AbletonProject"] = typeof(AbletonProject);
+
+        foreach (var version in SchemaCatalog.SupportedVersions)
+        {
+            RegisterSchemaMapping(version.VersionId, version.Namespace);
+        }
     }
 }

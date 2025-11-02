@@ -1,0 +1,321 @@
+---
+description: Coding standards for AbleSharp.SDK - high-level API for integrating AbleSharp
+globs: ["AbleSharp.SDK/**/*.cs"]
+alwaysApply: false
+---
+
+# AbleSharp.SDK - High-Level API Rules
+
+## Purpose
+AbleSharp.SDK provides a high-level, developer-friendly API for integrating AbleSharp functionality into applications. It wraps the low-level AbleSharp.Lib classes with a cleaner, more intuitive interface.
+
+## Architecture
+
+### Project Structure
+```
+AbleSharp.SDK/
+├── Core/           # Core handlers (ProjectHandler, Merger, Dumper, Factory)
+├── Options/        # Configuration options classes
+├── Utils/          # Utility classes
+└── AbleSharpSdk.cs # Main SDK entry point (singleton)
+```
+
+## Design Philosophy
+
+### Facade Pattern
+- SDK provides a simplified facade over the complex core library
+- Hide implementation details from consumers
+- Provide sensible defaults
+- Make common tasks easy, complex tasks possible
+
+### Singleton Pattern
+```csharp
+public class AbleSharpSdk
+{
+    private static readonly Lazy<AbleSharpSdk> _instance = new(() => new AbleSharpSdk());
+    public static AbleSharpSdk Instance => _instance.Value;
+    
+    private AbleSharpSdk() { /* Private constructor */ }
+}
+```
+- Use thread-safe lazy initialization
+- Single point of access for SDK functionality
+- Stateless design (store no mutable state in singleton)
+
+### Options Pattern
+All SDK methods should accept options objects:
+```csharp
+public AbletonProject OpenProject(string path, ProjectOpenOptions? options = null)
+{
+    options ??= new ProjectOpenOptions();
+    // Implementation
+}
+```
+
+## Core Components
+
+### 1. AbleSharpSdk (Main Entry Point)
+```csharp
+public class AbleSharpSdk
+{
+    // Properties
+    public List<AbletonVersion> AvailableVersions { get; }
+    public AbletonVersion LatestVersion { get; }
+    
+    // Core Operations
+    public AbletonProject CreateProject(ProjectCreationOptions? options = null);
+    public AbletonProject OpenProject(string path, ProjectOpenOptions? options = null);
+    public void SaveProject(AbletonProject project, string path, ProjectSaveOptions? options = null);
+    public void ExportProject(AbletonProject project, string path, AbletonVersion targetVersion, ProjectExportOptions? options = null);
+    public AbletonProject MergeProjects(IEnumerable<AbletonProject> projects, ProjectMergeOptions? options = null);
+    public string GetProjectDump(AbletonProject project);
+    public bool IsVersionSupported(AbletonVersion version);
+}
+```
+
+### 2. Options Classes
+All options classes should:
+- Have nullable optional parameters
+- Provide sensible defaults
+- Include `Logger` delegate for feedback
+- Include `ErrorHandling` enum for behavior control
+
+```csharp
+public class ProjectOpenOptions
+{
+    public ErrorHandling ErrorHandling { get; set; } = ErrorHandling.ThrowException;
+    public Action<string>? Logger { get; set; }
+    // Other options...
+}
+
+public enum ErrorHandling
+{
+    ThrowException,  // Default: throw on errors
+    ReturnEmpty      // Return empty project on errors
+}
+```
+
+### 3. Core Handler Classes
+
+#### AbletonProjectHandler
+- Responsible for loading and saving projects
+- Handles file I/O, compression, validation
+- Provides static methods for common operations
+```csharp
+public static class AbletonProjectHandler
+{
+    public static AbletonProject LoadFromFile(string path);
+    public static void SaveToFile(AbletonProject project, string path);
+    // Other methods...
+}
+```
+
+#### AbletonProjectFactory
+- Creates new projects from scratch
+- Provides templates and defaults
+```csharp
+public static class AbletonProjectFactory
+{
+    public static AbletonProject CreateBlankProject();
+    public static AbletonProject CreateFromTemplate(string templateName);
+    // Other methods...
+}
+```
+
+#### AbletonProjectMerger
+- Merges multiple projects into one
+- Handles conflicts, track ordering, scene merging
+```csharp
+public static class AbletonProjectMerger
+{
+    public static AbletonProject MergeProjects(List<AbletonProject> projects);
+    // Other methods...
+}
+```
+
+#### AbletonProjectDumper
+- Generates text representations of projects
+- Useful for debugging and testing
+```csharp
+public static class AbletonProjectDumper
+{
+    public static string DebugDumpProject(AbletonProject project);
+    // Other methods...
+}
+```
+
+### 4. AbletonVersion Class
+```csharp
+public class AbletonVersion(string displayName, string minorVersion, string namespaceVersion)
+{
+    public string DisplayName { get; } = displayName;      // e.g., "12.0"
+    public string MinorVersion { get; } = minorVersion;    // e.g., "12.0.0"
+    public string NamespaceVersion { get; } = namespaceVersion; // e.g., "v12_0_0"
+}
+```
+
+## Coding Guidelines
+
+### API Design Principles
+
+1. **Fluent and Intuitive**
+```csharp
+// Good: Clear, readable
+var project = sdk.OpenProject("project.als");
+sdk.SaveProject(project, "output.als");
+
+// Bad: Complex, unclear
+var handler = new ProjectHandler();
+handler.Initialize();
+var result = handler.Load("project.als", new LoadConfig { Validate = true });
+```
+
+2. **Consistent Method Naming**
+- `Create*`: Creates new objects
+- `Open*`: Loads existing resources
+- `Save*`: Persists to disk
+- `Export*`: Converts/exports to different format
+- `Merge*`: Combines multiple items
+- `Get*`: Retrieves information
+
+3. **Graceful Error Handling**
+```csharp
+try
+{
+    return AbletonProjectHandler.LoadFromFile(path);
+}
+catch (Exception ex) when (options.ErrorHandling == ErrorHandling.ReturnEmpty)
+{
+    options.Logger?.Invoke($"Error loading project: {ex.Message}");
+    return AbletonProjectFactory.CreateBlankProject();
+}
+```
+
+4. **Logging Support**
+```csharp
+options.Logger?.Invoke($"Loading project from: {path}");
+```
+
+5. **Validation and Guard Clauses**
+```csharp
+if (string.IsNullOrEmpty(path))
+    throw new ArgumentNullException(nameof(path));
+
+if (!File.Exists(path))
+    throw new FileNotFoundException("Ableton project file not found", path);
+```
+
+### Options Pattern Implementation
+
+#### Base Options Structure
+```csharp
+public class ProjectOpenOptions
+{
+    public ErrorHandling ErrorHandling { get; set; } = ErrorHandling.ThrowException;
+    public Action<string>? Logger { get; set; }
+}
+
+public class ProjectSaveOptions : ProjectOpenOptions
+{
+    public bool CreateBackup { get; set; } = true;
+    public bool Compress { get; set; } = true;
+}
+
+public class ProjectCreationOptions : ProjectOpenOptions
+{
+    public string? TargetMinorVersion { get; set; }
+    public int Tempo { get; set; } = 120;
+    public bool CreateDefaultTracks { get; set; } = true;
+}
+
+public class ProjectMergeOptions : ProjectOpenOptions
+{
+    public bool PreserveColors { get; set; } = true;
+    public bool MergeScenes { get; set; } = true;
+    public ConflictResolution NamingConflicts { get; set; } = ConflictResolution.Rename;
+}
+
+public enum ConflictResolution
+{
+    Rename,      // Append number to duplicate names
+    Overwrite,   // Keep first occurrence
+    Skip         // Skip duplicates
+}
+```
+
+### Documentation Standards
+- Every public method must have XML documentation
+- Include usage examples for complex operations
+- Document all parameters and return values
+- Explain exceptions that may be thrown
+- Provide links to related methods
+
+```csharp
+/// <summary>
+/// Opens an existing Ableton Live project file
+/// </summary>
+/// <param name="path">Path to the .als file</param>
+/// <param name="options">Optional settings for loading the project</param>
+/// <returns>The loaded project</returns>
+/// <exception cref="ArgumentNullException">Thrown when path is null or empty</exception>
+/// <exception cref="FileNotFoundException">Thrown when project file is not found</exception>
+/// <exception cref="InvalidOperationException">Thrown when file format is invalid</exception>
+/// <remarks>
+/// The project file will be decompressed automatically if needed.
+/// Supports Ableton Live versions 11.0 through 12.1.
+/// </remarks>
+/// <example>
+/// <code>
+/// var sdk = AbleSharpSdk.Instance;
+/// var options = new ProjectOpenOptions 
+/// { 
+///     Logger = msg => Console.WriteLine(msg) 
+/// };
+/// var project = sdk.OpenProject("myproject.als", options);
+/// </code>
+/// </example>
+```
+
+### Testing
+- Test all public API methods
+- Test with various options combinations
+- Test error handling paths
+- Mock file system operations
+- Integration tests with actual .als files
+
+## Best Practices
+
+### 1. Stateless Design
+- SDK singleton should not hold mutable state
+- Each method should be independent
+- Thread-safe by design
+
+### 2. Backward Compatibility
+- Don't remove public methods
+- Use `[Obsolete]` for deprecated APIs
+- Provide migration paths
+
+### 3. Performance
+- Avoid unnecessary object allocations
+- Use efficient collection operations
+- Consider caching for expensive lookups
+- Profile common operations
+
+### 4. Extensibility
+- Design for inheritance (virtual methods)
+- Support custom handlers through interfaces
+- Allow dependency injection where appropriate
+
+### 5. Validation
+- Validate all inputs
+- Fail fast with clear error messages
+- Check file existence before operations
+- Verify version compatibility
+
+## Anti-Patterns to Avoid
+- Don't expose internal library types directly
+- Avoid complex method signatures (use options instead)
+- Don't add UI dependencies
+- Avoid global mutable state
+- Don't ignore exceptions silently
+- Avoid method overloads - use options pattern

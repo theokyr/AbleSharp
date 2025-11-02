@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AvaloniaProject">
+    <option name="projectPerEditor">
+      <map>
+        <entry key="AbleSharp.GUI/App.axaml" value="AbleSharp.GUI/AbleSharp.GUI.csproj" />
+        <entry key="AbleSharp.GUI/Styles/Colors.axaml" value="AbleSharp.GUI/AbleSharp.GUI.csproj" />
+        <entry key="AbleSharp.GUI/Styles/GlobalStyles.axaml" value="AbleSharp.GUI/AbleSharp.GUI.csproj" />
+        <entry key="AbleSharp.GUI/Views/App/AboutWindow.axaml" value="AbleSharp.GUI/AbleSharp.GUI.csproj" />
+        <entry key="AbleSharp.GUI/Views/App/MainWindow.axaml" value="AbleSharp.GUI/AbleSharp.GUI.csproj" />
+        <entry key="AbleSharp.GUI/Views/App/SettingsWindow.axaml" value="AbleSharp.GUI/AbleSharp.GUI.csproj" />
+        <entry key="AbleSharp.GUI/Views/ClipView.axaml" value="AbleSharp.GUI/AbleSharp.GUI.csproj" />
+        <entry key="AbleSharp.GUI/Views/DebugLogWindow.axaml" value="AbleSharp.GUI/AbleSharp.GUI.csproj" />
+        <entry key="AbleSharp.GUI/Views/GridLinesView.axaml" value="AbleSharp.GUI/AbleSharp.GUI.csproj" />
+        <entry key="AbleSharp.GUI/Views/MainWindow.axaml" value="AbleSharp.GUI/AbleSharp.GUI.csproj" />
+        <entry key="AbleSharp.GUI/Views/Project/ProjectView.axaml" value="AbleSharp.GUI/AbleSharp.GUI.csproj" />
+        <entry key="AbleSharp.GUI/Views/Project/Timeline/GridLinesView.axaml" value="AbleSharp.GUI/AbleSharp.GUI.csproj" />
+        <entry key="AbleSharp.GUI/Views/Project/Timeline/TimeRulerView.axaml" value="AbleSharp.GUI/AbleSharp.GUI.csproj" />
+        <entry key="AbleSharp.GUI/Views/Project/Timeline/TimelineClipView.axaml" value="AbleSharp.GUI/AbleSharp.GUI.csproj" />
+        <entry key="AbleSharp.GUI/Views/Project/Timeline/TimelineTrackHeaderView.axaml" value="AbleSharp.GUI/AbleSharp.GUI.csproj" />
+        <entry key="AbleSharp.GUI/Views/Project/Timeline/TimelineTrackView.axaml" value="AbleSharp.GUI/AbleSharp.GUI.csproj" />
+        <entry key="AbleSharp.GUI/Views/Project/Timeline/TimelineView.axaml" value="AbleSharp.GUI/AbleSharp.GUI.csproj" />
+        <entry key="AbleSharp.GUI/Views/Project/Timeline/TrackHeaderView.axaml" value="AbleSharp.GUI/AbleSharp.GUI.csproj" />
+        <entry key="AbleSharp.GUI/Views/ProjectView.axaml" value="AbleSharp.GUI/AbleSharp.GUI.csproj" />
+        <entry key="AbleSharp.GUI/Views/TimeRulerView.axaml" value="AbleSharp.GUI/AbleSharp.GUI.csproj" />
+        <entry key="AbleSharp.GUI/Views/TimelineClipView.axaml" value="AbleSharp.GUI/AbleSharp.GUI.csproj" />
+        <entry key="AbleSharp.GUI/Views/TimelineTrackView.axaml" value="AbleSharp.GUI/AbleSharp.GUI.csproj" />
+        <entry key="AbleSharp.GUI/Views/TimelineView.axaml" value="AbleSharp.GUI/AbleSharp.GUI.csproj" />
+        <entry key="AbleSharp.GUI/Views/Tools/DebugLogWindow.axaml" value="AbleSharp.GUI/AbleSharp.GUI.csproj" />
+        <entry key="AbleSharp.GUI/Views/Tools/MergeProjectsWindow.axaml" value="AbleSharp.GUI/AbleSharp.GUI.csproj" />
+        <entry key="AbleSharp.GUI/Views/TrackHeaderView.axaml" value="AbleSharp.GUI/AbleSharp.GUI.csproj" />
+        <entry key="AbleSharp.GUI/Views/TrackView.axaml" value="AbleSharp.GUI/AbleSharp.GUI.csproj" />
+      </map>
+    </option>
+  </component>
+</project>

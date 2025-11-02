@@ -1,0 +1,477 @@
+---
+description: Coding standards for AbleSharp.GUI - Avalonia-based desktop application
+globs: ["AbleSharp.GUI/**/*.cs", "AbleSharp.GUI/**/*.axaml"]
+alwaysApply: false
+---
+
+# AbleSharp.GUI - Desktop Application Rules
+
+## Purpose
+AbleSharp.GUI is a cross-platform desktop application for visual project manipulation, built with Avalonia UI framework and following MVVM pattern with ReactiveUI.
+
+## Architecture
+
+### Project Structure
+```
+AbleSharp.GUI/
+├── Commands/           # ICommand implementations
+├── Constants/          # Application constants
+├── Converters/         # Value converters for XAML binding
+├── Services/           # Application services (logging, dialogs)
+├── Styles/             # XAML styles
+├── Utils/              # Utility classes
+├── ViewModels/         # MVVM ViewModels
+│   ├── App/           # Application-level ViewModels
+│   ├── Project/       # Project-related ViewModels
+│   ├── Timeline/      # Timeline ViewModels
+│   └── Tools/         # Tool ViewModels
+├── Views/              # XAML Views
+│   ├── App/           # Application windows
+│   ├── Project/       # Project views
+│   └── Tools/         # Tool windows
+├── App.axaml           # Application XAML
+├── App.axaml.cs        # Application code-behind
+└── Program.cs          # Entry point
+```
+
+## Framework: Avalonia UI
+
+### Avalonia Basics
+- Version: 11.2.3
+- Cross-platform XAML-based UI framework (.NET)
+- Similar to WPF but cross-platform
+- Uses `.axaml` extension for XAML files
+- Supports data binding, styles, templates
+
+### Key Packages
+```xml
+<PackageReference Include="Avalonia" Version="11.2.3"/>
+<PackageReference Include="Avalonia.Desktop" Version="11.2.3"/>
+<PackageReference Include="Avalonia.ReactiveUI" Version="11.2.3"/>
+<PackageReference Include="Avalonia.Themes.Fluent" Version="11.2.3"/>
+<PackageReference Include="ReactiveUI" Version="20.1.63"/>
+<PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.0"/>
+```
+
+## MVVM Pattern
+
+### View-ViewModel Relationship
+```
+View (.axaml + .axaml.cs) ←→ ViewModel (.cs)
+           ↓ DataContext
+```
+
+### ViewModel Base Pattern
+```csharp
+public class MainWindowViewModel : INotifyPropertyChanged
+{
+    private object? _currentView;
+    
+    public event PropertyChangedEventHandler? PropertyChanged;
+    
+    public object? CurrentView
+    {
+        get => _currentView;
+        set
+        {
+            if (_currentView != value)
+            {
+                _currentView = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+    
+    protected void OnPropertyChanged([CallerMemberName] string? name = null)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+    }
+}
+```
+
+### View Code-Behind Pattern
+```csharp
+public partial class MainWindow : Window
+{
+    public MainWindow()
+    {
+        InitializeComponent();
+        DataContext = new MainWindowViewModel();
+    }
+}
+```
+
+### XAML Binding
+```xml
+<Window x:Class="AbleSharp.GUI.Views.MainWindow"
+        xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="AbleSharp">
+    
+    <ContentControl Content="{Binding CurrentView}"/>
+</Window>
+```
+
+## ReactiveUI Integration
+
+### Commands with ReactiveUI
+```csharp
+// Simple command
+OpenDebugLogWindowCommand = AbleSharpUiCommand.Create(ShowDebugLogWindow);
+
+// Custom command implementation
+public class OpenProjectDialogCommand : ICommand
+{
+    private readonly MainWindowViewModel _viewModel;
+    
+    public OpenProjectDialogCommand(MainWindowViewModel viewModel)
+    {
+        _viewModel = viewModel;
+    }
+    
+    public bool CanExecute(object? parameter) => true;
+    
+    public void Execute(object? parameter)
+    {
+        // Command logic
+    }
+    
+    public event EventHandler? CanExecuteChanged;
+}
+```
+
+### Reactive Properties
+```csharp
+// Use ReactiveUI for advanced scenarios
+private readonly ObservableAsPropertyHelper<string> _projectName;
+public string ProjectName => _projectName.Value;
+```
+
+## Dependency Injection
+
+### Service Configuration
+```csharp
+public partial class App : Application
+{
+    public static IServiceProvider Services { get; private set; }
+    
+    public override void OnFrameworkInitializationCompleted()
+    {
+        LoggerService.Initialize();
+        
+        var serviceCollection = new ServiceCollection();
+        ConfigureServices(serviceCollection);
+        Services = serviceCollection.BuildServiceProvider();
+        
+        // Rest of initialization
+    }
+    
+    private void ConfigureServices(IServiceCollection services)
+    {
+        services.AddSingleton<MergeProjectsViewModel>();
+        services.AddTransient<MainWindow>();
+    }
+}
+```
+
+### Service Usage
+```csharp
+var viewModel = App.Services.GetRequiredService<MergeProjectsViewModel>();
+```
+
+## Logging
+
+### Logger Service
+```csharp
+public static class LoggerService
+{
+    private static ILoggerFactory? _loggerFactory;
+    
+    public static void Initialize()
+    {
+        _loggerFactory = LoggerFactory.Create(builder =>
+        {
+            builder.AddConsole();
+            builder.SetMinimumLevel(LogLevel.Debug);
+        });
+    }
+    
+    public static ILogger<T> GetLogger<T>()
+    {
+        return _loggerFactory!.CreateLogger<T>();
+    }
+}
+```
+
+### Usage in ViewModels
+```csharp
+public class MainWindowViewModel : INotifyPropertyChanged
+{
+    private readonly ILogger<MainWindowViewModel> _logger;
+    
+    public MainWindowViewModel()
+    {
+        _logger = LoggerService.GetLogger<MainWindowViewModel>();
+        _logger.LogDebug("Constructing MainWindowViewModel");
+    }
+}
+```
+
+## Value Converters
+
+### Converter Structure
+```csharp
+public class BoolToOpacityConverter : IValueConverter
+{
+    public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        if (value is bool boolValue)
+            return boolValue ? 1.0 : 0.5;
+        return 0.5;
+    }
+    
+    public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        throw new NotImplementedException();
+    }
+}
+```
+
+### Multi-Value Converters
+```csharp
+public class AllTrueMultiConverter : IMultiValueConverter
+{
+    public object? Convert(IList<object?> values, Type targetType, object? parameter, CultureInfo culture)
+    {
+        return values.OfType<bool>().All(b => b);
+    }
+}
+```
+
+### Usage in XAML
+```xml
+<Window.Resources>
+    <converters:BoolToOpacityConverter x:Key="BoolToOpacityConverter"/>
+</Window.Resources>
+
+<TextBlock Opacity="{Binding IsEnabled, Converter={StaticResource BoolToOpacityConverter}}"/>
+```
+
+## Commands
+
+### Command Pattern
+```csharp
+public static class AbleSharpUiCommand
+{
+    public static ICommand Create(Action execute, Func<bool>? canExecute = null)
+    {
+        return new DelegateCommand(execute, canExecute);
+    }
+}
+
+public class DelegateCommand : ICommand
+{
+    private readonly Action _execute;
+    private readonly Func<bool>? _canExecute;
+    
+    public DelegateCommand(Action execute, Func<bool>? canExecute = null)
+    {
+        _execute = execute;
+        _canExecute = canExecute;
+    }
+    
+    public bool CanExecute(object? parameter) => _canExecute?.Invoke() ?? true;
+    
+    public void Execute(object? parameter) => _execute();
+    
+    public event EventHandler? CanExecuteChanged;
+}
+```
+
+## File Dialogs
+
+### Dialog Service
+```csharp
+public static class FileDialogService
+{
+    public static async Task<string?> OpenFileDialogAsync(string title, params string[] filters)
+    {
+        var dialog = new OpenFileDialog
+        {
+            Title = title,
+            AllowMultiple = false,
+            Filters = CreateFilters(filters)
+        };
+        
+        var window = GetMainWindow();
+        var result = await dialog.ShowAsync(window);
+        return result?.FirstOrDefault();
+    }
+    
+    private static Window GetMainWindow()
+    {
+        if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+            return desktop.MainWindow!;
+        throw new InvalidOperationException("Cannot get main window");
+    }
+}
+```
+
+## Threading and UI Updates
+
+### UI Thread Dispatcher
+```csharp
+// Update UI from background thread
+await Dispatcher.UIThread.InvokeAsync(() =>
+{
+    CurrentView = projectView;
+});
+```
+
+### Async Operations
+```csharp
+public async Task LoadProjectAsync(string path)
+{
+    _logger.LogInformation($"Loading project: {path}");
+    
+    // Do work on background thread
+    var project = await Task.Run(() => _sdk.OpenProject(path));
+    
+    // Update UI on UI thread
+    await Dispatcher.UIThread.InvokeAsync(() =>
+    {
+        ProjectName = project.Name;
+        // Update other properties
+    });
+}
+```
+
+## Styling and Theming
+
+### Global Styles
+```xml
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    
+    <Style Selector="Button.primary">
+        <Setter Property="Background" Value="#0078D4"/>
+        <Setter Property="Foreground" Value="White"/>
+    </Style>
+</Styles>
+```
+
+### Resource Dictionary
+```xml
+<Window.Resources>
+    <SolidColorBrush x:Key="PrimaryBrush" Color="#0078D4"/>
+    <sys:Double x:Key="DefaultMargin">8</sys:Double>
+</Window.Resources>
+```
+
+## Best Practices
+
+### 1. ViewModel Guidelines
+- ViewModels should not reference View types
+- Use interfaces for view interactions
+- Keep business logic out of ViewModels (use services)
+- Implement INotifyPropertyChanged properly
+- Use CallerMemberName for OnPropertyChanged
+
+### 2. View Guidelines
+- Minimize code-behind (use ViewModels)
+- Use data binding over code
+- Separate concerns (View for UI, ViewModel for logic)
+- Use UserControls for reusable components
+
+### 3. Data Binding
+- Always use `{Binding}` syntax
+- Specify `UpdateSourceTrigger` when needed
+- Use `StringFormat` for simple formatting
+- Prefer converters over code-behind
+
+### 4. Commands
+- Use ICommand for all user actions
+- Keep commands simple and focused
+- Handle CanExecute properly
+- Use async commands for long operations
+
+### 5. Performance
+- Use virtualization for large lists
+- Lazy-load data when possible
+- Avoid heavy operations on UI thread
+- Profile and optimize rendering
+
+### 6. Error Handling
+- Show user-friendly error messages
+- Log errors for debugging
+- Provide recovery options
+- Don't crash on errors
+
+### 7. Accessibility
+- Provide keyboard shortcuts
+- Support tab navigation
+- Use proper ARIA labels
+- Test with screen readers
+
+### 8. Cross-Platform Considerations
+- Test on Windows, macOS, Linux
+- Use platform-agnostic paths
+- Handle platform-specific features gracefully
+- Use Avalonia's platform detection
+
+## XAML Best Practices
+
+### Layout
+```xml
+<!-- Good: Clear hierarchy -->
+<Grid RowDefinitions="Auto,*,Auto">
+    <Menu Grid.Row="0"/>
+    <ContentControl Grid.Row="1" Content="{Binding CurrentView}"/>
+    <StatusBar Grid.Row="2"/>
+</Grid>
+
+<!-- Bad: Nested absolute positioning -->
+<Canvas>
+    <Canvas Canvas.Left="10" Canvas.Top="10">
+        <Button Content="Click"/>
+    </Canvas>
+</Canvas>
+```
+
+### Naming
+```xml
+<!-- Good: Descriptive names -->
+<Button x:Name="OpenProjectButton" Content="Open Project"/>
+
+<!-- Bad: Generic names -->
+<Button x:Name="Button1" Content="Open Project"/>
+```
+
+### Resources
+```xml
+<!-- Good: Reusable resources -->
+<Window.Resources>
+    <Style x:Key="HeaderTextStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="24"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+    </Style>
+</Window.Resources>
+
+<TextBlock Style="{StaticResource HeaderTextStyle}" Text="Header"/>
+```
+
+## Testing Strategy
+- Unit test ViewModels (no UI dependencies)
+- Test commands independently
+- Test converters with various inputs
+- Integration tests with Avalonia test framework
+- UI automation tests for critical paths
+
+## Anti-Patterns to Avoid
+- Don't put business logic in code-behind
+- Avoid tight coupling between Views and ViewModels
+- Don't block UI thread with long operations
+- Avoid massive ViewModels (split into smaller ones)
+- Don't duplicate SDK logic in GUI
+- Avoid memory leaks (unsubscribe from events)
+- Don't ignore cross-platform differences

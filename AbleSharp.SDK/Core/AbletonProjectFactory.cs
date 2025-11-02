@@ -1,4 +1,5 @@
 ﻿using AbleSharp.Lib;
+using AbleSharp.Lib.Schema;
 using AbleSharp.SDK.Utils;
 
 namespace AbleSharp.SDK.Factories;
@@ -12,10 +13,10 @@ public class AbletonProjectFactory
         var project = new AbletonProject
         {
             MajorVersion = 5,
-            MinorVersion = "12.0_12049",
-            SchemaChangeCount = 12,
-            Creator = "Ableton Live 12.0.10",
-            Revision = "518b0e8f662095a813fbfe2191c405929dce7c4f",
+            MinorVersion = SchemaCatalog.CanonicalVersionId,
+            SchemaChangeCount = SchemaCatalog.CanonicalSchemaChangeCount,
+            Creator = "Ableton Live 12.1",
+            Revision = "canonical-12203",
             LiveSet = CreateBlankLiveSet()
         };
 

@@ -11,6 +11,7 @@
     <ItemGroup>
         <ProjectReference Include="..\AbleSharp.Lib\AbleSharp.Lib.csproj"/>
         <ProjectReference Include="..\AbleSharp.SDK\AbleSharp.SDK.csproj"/>
+        <ProjectReference Include="..\AbleSharp.Schema.Generation\AbleSharp.Schema.Generation.csproj"/>
     </ItemGroup>
 
 </Project>
